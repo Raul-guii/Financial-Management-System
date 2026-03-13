@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
 
   mysql:
@@ -11,12 +9,18 @@ services:
       MYSQL_DATABASE: sgf_db
       MYSQL_USER: sgf_user
       MYSQL_PASSWORD: sgf_pass
+      MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - sgf_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -34,11 +38,13 @@ services:
 
   backend:
     build: ./backend
+    image: sgf-backend
     container_name: sgf_backend
     ports:
       - "8080:8080"
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sgf_db
       SPRING_DATASOURCE_USERNAME: sgf_user
@@ -48,6 +54,7 @@ services:
 
   frontend:
     build: ./frontend
+    image: sgf-frontend
     container_name: sgf_frontend
     ports:
       - "4200:4200"
