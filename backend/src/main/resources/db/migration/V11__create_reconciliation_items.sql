@@ -1,0 +1,4 @@
+CREATE TABLE reconciliation_items(
+    id BIGINT AUTO_INCREMENT PRIMARY_KEY,
+
+)
