@@ -3,8 +3,7 @@ CREATE TABLE invoice_lines(
     description VARCHAR(254),
     quantity DECIMAL(15, 2) NOT NULL,
     unit_price DECIMAL(15, 2) NOT NULL,
-    line_total DECIMAL(15, 2) NOT NULL,
-    created_at DATETIME NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     contract_item_id BIGINT NOT NULL,
     invoice_id BIGINT NOT NULL,

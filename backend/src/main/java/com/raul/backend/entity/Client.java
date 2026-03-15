@@ -1,5 +1,7 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.auditable.Auditable;
+import com.raul.backend.auditable.SoftDeletable;
 import com.raul.backend.enums.ClientType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "clients")
-public class Client {
+public class Client extends SoftDeletable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,12 +67,6 @@ public class Client {
     private String addressCountry;
 
     private Boolean active;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "created_by")

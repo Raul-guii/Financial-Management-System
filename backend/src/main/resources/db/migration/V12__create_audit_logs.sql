@@ -3,7 +3,7 @@ CREATE TABLE audit_logs(
     entity_id BIGINT NOT NULL,
     action VARCHAR(254) NOT NULL,
     entity_type VARCHAR(100) NOT NULL,
-    time_stamp DATETIME NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     user_id BIGINT NOT NULL,
 

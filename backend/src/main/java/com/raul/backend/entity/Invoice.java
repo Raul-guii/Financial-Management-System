@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.auditable.Auditable;
 import com.raul.backend.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "invoices")
-public class Invoice {
+public class Invoice extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,26 +30,20 @@ public class Invoice {
     @Column(nullable = false, length = 20)
     private InvoiceStatus status;
 
-    @Column(nullable = false)
+    @Column(name = "issue_date", nullable = false)
     private LocalDate issueDate;
 
-    @Column(nullable = false)
+    @Column(name = "due_day", nullable = false)
     private LocalDate dueDay;
 
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(nullable = false)
+    @Column(name = "late_free_amount", nullable = false)
     private BigDecimal lateFreeAmount;
 
-    @Column(nullable = false)
+    @Column(name = "interest_amount", nullable = false)
     private BigDecimal interestAmount;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "contract_id")

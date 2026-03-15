@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.auditable.SoftDeletable;
 import com.raul.backend.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +17,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User {
+public class User extends SoftDeletable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

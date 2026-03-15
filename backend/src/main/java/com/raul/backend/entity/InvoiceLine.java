@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.auditable.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "invoice_lines")
-public class InvoiceLine {
+public class InvoiceLine extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,14 +30,8 @@ public class InvoiceLine {
     @Column(nullable = false)
     private BigDecimal quantity;
 
-    @Column(nullable = false)
+    @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
-
-    @Column(nullable = false)
-    private BigDecimal lineTotal;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "contract_item_id")

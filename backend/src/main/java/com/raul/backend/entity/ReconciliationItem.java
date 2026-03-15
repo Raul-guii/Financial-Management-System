@@ -21,10 +21,10 @@ public class ReconciliationItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "system_amount", nullable = false)
     private BigDecimal systemAmount;
 
-    @Column(nullable = false)
+    @Column(name = "gateway_amount", nullable = false)
     private BigDecimal gatewayAmount;
 
     @ManyToOne(optional = false)

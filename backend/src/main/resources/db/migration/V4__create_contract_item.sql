@@ -5,7 +5,9 @@ CREATE TABLE contract_items(
     quantity DECIMAL(15, 2) NOT NULL,
     unit_price DECIMAL(15, 2) NOT NULL,
     active BOOLEAN DEFAULT TRUE,
-    created_at DATETIME NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
 
     contract_id BIGINT INT NOT NULL,
     billing_period_id BIGINT NOT NULL,

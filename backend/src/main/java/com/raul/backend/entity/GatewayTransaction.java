@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.auditable.Auditable;
 import com.raul.backend.enums.GatewayStatus;
 import com.raul.backend.enums.InvoiceStatus;
 import jakarta.persistence.*;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "gateway_transactions")
-public class GatewayTransaction {
+public class GatewayTransaction extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,28 +30,18 @@ public class GatewayTransaction {
     private GatewayStatus status;
 
     @NotBlank
-    @Column(nullable = false, unique = true, length = 254)
+    @Column(name = "external_id", nullable = false, unique = true, length = 254)
     private String externalId;
 
     @NotBlank
-    @Column(nullable = false, length = 254)
+    @Column(name = "gateway_name", nullable = false, length = 254)
     private String gatewayName;
 
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(nullable = false, length = 254)
+    @Column(name = "raw_response", nullable = false, length = 254)
     private String rawResponse;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "invoice_id")
-    private Invoice invoice;
 
     @OneToOne
     @JoinColumn(name = "payment_id", nullable = false, unique = true)

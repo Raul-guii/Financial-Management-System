@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.auditable.SoftDeletable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,11 +15,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "contracts")
-public class FinancialParameter{
+public class FinancialParameter extends SoftDeletable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private String type;
 
     @Column(nullable = false, length = 100)
     private String key;
@@ -26,25 +31,16 @@ public class FinancialParameter{
     @Column(nullable = false, length = 254)
     private String value;
 
-    @Column(nullable = false, length = 30)
-    private String type;
-
     @Column(nullable = false, length = 254)
     private String description;
 
     private Boolean active;
 
-    @Column(nullable = false)
-    private LocalDateTime updated_at;
-
-    @Column(nullable = false)
-    private LocalDateTime created_at;
-
     @ManyToOne(optional = true)
     @JoinColumn(name = "updated_by", nullable = false)
-    private User updated_by;
+    private User updatedBy;
 
     @ManyToOne(optional = true)
     @JoinColumn(name = "created_by", nullable = false)
-    private User created_by;
+    private User createdBy;
 }

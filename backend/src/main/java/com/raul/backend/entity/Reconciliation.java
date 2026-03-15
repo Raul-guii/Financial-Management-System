@@ -23,18 +23,18 @@ public class Reconciliation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "period_start", nullable = false)
     private LocalDate periodStart;
 
-    @Column(nullable = false)
+    @Column(name = "period_end", nullable = false)
     private LocalDate periodEnd;
 
-    @Column(nullable = false)
+    @Column(name = "executed_at", nullable = false)
     private LocalDateTime executedAt;
 
     @ManyToOne
     @JoinColumn(name = "executed_by")
-    private User executed_by;
+    private User executedBy;
 
     @OneToMany(mappedBy = "reconciliations", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReconciliationItem> items = new ArrayList<>();

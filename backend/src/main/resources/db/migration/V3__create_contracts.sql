@@ -4,8 +4,9 @@ CREATE TABLE contracts(
     billing_period VARCHAR(20) NOT NULL,
     start_date DATE NOT NULL,
     end_date   DATE NOT NULL,
-    created_at DATETIME NOT NULL,
-    updated_at DATETIME NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
     created_by BIGINT,
     client_id BIGINT,
 

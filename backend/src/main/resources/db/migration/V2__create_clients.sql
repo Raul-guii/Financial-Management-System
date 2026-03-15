@@ -19,8 +19,9 @@ CREATE TABLE clients (
      active BOOLEAN DEFAULT TRUE,
 
      created_by BIGINT,
-     created_at DATETIME NOT NULL,
-     updated_at DATETIME,
+     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+     deleted_at DATETIME NULL,
 
      CONSTRAINT fk_clients_user
          FOREIGN KEY (created_by)

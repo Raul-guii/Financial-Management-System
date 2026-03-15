@@ -24,16 +24,16 @@ public class RefundRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private RefundStatus refundStatus;
+    private RefundStatus status;
 
     @NotBlank
     @Column(nullable = false, length = 150)
     private String reason;
 
-    @Column(nullable = false)
+    @Column(name = "requested_at", nullable = false)
     private LocalDateTime requestedAt;
 
-    @Column(nullable = false)
+    @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
     @ManyToOne

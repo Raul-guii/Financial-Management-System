@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.auditable.SoftDeletable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "contract_items")
-public class ContractItem {
+public class ContractItem extends SoftDeletable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +34,10 @@ public class ContractItem {
     @Column(nullable = false)
     private BigDecimal quantity;
 
-    @Column(nullable = false)
+    @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 
     private Boolean active;
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "contract_id", nullable = false)

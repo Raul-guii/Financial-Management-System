@@ -3,7 +3,7 @@ CREATE TABLE refund_requests(
     status VARCHAR(20) NOT NULL,
     reason VARCHAR(150) NOT NULL,
     requested_at DATETIME NOT NULL,
-    approved_at DATETIME NOT NULL,
+    approved_at DATETIME NULL,
 
     payment_id BIGINT NOT NULL,
     requested_by BIGINT NOT NULL,
