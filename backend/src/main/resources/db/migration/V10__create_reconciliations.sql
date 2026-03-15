@@ -1,4 +1,4 @@
-CREATE TABLE reconciliation(
+CREATE TABLE reconciliations(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     period_start DATE NOT NULL,
     period_end DATE NOT NULL,

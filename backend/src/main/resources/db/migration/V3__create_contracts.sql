@@ -1,11 +1,11 @@
 CREATE TABLE contracts(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     status VARCHAR(20) NOT NULL,
-    billingPeriod VARCHAR(20) NOT NULL,
-    startDate DATE NOT NULL,
-    endDate   DATE NOT NULL,
-    createdAt DATETIME NOT NULL,
-    updatedBy DATETIME NOT NULL,
+    billing_period VARCHAR(20) NOT NULL,
+    start_date DATE NOT NULL,
+    end_date   DATE NOT NULL,
+    created_at DATETIME NOT NULL,
+    updated_at DATETIME NOT NULL,
     created_by BIGINT,
     client_id BIGINT,
 

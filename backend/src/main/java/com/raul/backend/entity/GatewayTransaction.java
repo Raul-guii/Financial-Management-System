@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.enums.GatewayStatus;
 import com.raul.backend.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -25,7 +26,7 @@ public class GatewayTransaction {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private InvoiceStatus invoiceStatus;
+    private GatewayStatus status;
 
     @NotBlank
     @Column(nullable = false, unique = true, length = 254)

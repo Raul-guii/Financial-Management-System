@@ -1,6 +1,7 @@
 package com.raul.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,12 +17,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Entity
 @Table(name = "contract_items")
-public class Contract_Item{
+public class ContractItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -41,4 +44,7 @@ public class Contract_Item{
     @ManyToOne(optional = false)
     @JoinColumn(name = "contract_id", nullable = false)
     private Contract contract;
+
+    @OneToMany(mappedBy = "contractItem")
+    private List<InvoiceLine> invoiceLines;
 }

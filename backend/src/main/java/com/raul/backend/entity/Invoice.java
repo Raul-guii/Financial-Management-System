@@ -10,6 +10,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -55,4 +56,7 @@ public class Invoice {
 
     @OneToMany(mappedBy = "invoices")
     private List<Payment> payments;
+
+    @OneToMany(mappedBy = "invoices", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvoiceLine> lines = new ArrayList<>();
 }

@@ -1,6 +1,6 @@
 package com.raul.backend.enums;
 
-public enum RefundRequest {
+public enum RefundStatus {
     PENDING,
     APPROVED,
     REJECTED

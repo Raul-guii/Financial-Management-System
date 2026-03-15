@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -47,4 +48,7 @@ public class Contract {
 
     @OneToMany(mappedBy = "contracts")
     private List<Invoice> invoices;
+
+    @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ContractItem> items = new ArrayList<>();
 }

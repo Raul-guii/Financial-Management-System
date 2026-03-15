@@ -39,6 +39,7 @@ public class Client {
     @Column(length = 150)
     private String email;
 
+    @NotBlank
     @Column(length = 20)
     private String phone;
 
@@ -65,14 +66,13 @@ public class Client {
 
     private Boolean active;
 
-    @ManyToOne
-    @JoinColumn(name = "created_by")
-    private User createdBy;
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
 }

@@ -1,9 +1,9 @@
 CREATE TABLE payments(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    paymentMethod VARCHAR(20) NOT NULL,
+    payment_method VARCHAR(20) NOT NULL,
     amount DECIMAL(15, 2) NOT NULL,
-    paymentDate DATETIME NOT NULL,
-    createdAt DATETIME NOT NULL,
+    payment_date DATETIME NOT NULL,
+    created_at DATETIME NOT NULL,
     invoice_id BIGINT,
     gateway_transaction_id BIGINT,
 
