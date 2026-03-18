@@ -8,5 +8,5 @@ CREATE TABLE payments(
     gateway_transaction_id BIGINT,
 
     FOREIGN KEY (invoice_id) REFERENCES invoices(id),
-    FOREIGN KEY (gateway_transaction_id) REFERENCES gateway_transactions(id);
+    FOREIGN KEY (gateway_transaction_id) REFERENCES gateway_transactions(id)
 );

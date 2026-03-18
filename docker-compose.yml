@@ -17,7 +17,7 @@ services:
     networks:
       - sgf_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "sgf_user", "-psgf_pass"]
       interval: 5s
       timeout: 5s
       retries: 10

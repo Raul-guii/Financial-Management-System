@@ -3,12 +3,12 @@ CREATE TABLE gateway_transactions(
     status VARCHAR(20) NOT NULL,
     external_id VARCHAR(254) NOT NULL UNIQUE,
     gateway_name VARCHAR(254) NOT NULL,
-    raw_response VARCHAR(254) NOT NULL,
+    raw_response TEXT,
     amount DECIMAL(15, 2) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NULL ON UPDATED CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 
-    gateway_transaction_id BIGINT,
+    payment_id BIGINT NOT NULL UNIQUE,
 
-    FOREIGN KEY (gateway_transaction_id) REFERENCES gateway_transactions(id) ON DELETE CASCADE;
+    FOREIGN KEY (payment_id) REFERENCES payments(id) ON DELETE CASCADE
 );

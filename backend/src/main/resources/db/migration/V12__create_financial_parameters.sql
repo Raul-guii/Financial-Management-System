@@ -10,5 +10,5 @@ CREATE TABLE financial_parameters(
     deleted_at DATETIME NULL,
     updated_by BIGINT NOT NULL,
 
-    FOREIGN KEY (updated_by) REFERENCES users(id);
-)
+    FOREIGN KEY (updated_by) REFERENCES users(id)
+);

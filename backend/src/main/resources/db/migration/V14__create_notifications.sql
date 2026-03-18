@@ -1,0 +1,15 @@
+CREATE TABLE notifications(
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+
+    title VARCHAR(150) NOT NULL,
+    message VARCHAR(255) NOT NULL,
+    type VARCHAR(30) NOT NULL,
+
+    read BOOLEAN DEFAULT FALSE,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    user_id BIGINT NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);
