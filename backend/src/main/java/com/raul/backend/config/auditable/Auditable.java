@@ -1,4 +1,4 @@
-package com.raul.backend.auditable;
+package com.raul.backend.config.auditable;
 
 import jakarta.persistence.MappedSuperclass;
 import org.hibernate.annotations.CreationTimestamp;

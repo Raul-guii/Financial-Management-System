@@ -6,5 +6,5 @@ CREATE TABLE reconciliations(
 
     executed_by BIGINT,
 
-    FOREIGN KEY (executed_by) REFERENCES users(id);
-)
+    FOREIGN KEY (executed_by) REFERENCES users(id)
+);

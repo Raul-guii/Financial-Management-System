@@ -1,6 +1,6 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.SoftDeletable;
+import com.raul.backend.config.auditable.SoftDeletable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter

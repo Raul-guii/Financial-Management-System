@@ -1,6 +1,6 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.SoftDeletable;
+import com.raul.backend.config.auditable.SoftDeletable;
 import com.raul.backend.enums.BillingPeriod;
 import com.raul.backend.enums.ContractStatus;
 import jakarta.persistence.*;
@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +47,7 @@ public class Contract extends SoftDeletable {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
-    @OneToMany(mappedBy = "contracts")
+    @OneToMany(mappedBy = "contract")
     private List<Invoice> invoices;
 
     @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)

@@ -1,4 +1,4 @@
-package com.raul.backend.auditable;
+package com.raul.backend.config.auditable;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;

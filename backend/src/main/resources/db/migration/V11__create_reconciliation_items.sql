@@ -1,5 +1,5 @@
 CREATE TABLE reconciliation_items(
-    id BIGINT AUTO_INCREMENT PRIMARY_KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
     system_amount DECIMAL(15, 2),
     gateway_amount DECIMAL(15, 2),
 
@@ -8,9 +8,9 @@ CREATE TABLE reconciliation_items(
     payment_id BIGINT,
     gateway_transaction_id BIGINT,
 
-    FOREIGN KEY (reconciliation_id) REFERENCES reconciliations(id) DELETE ON CASCADE,
+    FOREIGN KEY (reconciliation_id) REFERENCES reconciliations(id) ON DELETE CASCADE,
     FOREIGN KEY (invoice_id) REFERENCES invoices(id),
     FOREIGN KEY (payment_id) REFERENCES payments(id),
-    FOREIGN KEY (gateway_transaction_id) REFERENCES gateway_transactions(id);
+    FOREIGN KEY (gateway_transaction_id) REFERENCES gateway_transactions(id)
 
-)
+);

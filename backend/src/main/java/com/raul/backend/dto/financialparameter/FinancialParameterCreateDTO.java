@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class FinancialParameterCreateDTO {
 
     @NotBlank
-    private String key;
+    private String name;
 
     @NotBlank
     private String value;

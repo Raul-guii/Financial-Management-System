@@ -36,6 +36,6 @@ public class Reconciliation {
     @JoinColumn(name = "executed_by")
     private User executedBy;
 
-    @OneToMany(mappedBy = "reconciliations", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "reconciliation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReconciliationItem> items = new ArrayList<>();
 }

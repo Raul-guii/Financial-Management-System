@@ -1,6 +1,6 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.Auditable;
+import com.raul.backend.config.auditable.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -39,9 +39,9 @@ public class Payment extends Auditable {
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
 
-    @OneToOne(mappedBy = "payments", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
     private GatewayTransaction gatewayTransaction;
 
-    @OneToMany(mappedBy = "refund_requests", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RefundRequest> lines = new ArrayList<>();
+    @OneToMany(mappedBy = "payment", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RefundRequest> refundRequests = new ArrayList<>();
 }

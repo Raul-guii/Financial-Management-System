@@ -4,7 +4,5 @@ public enum Roles {
     ADMIN,
     FINANCIAL_MANAGER,
     FINANCIAL_ANALYST,
-    MEETING_MANAGER,
-    SALES,
-    VIEWER
+    MEETING_MANAGER
 }

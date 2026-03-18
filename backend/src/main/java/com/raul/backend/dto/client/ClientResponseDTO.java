@@ -28,5 +28,5 @@ public class ClientResponseDTO {
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private Long createdById;
+    private Long createdBy;
 }

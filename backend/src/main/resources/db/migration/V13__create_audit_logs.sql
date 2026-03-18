@@ -4,7 +4,7 @@ CREATE TABLE audit_logs(
     action VARCHAR(254) NOT NULL,
     entity_type VARCHAR(100) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     user_id BIGINT NOT NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(id)

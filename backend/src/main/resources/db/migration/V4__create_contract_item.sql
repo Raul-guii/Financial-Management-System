@@ -6,11 +6,10 @@ CREATE TABLE contract_items(
     unit_price DECIMAL(15, 2) NOT NULL,
     active BOOLEAN DEFAULT TRUE,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NULL ON CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
     deleted_at DATETIME NULL,
 
-    contract_id BIGINT INT NOT NULL,
-    billing_period_id BIGINT NOT NULL,
+    contract_id BIGINT NOT NULL,
 
-    FOREIGN KEY (contract_id) REFERENCES contracts(id) DELETE ON CASCADE,
-    FOREIGN KEY (billing_period_id) REFERENCES billing_period(id);
+    FOREIGN KEY (contract_id) REFERENCES contracts(id) ON DELETE CASCADE
+);

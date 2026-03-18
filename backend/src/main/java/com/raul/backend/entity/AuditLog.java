@@ -1,14 +1,12 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.Auditable;
+import com.raul.backend.config.auditable.Auditable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter

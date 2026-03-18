@@ -1,8 +1,7 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.Auditable;
+import com.raul.backend.config.auditable.Auditable;
 import com.raul.backend.enums.GatewayStatus;
-import com.raul.backend.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -11,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -40,7 +38,7 @@ public class GatewayTransaction extends Auditable {
     @Column(nullable = false)
     private BigDecimal amount;
 
-    @Column(name = "raw_response", nullable = false, length = 254)
+    @Column(name = "raw_response", columnDefinition = "TEXT")
     private String rawResponse;
 
     @OneToOne

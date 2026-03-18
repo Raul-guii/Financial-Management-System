@@ -1,6 +1,6 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.SoftDeletable;
+import com.raul.backend.config.auditable.SoftDeletable;
 import com.raul.backend.enums.Roles;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -35,9 +35,7 @@ public class User extends SoftDeletable {
     @Column(nullable = false, length = 254)
     private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    @Column(name = "roles")
-    private Set<Roles> accessRoles;
+    @Column(nullable = false, length = 50)
+    private Roles role;
 }

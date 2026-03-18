@@ -1,7 +1,6 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.Auditable;
-import com.raul.backend.auditable.SoftDeletable;
+import com.raul.backend.config.auditable.SoftDeletable;
 import com.raul.backend.enums.ClientType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -9,9 +8,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @Setter

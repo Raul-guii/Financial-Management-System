@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class FinancialParameterResponseDTO {
 
     private Long id;
-    private String key;
+    private String name;
     private String value;
     private String type;
     private String description;

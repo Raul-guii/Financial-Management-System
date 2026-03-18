@@ -19,5 +19,5 @@ public class UserUpdateDTO {
     private String email;
 
     private String password;
-    private Set<Roles> accessRoles;
+    private Roles role;
 }

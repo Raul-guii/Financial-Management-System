@@ -1,6 +1,6 @@
 package com.raul.backend.entity;
 
-import com.raul.backend.auditable.Auditable;
+import com.raul.backend.config.auditable.Auditable;
 import com.raul.backend.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,9 +48,9 @@ public class Invoice extends Auditable {
     @JoinColumn(name = "contract_id")
     private Contract contract;
 
-    @OneToMany(mappedBy = "invoices")
-    private List<Payment> payments;
+    @OneToMany(mappedBy = "invoice")
+    private List<Payment> payment;
 
-    @OneToMany(mappedBy = "invoices", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<InvoiceLine> lines = new ArrayList<>();
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<InvoiceLine> invoiceLines = new ArrayList<>();
 }

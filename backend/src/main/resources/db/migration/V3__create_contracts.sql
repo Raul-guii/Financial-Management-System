@@ -11,5 +11,5 @@ CREATE TABLE contracts(
     client_id BIGINT,
 
     FOREIGN KEY (created_by) REFERENCES users(id),
-    FOREIGN KEY (client_id) REFERENCES clients(id);
+    FOREIGN KEY (client_id) REFERENCES clients(id)
 );

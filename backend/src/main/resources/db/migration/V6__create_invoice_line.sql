@@ -4,10 +4,11 @@ CREATE TABLE invoice_lines(
     quantity DECIMAL(15, 2) NOT NULL,
     unit_price DECIMAL(15, 2) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 
     contract_item_id BIGINT NOT NULL,
     invoice_id BIGINT NOT NULL,
 
     FOREIGN KEY (contract_item_id) REFERENCES contract_items(id),
-    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE;
+    FOREIGN KEY (invoice_id) REFERENCES invoices(id) ON DELETE CASCADE
 )
