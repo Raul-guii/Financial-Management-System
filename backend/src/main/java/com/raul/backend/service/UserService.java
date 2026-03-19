@@ -15,8 +15,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,11 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
+
+
+        if (user.getDeletedAt() != null) {
+            throw new UsernameNotFoundException("Usuário desativado");
+        }
 
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
@@ -99,5 +106,50 @@ public class UserService implements UserDetailsService {
                 user.getEmail(),
                 user.getRole()
         );
+    }
+
+    public List<UserResponseDTO> findAll() {
+        return userRepository.findAll().stream()
+                .filter(user -> user.getDeletedAt() == null)
+                .map(user -> new UserResponseDTO(
+                        user.getId(),
+                        user.getName(),
+                        user.getEmail(),
+                        user.getRole()
+                ))
+                .toList();
+    }
+
+    public UserResponseDTO findById(Long id) {
+        User user = userRepository.findById(id)
+                .filter(u -> u.getDeletedAt() == null)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        return new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
+    }
+
+    @Transactional
+    public void deactivateUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        user.setDeletedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void deleteUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+        user.setDeletedAt(LocalDateTime.now());
+
+        userRepository.save(user);
     }
 }
