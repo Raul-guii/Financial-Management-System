@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 public class ClientCreateDTO {
 
     @NotBlank
-    @NotNull
     @Size(max = 150)
     private String name;
 
@@ -23,42 +22,33 @@ public class ClientCreateDTO {
     private ClientType type;
 
     @NotBlank
-    @NotNull
     @Size(max = 20)
     private String document;
 
     @NotBlank
-    @NotNull
     @Email
     @Size(max = 150)
     private String email;
 
     @NotBlank
-    @NotNull
     @Size(max = 20)
     private String phone;
 
-    @NotBlank
     @Size(max = 150)
     private String addressStreet;
 
-    @NotBlank
     @Size(max = 20)
     private String addressNumber;
 
-    @NotBlank
     @Size(max = 100)
     private String addressNeighborhood;
 
-    @NotBlank
     @Size(max = 100)
     private String addressCity;
 
-    @NotBlank
     @Size(max = 50)
     private String addressState;
 
-    @NotBlank
     @Size(max = 20)
     private String addressPostalCode;
 
