@@ -2,7 +2,7 @@ package com.raul.backend.dto.contractitem;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,16 +15,16 @@ import java.math.BigDecimal;
 public class ContractItemCreateDTO {
 
     @NotBlank
+    @Size(max = 100)
     private String name;
 
+    @Size(max = 254)
     private String description;
 
     @NotNull
-    @Positive
     private BigDecimal quantity;
 
     @NotNull
-    @Positive
     private BigDecimal unitPrice;
 
     private Boolean active;

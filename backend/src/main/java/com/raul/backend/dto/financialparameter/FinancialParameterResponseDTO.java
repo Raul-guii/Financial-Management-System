@@ -1,10 +1,9 @@
 package com.raul.backend.dto.financialparameter;
 
+import com.raul.backend.enums.FinancialParameterType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -14,11 +13,9 @@ public class FinancialParameterResponseDTO {
     private Long id;
     private String name;
     private String value;
-    private String type;
+    private FinancialParameterType type;
     private String description;
     private Boolean active;
-    private LocalDateTime updatedAt;
-    private LocalDateTime createdAt;
     private Long updatedById;
     private Long createdById;
 }

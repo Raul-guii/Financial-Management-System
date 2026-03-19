@@ -1,6 +1,7 @@
 package com.raul.backend.service;
 
 import com.raul.backend.dto.user.UserCreateDTO;
+import com.raul.backend.dto.user.UserResponseDTO;
 import com.raul.backend.dto.user.UserUpdateDTO;
 import com.raul.backend.entity.User;
 import com.raul.backend.enums.Roles;
@@ -48,7 +49,7 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toSet());
     }
 
-    public User createUser(UserCreateDTO dto) {
+    public UserResponseDTO createUser(UserCreateDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Email já cadastrado");
         }
@@ -59,13 +60,20 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole(dto.getRole());
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        return new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 
     @Transactional
-    public User updateUser(String email, UserUpdateDTO dto) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
+    public UserResponseDTO updateUser(Long id, UserUpdateDTO dto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         if (dto.getName() != null && !dto.getName().isBlank()) {
             user.setName(dto.getName());
@@ -83,6 +91,13 @@ public class UserService implements UserDetailsService {
             user.setRole(dto.getRole());
         }
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+
+        return new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }
