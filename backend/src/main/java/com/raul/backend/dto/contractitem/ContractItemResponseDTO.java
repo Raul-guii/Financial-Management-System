@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -19,7 +18,6 @@ public class ContractItemResponseDTO {
     private BigDecimal quantity;
     private BigDecimal unitPrice;
     private Boolean active;
-    private LocalDateTime createdAt;
     private Long contractId;
     private List<Long> invoiceLineIds;
 }

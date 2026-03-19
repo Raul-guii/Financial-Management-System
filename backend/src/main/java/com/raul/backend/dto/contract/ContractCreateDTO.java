@@ -3,6 +3,7 @@ package com.raul.backend.dto.contract;
 import com.raul.backend.enums.BillingPeriod;
 import com.raul.backend.enums.ContractStatus;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,14 +16,17 @@ import java.time.LocalDate;
 public class ContractCreateDTO {
 
     @NotNull
+    @Size(max = 20)
     private ContractStatus status;
 
     @NotNull
+    @Size(max = 20)
     private BillingPeriod billingPeriod;
 
+    @NotNull
     private LocalDate startDate;
-    private LocalDate endDate;
 
     @NotNull
-    private Long clientId;
+    private LocalDate endDate;
+
 }
