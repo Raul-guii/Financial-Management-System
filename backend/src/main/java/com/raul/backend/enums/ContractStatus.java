@@ -4,5 +4,5 @@ public enum ContractStatus {
     ACTIVE,
     SUSPENDED,
     CLOSED,
-    CANCELED
+    CANCELLED
 }

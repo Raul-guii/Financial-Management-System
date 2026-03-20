@@ -39,7 +39,7 @@ public class Contract extends SoftDeletable {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @ManyToOne
+    @ManyToOne(optional = true)
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 

@@ -16,11 +16,9 @@ import java.time.LocalDate;
 public class ContractUpdateDTO {
 
     @NotNull
-    @Size(max = 20)
     private ContractStatus status;
 
     @NotNull
-    @Size(max = 20)
     private BillingPeriod billingPeriod;
 
     @NotNull
