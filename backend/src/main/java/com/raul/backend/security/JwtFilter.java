@@ -34,10 +34,7 @@ public class JwtFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         try {
-            System.out.println("=== JWT FILTER ===");
-
             final String authHeader = request.getHeader("Authorization");
-            System.out.println("HEADER: " + authHeader);
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
@@ -45,10 +42,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
 
             final String token = authHeader.substring(7);
-            System.out.println("TOKEN: " + token);
-
             final String email = jwtService.extractUsername(token);
-            System.out.println("EMAIL EXTRAIDO: " + email);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userService.loadUserByUsername(email);
@@ -70,10 +64,6 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            System.out.println("❌ ERRO NO JWT:");
-            System.out.println("TIPO: " + e.getClass().getName());
-            System.out.println("MSG: " + e.getMessage());
-            e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid or expired token");
         }
