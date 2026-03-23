@@ -20,14 +20,14 @@ public class InvoiceLineController {
         this.service = service;
     }
 
-    // GET BY ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     public ResponseEntity<InvoiceLineResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
-    // LISTAR POR INVOICE
     @GetMapping("/invoice/{invoiceId}")
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     public ResponseEntity<List<InvoiceLineResponseDTO>> findByInvoice(
             @PathVariable Long invoiceId
     ) {

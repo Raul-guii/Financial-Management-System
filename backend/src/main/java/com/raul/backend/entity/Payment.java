@@ -1,6 +1,7 @@
 package com.raul.backend.entity;
 
 import com.raul.backend.config.auditable.Auditable;
+import com.raul.backend.enums.PaymentMethod;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -25,15 +26,15 @@ public class Payment extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
     @Column(nullable = false)
     private BigDecimal amount;
 
     @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", nullable = false)
+    private PaymentMethod paymentMethod;
 
     @ManyToOne
     @JoinColumn(name = "invoice_id")
