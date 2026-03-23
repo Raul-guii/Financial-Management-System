@@ -32,6 +32,9 @@ public class InvoiceLine extends Auditable {
     @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 
+    @Column(nullable = false)
+    private BigDecimal total;
+
     @ManyToOne(optional = true)
     @JoinColumn(name = "contract_item_id")
     private ContractItem contractItem;

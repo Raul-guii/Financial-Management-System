@@ -26,10 +26,6 @@ public class InvoiceCreateDTO {
 
     @NotNull
     @PositiveOrZero
-    private BigDecimal amount;
-
-    @NotNull
-    @PositiveOrZero
     private BigDecimal lateFreeAmount;
 
     @NotNull
