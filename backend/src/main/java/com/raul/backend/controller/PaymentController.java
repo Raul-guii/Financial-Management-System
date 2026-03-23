@@ -1,7 +1,7 @@
 package com.raul.backend.controller;
 
-import com.raul.backend.dto.invoice.*;
-import com.raul.backend.service.InvoiceService;
+import com.raul.backend.dto.payment.*;
+import com.raul.backend.service.PaymentService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,44 +10,42 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/invoices")
-public class InvoiceController {
+@RequestMapping("/payments")
+public class PaymentController {
 
-    private final InvoiceService service;
+    private final PaymentService service;
 
-    public InvoiceController(InvoiceService service) {
+    public PaymentController(PaymentService service) {
         this.service = service;
     }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
-    public ResponseEntity<InvoiceResponseDTO> create(@RequestBody @Valid InvoiceCreateDTO dto) {
+    public ResponseEntity<PaymentResponseDTO> create(@RequestBody @Valid PaymentCreateDTO dto) {
         return ResponseEntity.ok(service.create(dto));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
-    public ResponseEntity<InvoiceResponseDTO> update(
-            @PathVariable Long id,
-            @RequestBody @Valid InvoiceUpdateDTO dto
-    ) {
+    public ResponseEntity<PaymentResponseDTO> update(@PathVariable Long id,
+                                                     @RequestBody @Valid PaymentUpdateDTO dto) {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     @GetMapping
-    public ResponseEntity<List<InvoiceResponseDTO>> findAll() {
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
+    public ResponseEntity<List<PaymentResponseDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     @GetMapping("/{id}")
-    public ResponseEntity<InvoiceResponseDTO> findById(@PathVariable Long id) {
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
+    public ResponseEntity<PaymentResponseDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_MANAGER')")
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_MANAGER')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();

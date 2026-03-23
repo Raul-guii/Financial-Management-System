@@ -1,5 +1,7 @@
 package com.raul.backend.dto.payment;
 
+import com.raul.backend.enums.PaymentMethod;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,5 +19,8 @@ public class PaymentUpdateDTO {
     private BigDecimal amount;
 
     private LocalDateTime paymentDate;
+
+    private PaymentMethod paymentMethod;
+
     private Long invoiceId;
 }

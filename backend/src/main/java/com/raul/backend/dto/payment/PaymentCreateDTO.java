@@ -1,5 +1,6 @@
 package com.raul.backend.dto.payment;
 
+import com.raul.backend.enums.PaymentMethod;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,9 @@ public class PaymentCreateDTO {
 
     @NotNull
     private LocalDateTime paymentDate;
+
+    @NotNull
+    private PaymentMethod paymentMethod;
 
     @NotNull
     private Long invoiceId;
