@@ -4,6 +4,8 @@ import com.raul.backend.dto.payment.*;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
 import com.raul.backend.enums.InvoiceStatus;
+import com.raul.backend.enums.PaymentStatus;
+import com.raul.backend.repository.GatewayTransactionRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
@@ -15,11 +17,12 @@ import java.util.List;
 @Service
 public class PaymentService {
 
+    private final GatewayTransactionService gatewayTransactionService;
     private final PaymentRepository repository;
     private final InvoiceRepository invoiceRepository;
 
-    public PaymentService(PaymentRepository repository,
-                          InvoiceRepository invoiceRepository) {
+    public PaymentService(GatewayTransactionService gatewayTransactionService, PaymentRepository repository, InvoiceRepository invoiceRepository) {
+        this.gatewayTransactionService = gatewayTransactionService;
         this.repository = repository;
         this.invoiceRepository = invoiceRepository;
     }
@@ -36,13 +39,15 @@ public class PaymentService {
         payment.setAmount(dto.getAmount());
         payment.setPaymentDate(dto.getPaymentDate());
         payment.setPaymentMethod(dto.getPaymentMethod());
+        payment.setPaymentStatus(PaymentStatus.PENDING);
         payment.setInvoice(invoice);
 
         payment = repository.save(payment);
 
-        // REGRA PRINCIPAL (RN015)
-        updateInvoiceStatus(invoice);
+        // chama gateway
+        gatewayTransactionService.processPayment(payment);
 
+        payment = repository.findById(payment.getId()).get();
         return toDTO(payment);
     }
 
@@ -63,8 +68,6 @@ public class PaymentService {
         }
 
         payment = repository.save(payment);
-
-        updateInvoiceStatus(payment.getInvoice());
 
         return toDTO(payment);
     }
@@ -101,7 +104,7 @@ public class PaymentService {
     // REGRA CENTRAL
     private void updateInvoiceStatus(Invoice invoice) {
 
-        BigDecimal totalPaid = repository.sumByInvoiceId(invoice.getId());
+        BigDecimal totalPaid = repository.sumApprovedByInvoice(invoice.getId());
 
         if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
             invoice.setStatus(InvoiceStatus.PAID);
@@ -123,7 +126,8 @@ public class PaymentService {
                 payment.getGatewayTransaction() != null ? payment.getGatewayTransaction().getId() : null,
                 payment.getRefundRequests() != null
                         ? payment.getRefundRequests().stream().map(r -> r.getId()).toList()
-                        : List.of()
+                        : List.of(),
+                payment.getPaymentStatus()
         );
     }
 }

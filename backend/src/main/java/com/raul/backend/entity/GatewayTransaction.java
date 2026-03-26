@@ -27,7 +27,6 @@ public class GatewayTransaction extends Auditable {
     @Column(nullable = false, length = 20)
     private GatewayStatus status;
 
-    @NotBlank
     @Column(name = "external_id", nullable = false, unique = true, length = 254)
     private String externalId;
 

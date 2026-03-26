@@ -2,6 +2,7 @@ package com.raul.backend.entity;
 
 import com.raul.backend.config.auditable.Auditable;
 import com.raul.backend.enums.PaymentMethod;
+import com.raul.backend.enums.PaymentStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,10 @@ public class Payment extends Auditable {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_method", nullable = false)
     private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false)
+    private PaymentStatus paymentStatus;
 
     @ManyToOne
     @JoinColumn(name = "invoice_id")
