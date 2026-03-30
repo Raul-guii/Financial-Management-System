@@ -49,6 +49,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sgf_db
       SPRING_DATASOURCE_USERNAME: sgf_user
       SPRING_DATASOURCE_PASSWORD: sgf_pass
+      MERCADOPAGO_ACCESS_TOKEN: TEST-2095943962507364-032619-668060ef9d2c7d8767ab2fed78773a05-2905125544
     networks:
       - sgf_network
 

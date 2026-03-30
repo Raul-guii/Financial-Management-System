@@ -40,6 +40,12 @@ public class GatewayTransaction extends Auditable {
     @Column(name = "raw_response", columnDefinition = "TEXT")
     private String rawResponse;
 
+    @Column(name = "qr_code", columnDefinition = "TEXT")
+    private String qrCode;
+
+    @Column(name = "ticket_url")
+    private String ticketUrl;
+
     @OneToOne
     @JoinColumn(name = "payment_id", nullable = false, unique = true)
     private Payment payment;

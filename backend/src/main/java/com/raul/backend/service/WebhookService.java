@@ -9,56 +9,58 @@ import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.repository.GatewayTransactionRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 @Service
-public class GatewayTransactionService {
+public class WebhookService {
 
     private final GatewayTransactionRepository repository;
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
     private final MercadoPagoClient mercadoPagoClient;
 
-    public GatewayTransactionService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceRepository invoiceRepository, MercadoPagoClient mercadoPagoClient) {
+    public WebhookService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceRepository invoiceRepository, MercadoPagoClient mercadoPagoClient) {
         this.repository = repository;
         this.paymentRepository = paymentRepository;
         this.invoiceRepository = invoiceRepository;
         this.mercadoPagoClient = mercadoPagoClient;
     }
 
-         @Transactional
-         public GatewayTransaction processPayment(Payment payment) {
+    @Transactional
+    public void process(Map<String, Object> payload) {
 
-             // chamar gateway
-             GatewayResponse response = mercadoPagoClient.createPayment(payment);
+        // pegar ID da transação do gateway
+        String externalId = extractExternalId(payload);
 
-             // criar transaction
-             GatewayTransaction transaction = new GatewayTransaction();
+        GatewayTransaction transaction = repository
+                .findByExternalId(externalId)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
-             transaction.setPayment(payment);
-             transaction.setExternalId(String.valueOf(response.getTransactionId()));
-             transaction.setGatewayName("MERCADO_PAGO");
-             transaction.setAmount(payment.getAmount());
+        //atualizar status
+        GatewayResponse response = mercadoPagoClient.getPayment(externalId);
 
-             transaction.setStatus(mapStatus(response.getStatus()));
+        response.setStatus("approved");
 
-             transaction.setQrCode(response.getQrCode());
-             transaction.setTicketUrl(response.getTicketUrl());
+        transaction.setStatus(mapStatus(response.getStatus()));
 
-             transaction.setRawResponse(response.getRawResponse());
+        repository.save(transaction);
 
-             transaction = repository.save(transaction);
+        Payment payment = transaction.getPayment();
+        payment.setPaymentStatus(mapToPaymentStatus(transaction.getStatus()));
 
-             // atualizar payment
-             payment.setGatewayTransaction(transaction);
-             payment.setPaymentStatus(mapToPaymentStatus(transaction.getStatus()));
+        paymentRepository.save(payment);
 
-             paymentRepository.save(payment);
+        updateInvoiceStatus(payment.getInvoice());
+    }
 
-             updateInvoiceStatus(payment.getInvoice());
-             return transaction;
-         }
+    private String extractExternalId(Map<String, Object> payload) {
+
+        Map<String, Object> data = (Map<String, Object>) payload.get("data");
+        return data.get("id").toString();
+    }
 
     private void updateInvoiceStatus(Invoice invoice) {
 
@@ -74,6 +76,8 @@ public class GatewayTransactionService {
     }
 
     private GatewayStatus mapStatus(String status){
+        if (status == null) return GatewayStatus.ERROR;
+
         return switch (status){
             case "approved" -> GatewayStatus.APPROVED;
             case "pending" -> GatewayStatus.PENDING;
@@ -89,5 +93,9 @@ public class GatewayTransactionService {
             case PENDING -> PaymentStatus.PENDING;
             default -> PaymentStatus.ERROR;
         };
+    }
+
+    private String extractStatus(Map<String, Object> payload) {
+        return payload.get("status").toString();
     }
 }

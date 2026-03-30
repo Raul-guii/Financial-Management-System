@@ -23,4 +23,5 @@ public class GatewayTransactionResponseDTO {
     private LocalDateTime updatedAt;
     private Long invoiceId;
     private Long paymentId;
+
 }

@@ -5,5 +5,6 @@ public enum GatewayStatus {
     PAID,
     APPROVED,
     REJECTED,
-    REFUNDED
+    REFUNDED,
+    ERROR
 }

@@ -127,7 +127,13 @@ public class PaymentService {
                 payment.getRefundRequests() != null
                         ? payment.getRefundRequests().stream().map(r -> r.getId()).toList()
                         : List.of(),
-                payment.getPaymentStatus()
+                payment.getPaymentStatus(),
+                payment.getGatewayTransaction() != null
+                        ? payment.getGatewayTransaction().getQrCode()
+                        : null,
+                payment.getGatewayTransaction() != null
+                        ? payment.getGatewayTransaction().getTicketUrl()
+                        : null
         );
     }
 }

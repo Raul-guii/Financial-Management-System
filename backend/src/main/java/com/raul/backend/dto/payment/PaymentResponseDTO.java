@@ -22,4 +22,6 @@ public class PaymentResponseDTO {
     private Long gatewayTransactionId;
     private List<Long> refundRequestIds;
     private PaymentStatus paymentStatus;
+    private String qrcode;
+    private String ticketUrl;
 }
