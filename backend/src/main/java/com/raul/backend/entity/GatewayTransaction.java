@@ -27,7 +27,6 @@ public class GatewayTransaction extends Auditable {
     @Column(nullable = false, length = 20)
     private GatewayStatus status;
 
-    @NotBlank
     @Column(name = "external_id", nullable = false, unique = true, length = 254)
     private String externalId;
 
@@ -40,6 +39,12 @@ public class GatewayTransaction extends Auditable {
 
     @Column(name = "raw_response", columnDefinition = "TEXT")
     private String rawResponse;
+
+    @Column(name = "qr_code", columnDefinition = "TEXT")
+    private String qrCode;
+
+    @Column(name = "ticket_url")
+    private String ticketUrl;
 
     @OneToOne
     @JoinColumn(name = "payment_id", nullable = false, unique = true)

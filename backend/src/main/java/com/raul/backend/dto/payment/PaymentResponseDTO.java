@@ -1,5 +1,6 @@
 package com.raul.backend.dto.payment;
 
+import com.raul.backend.enums.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,7 @@ public class PaymentResponseDTO {
     private Long invoiceId;
     private Long gatewayTransactionId;
     private List<Long> refundRequestIds;
+    private PaymentStatus paymentStatus;
+    private String qrcode;
+    private String ticketUrl;
 }

@@ -3,6 +3,8 @@ package com.raul.backend.enums;
 public enum GatewayStatus {
     PENDING,
     PAID,
-    FAILED,
-    REFUNDED
+    APPROVED,
+    REJECTED,
+    REFUNDED,
+    ERROR
 }
