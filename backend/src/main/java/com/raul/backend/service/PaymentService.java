@@ -20,11 +20,13 @@ public class PaymentService {
     private final GatewayTransactionService gatewayTransactionService;
     private final PaymentRepository repository;
     private final InvoiceRepository invoiceRepository;
+    private final InvoiceStatusService invoiceStatusService;
 
-    public PaymentService(GatewayTransactionService gatewayTransactionService, PaymentRepository repository, InvoiceRepository invoiceRepository) {
+    public PaymentService(GatewayTransactionService gatewayTransactionService, PaymentRepository repository, InvoiceRepository invoiceRepository, InvoiceStatusService invoiceStatusService) {
         this.gatewayTransactionService = gatewayTransactionService;
         this.repository = repository;
         this.invoiceRepository = invoiceRepository;
+        this.invoiceStatusService = invoiceStatusService;
     }
 
     // CREATE
@@ -98,21 +100,7 @@ public class PaymentService {
 
         repository.delete(payment);
 
-        updateInvoiceStatus(invoice);
-    }
-
-    // REGRA CENTRAL
-    private void updateInvoiceStatus(Invoice invoice) {
-
-        BigDecimal totalPaid = repository.sumApprovedByInvoice(invoice.getId());
-
-        if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
-            invoice.setStatus(InvoiceStatus.PAID);
-        } else {
-            invoice.setStatus(InvoiceStatus.PENDING);
-        }
-
-        invoiceRepository.save(invoice);
+        invoiceStatusService.recalculateInvoiceStatus(invoice.getId());
     }
 
     // MAPPER

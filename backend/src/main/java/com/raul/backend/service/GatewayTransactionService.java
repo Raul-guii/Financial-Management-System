@@ -17,61 +17,49 @@ public class GatewayTransactionService {
 
     private final GatewayTransactionRepository repository;
     private final PaymentRepository paymentRepository;
-    private final InvoiceRepository invoiceRepository;
+    private final InvoiceStatusService invoiceStatusService;
     private final MercadoPagoClient mercadoPagoClient;
 
-    public GatewayTransactionService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceRepository invoiceRepository, MercadoPagoClient mercadoPagoClient) {
+    public GatewayTransactionService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceStatusService invoiceStatusService, MercadoPagoClient mercadoPagoClient) {
         this.repository = repository;
         this.paymentRepository = paymentRepository;
-        this.invoiceRepository = invoiceRepository;
+        this.invoiceStatusService = invoiceStatusService;
         this.mercadoPagoClient = mercadoPagoClient;
     }
 
-         @Transactional
-         public GatewayTransaction processPayment(Payment payment) {
+    @Transactional
+    public GatewayTransaction processPayment(Payment payment) {
 
-             // chamar gateway
-             GatewayResponse response = mercadoPagoClient.createPayment(payment);
+     // chamar gateway
+     GatewayResponse response = mercadoPagoClient.createPayment(payment);
 
-             // criar transaction
-             GatewayTransaction transaction = new GatewayTransaction();
+     // criar transaction
+     GatewayTransaction transaction = new GatewayTransaction();
 
-             transaction.setPayment(payment);
-             transaction.setExternalId(String.valueOf(response.getTransactionId()));
-             transaction.setGatewayName("MERCADO_PAGO");
-             transaction.setAmount(payment.getAmount());
+     transaction.setPayment(payment);
+     transaction.setExternalId(String.valueOf(response.getTransactionId()));
+     transaction.setGatewayName("MERCADO_PAGO");
+     transaction.setAmount(payment.getAmount());
 
-             transaction.setStatus(mapStatus(response.getStatus()));
+     transaction.setStatus(mapStatus(response.getStatus()));
 
-             transaction.setQrCode(response.getQrCode());
-             transaction.setTicketUrl(response.getTicketUrl());
+     transaction.setQrCode(response.getQrCode());
+     transaction.setTicketUrl(response.getTicketUrl());
 
-             transaction.setRawResponse(response.getRawResponse());
+     transaction.setRawResponse(response.getRawResponse());
 
-             transaction = repository.save(transaction);
+     transaction = repository.save(transaction);
 
-             // atualizar payment
-             payment.setGatewayTransaction(transaction);
-             payment.setPaymentStatus(mapToPaymentStatus(transaction.getStatus()));
+     // atualizar payment
+     payment.setGatewayTransaction(transaction);
+     payment.setPaymentStatus(mapToPaymentStatus(transaction.getStatus()));
 
-             paymentRepository.save(payment);
+     paymentRepository.save(payment);
 
-             updateInvoiceStatus(payment.getInvoice());
-             return transaction;
-         }
-
-    private void updateInvoiceStatus(Invoice invoice) {
-
-        var totalPaid = paymentRepository.sumApprovedByInvoice(invoice.getId());
-
-        if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
-            invoice.setStatus(com.raul.backend.enums.InvoiceStatus.PAID);
-        } else {
-            invoice.setStatus(com.raul.backend.enums.InvoiceStatus.PENDING);
-        }
-
-        invoiceRepository.save(invoice);
+     invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
+     return transaction;
     }
+
 
     private GatewayStatus mapStatus(String status){
         return switch (status){
