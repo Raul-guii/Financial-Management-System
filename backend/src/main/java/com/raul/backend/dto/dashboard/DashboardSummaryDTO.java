@@ -9,9 +9,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class DashboardSummaryDTO {
 
-    private BigDecimal totalReceived;
+    private BigDecimal grossRevenue;
+    private BigDecimal refunded;
+    private BigDecimal netRevenue;
+
     private BigDecimal totalPending;
-    private BigDecimal totalRefunded;
 
     private Long paidInvoices;
     private Long pendingInvoices;
