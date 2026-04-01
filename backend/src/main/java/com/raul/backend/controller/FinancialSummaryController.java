@@ -20,7 +20,6 @@ public class FinancialSummaryController {
         this.financiaSummaryService = financiaSummaryService;
     }
 
-
     @GetMapping("/summary")
     @PreAuthorize("hasAnyRole('ADMIN', 'FINANCIAL_ANALYST', 'FINANCIAL_MANAGER')")
     public FinancialSummaryDTO getSummary(@RequestParam LocalDate start, @RequestParam LocalDate end){

@@ -21,6 +21,28 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     FROM Payment p
     WHERE p.invoice.id = :invoiceId
     AND p.paymentStatus = 'APPROVED'
-""")
+    """)
     BigDecimal sumApprovedByInvoice(Long invoiceId);
+
+    @Query("""
+    SELECT COALESCE(SUM(p.amount), 0)
+    FROM Payment p
+    WHERE p.paymentStatus = 'REFUNDED'
+    """)
+    BigDecimal sumRefundedPayments();
+
+    @Query("""
+    SELECT COALESCE(SUM(p.amount), 0)
+    FROM Payment p
+    WHERE p.paymentStatus IN ('APPROVED', 'REFUNDED')
+    """)
+    BigDecimal sumAllSuccessfulPayments();
+
+    @Query("""
+    SELECT COALESCE(SUM(p.amount), 0)
+    FROM Payment p
+    WHERE p.paymentStatus = 'APPROVED'
+    """)
+    BigDecimal sumApprovedPayments();
+
 }
