@@ -39,4 +39,8 @@ public class RefundRequest {
     @ManyToOne
     @JoinColumn(name = "payment_id")
     private Payment payment;
+
+    @ManyToOne
+    @JoinColumn(name = "requested_by", nullable = false)
+    private User requestedBy;
 }
