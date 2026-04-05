@@ -11,13 +11,12 @@ export const routes: Routes = [
         .then(m => m.LoginComponent)
   },
 
-
   {
     path: '',
     component: LayoutComponent,
     canActivate: [authGuard],
     children: [
-
+    
       {
         path: '',
         redirectTo: 'dashboard',
@@ -29,8 +28,14 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/home/dashboard/dashboard.component')
             .then(m => m.DashboardComponent)
-      }
+      },
 
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/users/user-list/user-list.component')
+            .then(m => m.UserListComponent)
+      }
     ]
   },
 

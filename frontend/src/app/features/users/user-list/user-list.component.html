@@ -1,0 +1,29 @@
+<h2>Usuários</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let user of users">
+      <td>{{ user.id }}</td>
+      <td>{{ user.name }}</td>
+      <td>{{ user.email }}</td>
+      <td>
+        <span>
+            {{ user.role }}
+        </span>    
+    </td>
+      <td>
+        <button (click)="delete(user.id)">Deletar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
