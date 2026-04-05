@@ -1,0 +1,61 @@
+<h2>{{ id ? 'Editar Usuário' : 'Novo Usuário' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="form">
+
+  <!-- NOME -->
+  <div class="form-group">
+    <label>Nome</label>
+    <input type="text" formControlName="name" placeholder="Digite o nome">
+
+    <small *ngIf="form.get('name')?.invalid && form.get('name')?.touched">
+      Nome é obrigatório
+    </small>
+  </div>
+
+  <!-- EMAIL -->
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" formControlName="email" placeholder="Digite o email">
+
+    <small *ngIf="form.get('email')?.errors?.['required'] && form.get('email')?.touched">
+      Email é obrigatório
+    </small>
+
+    <small *ngIf="form.get('email')?.errors?.['email'] && form.get('email')?.touched">
+      Email inválido
+    </small>
+  </div>
+
+  <!-- SENHA -->
+  <div class="form-group">
+    <label>Senha</label>
+    <input type="password" formControlName="password" placeholder="Digite a senha">
+
+    <small *ngIf="!id && form.get('password')?.invalid && form.get('password')?.touched">
+      Senha é obrigatória
+    </small>
+  </div>
+
+  <!-- ROLE -->
+  <div class="form-group">
+    <label>Perfil</label>
+    <select formControlName="role">
+      <option value="">Selecione</option>
+      <option value="ADMIN">ADMIN</option>
+      <option value="FINANCIAL_MANAGER">FINANCIAL_MANAGER</option>
+      <option value="FINANCIAL_ANALYST">FINANCIAL_ANALYST</option>
+    </select>
+  </div>
+
+  <!-- BOTÕES -->
+  <div class="actions">
+    <button type="submit" [disabled]="form.invalid">
+      {{ id ? 'Atualizar' : 'Criar' }}
+    </button>
+
+    <button type="button" class="cancel" routerLink="/users">
+      Cancelar
+    </button>
+  </div>
+
+</form>

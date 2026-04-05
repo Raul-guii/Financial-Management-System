@@ -3,11 +3,12 @@ import { UserService } from '../../../core/services/user.service';
 import { User } from '../../../models/user.model';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-user-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss']
 })

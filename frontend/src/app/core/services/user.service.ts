@@ -31,7 +31,7 @@ export class UserService {
   deactivate(id: number) {
     return this.http.patch(`${this.api}/${id}/deactivate`, {});
   }
-
+  
   delete(id: number) {
     return this.http.delete(`${this.api}/${id}`);
   }
