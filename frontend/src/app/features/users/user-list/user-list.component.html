@@ -1,12 +1,18 @@
-<h2>Usuários</h2>
+<div class="header">
+  <h2>Usuários</h2>
 
-<table>
+  <button class="new" routerLink="/users/new">
+    + Novo Usuário
+  </button>
+</div>
+
+<table *ngIf="users.length > 0; else empty">
   <thead>
     <tr>
       <th>ID</th>
       <th>Nome</th>
       <th>Email</th>
-      <th>Role</th>
+      <th>Perfil</th>
       <th>Ações</th>
     </tr>
   </thead>
@@ -16,14 +22,26 @@
       <td>{{ user.id }}</td>
       <td>{{ user.name }}</td>
       <td>{{ user.email }}</td>
+
+      <!-- ROLE COM ESTILO -->
       <td>
-        <span>
-            {{ user.role }}
-        </span>    
-    </td>
-      <td>
-        <button (click)="delete(user.id)">Deletar</button>
+        <span class="role" [ngClass]="user.role.toLowerCase()">
+          {{ user.role }}
+        </span>
+      </td>
+
+      <!-- AÇÕES -->
+      <td class="actions">
+
+        <button class="delete" (click)="delete(user.id)">
+          Excluir
+        </button>
       </td>
     </tr>
   </tbody>
 </table>
+
+<!-- ESTADO VAZIO -->
+<ng-template #empty>
+  <p class="empty">Nenhum usuário encontrado</p>
+</ng-template>
