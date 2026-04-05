@@ -10,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './header.html',
   styleUrl: './header.scss',
 })
-export class Header {
+export class HeaderComponent {
 
     constructor(
     private authService: AuthService, private router: Router) {}

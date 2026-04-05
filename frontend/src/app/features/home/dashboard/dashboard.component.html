@@ -1,1 +1,18 @@
-<p>dashbaod.component works!</p>
+<div class="dashboard">
+
+  <div class="card">
+    <h3>Receita Líquida</h3>
+    <p>{{ summary?.netRevenue }}</p>
+  </div>
+
+  <pre>{{ summary | json }}</pre>
+
+  <div *ngIf="pieChartData">
+  <canvas
+    baseChart
+    [data]="pieChartData"
+    chartType="pie">
+  </canvas>
+</div>
+
+</div>
