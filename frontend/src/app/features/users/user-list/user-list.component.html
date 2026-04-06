@@ -36,6 +36,9 @@
         <button class="delete" (click)="delete(user.id)">
           Excluir
         </button>
+        <button class="edit" [routerLink]="['/users/edit', user.id]">
+          Editar
+        </button>
       </td>
     </tr>
   </tbody>

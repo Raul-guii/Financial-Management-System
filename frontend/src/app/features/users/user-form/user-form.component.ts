@@ -32,26 +32,40 @@ export class UserFormComponent implements OnInit {
       role: ['']
     });
 
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
+    const paramId = this.route.snapshot.paramMap.get('id');
+    this.id = paramId ? Number(paramId) : undefined;
 
     if (this.id) {
       this.service.getById(this.id).subscribe(user => {
-        this.form.patchValue(user);
+        this.form.patchValue({
+          name: user.name,
+          email: user.email,
+          role: user.role
+        });
       });
     }
   }
 
   submit() {
-    if (this.form.invalid) return;
+  if (this.form.invalid) return;
 
-    if (this.id) {
-      this.service.update(this.id, this.form.value).subscribe(() => {
-        this.router.navigate(['/users']);
-      });
-    } else {
-      this.service.create(this.form.value).subscribe(() => {
-        this.router.navigate(['/users']);
-      });
-    }
+  const payload: any = { ...this.form.value };
+
+  if (!payload.password) delete payload.password;
+  if (!payload.role) delete payload.role;
+
+  if (this.id) {
+    this.service.update(this.id, payload).subscribe(() => {
+      this.router.navigate(['/users']);
+    });
+  } else {
+    this.service.create(payload).subscribe(() => {
+      this.router.navigate(['/users']);
+    });
   }
+}
+
+  cancel() {
+  this.router.navigate(['/users']);
+}
 }
