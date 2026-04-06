@@ -39,8 +39,16 @@ export const routes: Routes = [
 
       {
         path: 'users/new',
-        loadComponent: () => import('./features/users/user-form/user-form.component')
+        loadComponent: () =>
+         import('./features/users/user-form/user-form.component')
           .then(m => m.UserFormComponent)
+      },
+
+      {
+        path: 'users/edit/:id',
+        loadComponent: () =>
+          import('./features/users/user-form/user-form.component')
+            .then(m => m.UserFormComponent)
       }
     ]
   },

@@ -43,8 +43,19 @@ export class AuthService {
   }
 
   isLogged(): boolean {
-    return !!this.getToken();
+  const token = this.getToken();
+
+  if (!token) return false;
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const exp = payload.exp;
+
+    return Date.now() < exp * 1000;
+  } catch (e) {
+    return false;
   }
+}
 
   logout() {
     localStorage.removeItem('token');
