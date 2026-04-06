@@ -16,16 +16,13 @@ import java.util.Set;
 @AllArgsConstructor
 public class UserUpdateDTO {
 
-    @NotBlank
     @Size(max = 100)
     private String name;
 
-    @NotBlank
     @Email
     @Size(max = 150)
     private String email;
 
-    @NotBlank
     @Size(min = 8)
     private String password;
 
