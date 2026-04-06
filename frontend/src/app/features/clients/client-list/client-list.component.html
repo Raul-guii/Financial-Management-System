@@ -1,0 +1,40 @@
+<div class="header">
+  <h2>Clientes</h2>
+
+  <button class="new" routerLink="/clients/new">
+    + Novo Cliente
+  </button>
+</div>
+
+<table *ngIf="clients.length > 0; else empty">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nome</th>
+      <th>Tipo</th>
+      <th>Documento</th>
+      <th>Email</th>
+      <th>Telefone</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let client of clients">
+      <td>{{ client.id }}</td>
+      <td>{{ client.name }}</td>
+      <td>{{ client.type }}</td>
+      <td>{{ client.document }}</td>
+      <td>{{ client.email }}</td>
+      <td>{{ client.phone }}</td>
+      <td class="actions">
+        <button class="edit" [routerLink]="['/clients/edit', client.id]">Editar</button>
+        <button class="delete" (click)="delete(client.id)">Excluir</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #empty>
+  <p class="empty">Nenhum cliente encontrado</p>
+</ng-template>
