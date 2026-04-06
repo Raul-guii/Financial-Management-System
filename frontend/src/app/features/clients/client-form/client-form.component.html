@@ -1,0 +1,27 @@
+<h2>{{ id ? 'Editar Cliente' : 'Novo Cliente' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <input placeholder="Nome" formControlName="name">
+
+  <select formControlName="type">
+    <option value="PERSON">Pessoa Física</option>
+    <option value="COMPANY">Pessoa Jurídica</option>
+  </select>
+
+  <input placeholder="Documento" formControlName="document">
+  <input placeholder="Email" formControlName="email">
+  <input placeholder="Telefone" formControlName="phone">
+
+  <input placeholder="Rua" formControlName="addressStreet">
+  <input placeholder="Número" formControlName="addressNumber">
+  <input placeholder="Bairro" formControlName="addressNeighborhood">
+  <input placeholder="Cidade" formControlName="addressCity">
+  <input placeholder="Estado" formControlName="addressState">
+  <input placeholder="CEP" formControlName="addressPostalCode">
+  <input placeholder="País" formControlName="addressCountry">
+
+  <div class="actions">
+    <button type="submit">{{ id ? 'Atualizar' : 'Criar' }}</button>
+    <button type="button" class="cancel" (click)="cancel()">Cancelar</button>
+  </div>
+</form>

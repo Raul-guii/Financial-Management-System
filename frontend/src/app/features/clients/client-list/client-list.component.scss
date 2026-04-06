@@ -1,0 +1,97 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* Botão novo */
+button.new {
+  background-color: #16a34a;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button.new:hover {
+  background-color: #15803d;
+}
+
+/* Tabela */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+thead {
+  background-color: #f3f4f6;
+}
+
+th,
+td {
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  font-weight: 600;
+}
+
+tbody tr {
+  border-top: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Ações */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+button.edit {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.edit:hover {
+  background-color: #1e40af;
+}
+
+button.delete {
+  background-color: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button.delete:hover {
+  background-color: #b91c1c;
+}
+
+/* Empty */
+.empty {
+  margin-top: 20px;
+  color: #6b7280;
+  text-align: center;
+}

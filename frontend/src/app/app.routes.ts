@@ -36,19 +36,36 @@ export const routes: Routes = [
           import('./features/users/user-list/user-list.component')
             .then(m => m.UserListComponent)
       },
-
       {
         path: 'users/new',
         loadComponent: () =>
          import('./features/users/user-form/user-form.component')
           .then(m => m.UserFormComponent)
       },
-
       {
         path: 'users/edit/:id',
         loadComponent: () =>
           import('./features/users/user-form/user-form.component')
             .then(m => m.UserFormComponent)
+      },
+
+      {
+        path: 'clients',
+        loadComponent: () =>
+          import('./features/clients/client-list/client-list.component')
+            .then(m => m.ClientListComponent)
+      },
+      {
+        path: 'clients/new',
+        loadComponent: () =>
+          import('./features/clients/client-form/client-form.component')
+            .then(m => m.ClientFormComponent)
+      },
+      {
+        path: 'clients/edit/:id',
+        loadComponent: () =>
+          import('./features/clients/client-form/client-form.component')
+            .then(m => m.ClientFormComponent)
       }
     ]
   },
