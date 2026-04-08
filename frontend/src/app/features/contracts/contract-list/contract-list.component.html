@@ -1,0 +1,52 @@
+<div class="header">
+  <h2>Contratos</h2>
+
+  <button class="new" routerLink="/contracts/new">
+    + Novo Contrato
+  </button>
+</div>
+
+<table *ngIf="contracts.length > 0; else empty">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Status</th>
+      <th>Periodicidade</th>
+      <th>Início</th>
+      <th>Fim</th>
+      <th>Cliente</th>
+      <th>Criado por</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr *ngFor="let contract of contracts">
+      <td>{{ contract.id }}</td>
+      <td>{{ contract.status }}</td>
+      <td>{{ contract.billingPeriod }}</td>
+      <td>{{ contract.startDate }}</td>
+      <td>{{ contract.endDate }}</td>
+      <td>{{ contract.client }}</td>
+      <td>{{ contract.createdBy }}</td>
+
+      <td class="actions">
+        <button class="edit" [routerLink]="['/contracts/edit', contract.id]">
+          Editar
+        </button>
+
+        <button class="items" [routerLink]="['/contracts', contract.id, 'items']">
+          Itens
+        </button>
+
+        <button class="delete" (click)="cancel(contract.id)">
+          Cancelar
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #empty>
+  <p class="empty">Nenhum contrato encontrado</p>
+</ng-template>

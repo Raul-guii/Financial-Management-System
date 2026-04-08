@@ -1,0 +1,27 @@
+<h2>{{ id ? 'Editar Contrato' : 'Novo Contrato' }}</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  
+  <select formControlName="clientId">
+    <option value="">Selecione o cliente</option>
+    <option *ngFor="let client of clients" [value]="client.id">
+      {{ client.name }}
+    </option>
+  </select>
+
+  <select formControlName="billingPeriod">
+    <option value="">Selecione a periodicidade</option>
+    <option value="MONTHLY">Mensal</option>
+    <option value="QUARTERLY">Trimestral</option>
+    <option value="YEARLY">Anual</option>
+  </select>
+
+  <input type="date" formControlName="startDate">
+  <input type="date" formControlName="endDate">
+
+  <div class="actions">
+    <button type="submit">{{ id ? 'Atualizar' : 'Criar' }}</button>
+    <button type="button" class="cancel" (click)="cancel()">Cancelar</button>
+  </div>
+
+</form>

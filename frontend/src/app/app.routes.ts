@@ -23,6 +23,7 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
 
+      // DASHBOARD ---------
       {
         path: 'dashboard',
         loadComponent: () =>
@@ -30,6 +31,7 @@ export const routes: Routes = [
             .then(m => m.DashboardComponent)
       },
 
+      // USERS -------------
       {
         path: 'users',
         loadComponent: () =>
@@ -49,6 +51,7 @@ export const routes: Routes = [
             .then(m => m.UserFormComponent)
       },
 
+      // CLIENTS ------------
       {
         path: 'clients',
         loadComponent: () =>
@@ -66,6 +69,38 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/clients/client-form/client-form.component')
             .then(m => m.ClientFormComponent)
+      },
+
+      //CONTRACTS ---------
+      {
+        path: 'contracts',
+        loadComponent: () =>
+          import('./features/contracts/contract-list/contract-list.component')
+            .then(m => m.ContractListComponent)
+      },
+      {
+        path: 'contracts/new',
+        loadComponent: () =>
+          import('./features/contracts/contract-form/contract-form.component')
+            .then(m => m.ContractFormComponent)
+      },
+      {
+        path: 'contracts/edit/:id',
+        loadComponent: () =>
+          import('./features/contracts/contract-form/contract-form.component')
+            .then(m => m.ContractFormComponent)
+      },
+      {
+        path: 'contracts/:id/items',
+        loadComponent: () =>
+          import('./features/contracts/contract-items-list/contract-items-list.component')
+            .then(m => m.ContractItemsListComponent)
+      },
+      {
+        path: 'contracts/:id/items/new',
+        loadComponent: () =>
+          import('./features/contracts/contract-items/contract-items-form.component')
+            .then(m => m.ContractItemsFormComponent)
       }
     ]
   },
