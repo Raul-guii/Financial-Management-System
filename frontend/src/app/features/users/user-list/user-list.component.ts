@@ -27,7 +27,6 @@ export class UserListComponent implements OnInit {
       next: (data) => {
         console.log('USERS:', data);
         this.users = data;
-
         this.cdr.detectChanges();
       },
       error: (err) => console.log(err)

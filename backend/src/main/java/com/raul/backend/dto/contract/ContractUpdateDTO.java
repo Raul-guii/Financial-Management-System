@@ -15,15 +15,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ContractUpdateDTO {
 
-    @NotNull
     private ContractStatus status;
-
-    @NotNull
     private BillingPeriod billingPeriod;
-
-    @NotNull
     private LocalDate startDate;
-
-    @NotNull
     private LocalDate endDate;
 }

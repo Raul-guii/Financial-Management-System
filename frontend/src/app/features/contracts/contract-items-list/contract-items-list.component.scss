@@ -1,0 +1,35 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+thead {
+  background: #f3f4f6;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+tr:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  background: #ef4444;
+  color: white;
+  cursor: pointer;
+}

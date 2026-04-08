@@ -1,0 +1,29 @@
+<h2>Itens do Contrato</h2>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <input placeholder="Nome do item" formControlName="name">
+  <input placeholder="Descrição" formControlName="description">
+  <input placeholder="Quantidade" type="number" formControlName="quantity">
+  <input placeholder="Preço unitário" type="number" formControlName="unitPrice">
+
+  <label>
+    <input type="checkbox" formControlName="active">
+    Ativo
+  </label>
+
+  <div class="actions">
+    <button type="submit">Adicionar Item</button>
+    <button type="button" class="cancel" (click)="finish()">Finalizar Contrato</button>
+  </div>
+</form>
+
+<hr>
+
+<div *ngIf="items.length > 0">
+  <h3>Itens cadastrados</h3>
+  <ul>
+    <li *ngFor="let item of items">
+      {{ item.name }} - {{ item.quantity }} x {{ item.unitPrice }}
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,70 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.header h2 {
+  color: #1f2937;
+}
+
+button.new {
+  background: #10b981;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+thead {
+  background: #f3f4f6;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+tr:not(:last-child) {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+td.actions {
+  display: flex;
+  gap: 6px;
+}
+
+button.edit {
+  background: #3b82f6;
+  color: white;
+}
+
+button.items {
+  background: #6366f1;
+  color: white;
+}
+
+button.delete {
+  background: #ef4444;
+  color: white;
+}
+
+.empty {
+  margin-top: 16px;
+  color: #6b7280;
+}
