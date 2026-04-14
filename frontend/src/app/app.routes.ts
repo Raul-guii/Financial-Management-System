@@ -101,6 +101,24 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/contracts/contract-items/contract-items-form.component')
             .then(m => m.ContractItemsFormComponent)
+      },
+      {
+        path: 'contracts/:id/invoice/new',
+        loadComponent: () =>
+          import('./features/invoices/invoice-form/invoice-form.component')
+            .then(m => m.InvoiceFormComponent)
+      },
+      {
+        path: 'invoices',
+        loadComponent: () =>
+          import('./features/invoices/invoice-list/invoice-list.component')
+            .then(m => m.InvoiceListComponent)
+      },
+      {
+        path: 'invoices/:id',
+        loadComponent: () =>
+          import('./features/invoices/invoice-detail/invoice-detail.component')
+            .then(m => m.InvoiceDetailComponent)
       }
     ]
   },

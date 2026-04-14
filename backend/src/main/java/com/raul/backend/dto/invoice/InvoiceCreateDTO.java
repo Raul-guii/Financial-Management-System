@@ -16,9 +16,6 @@ import java.time.LocalDate;
 public class InvoiceCreateDTO {
 
     @NotNull
-    private InvoiceStatus status;
-
-    @NotNull
     private LocalDate issueDate;
 
     @NotNull

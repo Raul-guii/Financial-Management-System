@@ -56,23 +56,42 @@ export class ContractFormComponent implements OnInit {
     }
   }
 
-  submit(): void {
-    if (this.form.invalid) return;
+submit(): void {
+  if (this.form.invalid) return;
 
-    const payload = this.form.value;
+  const formValue = this.form.value;
 
-    if (this.id) {
-      this.contractService.update(this.id, payload).subscribe(() => {
-        this.router.navigate(['/contracts']);
-      });
-    } else {
-      this.contractService.create(payload).subscribe((contract) => {
-        this.router.navigate(['/contracts', contract.id, 'items']);
-      });
-    }
+  const payload = {
+    ...formValue,
+    status: 'ACTIVE',
+    startDate: this.formatDate(formValue.startDate),
+    endDate: this.formatDate(formValue.endDate)
+  };
+
+  if (this.id) {
+    this.contractService.update(this.id, payload).subscribe(() => {
+      this.router.navigate(['/contracts']);
+    });
+  } else {
+    this.contractService.create(payload).subscribe((contract) => {
+      this.router.navigate(['/contracts', contract.id, 'items', 'new']);
+    });
   }
+}
 
   cancel(): void {
     this.router.navigate(['/contracts']);
+  }
+
+  private formatDate(date: string): string {
+    if (!date) return date;
+
+    const d = new Date(date);
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
   }
 }

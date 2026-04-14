@@ -2,6 +2,7 @@ package com.raul.backend.service;
 
 import com.raul.backend.dto.invoice.*;
 import com.raul.backend.entity.*;
+import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.InvoiceLineRepository;
 import com.raul.backend.repository.InvoiceRepository;
@@ -9,6 +10,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -33,7 +35,7 @@ public class InvoiceService {
 
         Invoice invoice = new Invoice();
 
-        invoice.setStatus(dto.getStatus());
+        invoice.setStatus(InvoiceStatus.PENDING);
         invoice.setIssueDate(dto.getIssueDate());
         invoice.setDueDay(dto.getDueDay());
         invoice.setLateFreeAmount(dto.getLateFreeAmount());
@@ -93,15 +95,16 @@ public class InvoiceService {
     public List<InvoiceResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::toDTO)
+                .map(this::mapWithCalculation)
                 .toList();
     }
 
     // GET BY ID
     public InvoiceResponseDTO findById(Long id) {
-        return repository.findById(id)
-                .map(this::toDTO)
+        Invoice invoice = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
+
+        return mapWithCalculation(invoice);
     }
 
     // DELETE
@@ -109,14 +112,46 @@ public class InvoiceService {
         repository.deleteById(id);
     }
 
+    private BigDecimal calculateFinalAmount(Invoice invoice) {
+
+        LocalDate today = LocalDate.now();
+
+        System.out.println("HOJE: " + today);
+        System.out.println("DUE: " + invoice.getDueDay());
+
+        if (today.isAfter(invoice.getDueDay())) {
+            System.out.println("ENTROU NO IF ✅");
+
+            BigDecimal total = invoice.getAmount();
+
+            total = total.add(invoice.getLateFreeAmount());
+
+            if (invoice.getInterestAmount() != null) {
+                BigDecimal interest = total.multiply(invoice.getInterestAmount());
+                total = total.add(interest);
+            }
+
+            return total;
+        }
+
+        System.out.println("NÃO ENTROU");
+        return invoice.getAmount();
+    }
+
+    private InvoiceResponseDTO mapWithCalculation(Invoice invoice) {
+        BigDecimal finalAmount = calculateFinalAmount(invoice);
+        return toDTO(invoice, finalAmount);
+    }
+
     // MAPPER
-    private InvoiceResponseDTO toDTO(Invoice invoice) {
+    private InvoiceResponseDTO toDTO(Invoice invoice, BigDecimal finalAmount) {
         return new InvoiceResponseDTO(
                 invoice.getId(),
                 invoice.getStatus(),
                 invoice.getIssueDate(),
                 invoice.getDueDay(),
                 invoice.getAmount(),
+                finalAmount,
                 invoice.getLateFreeAmount(),
                 invoice.getInterestAmount(),
                 invoice.getCreatedAt(),
@@ -129,5 +164,9 @@ public class InvoiceService {
                         ? invoice.getInvoiceLines().stream().map(InvoiceLine::getId).toList()
                         : List.of()
         );
+    }
+
+    private InvoiceResponseDTO toDTO(Invoice invoice) {
+        return toDTO(invoice, invoice.getAmount());
     }
 }

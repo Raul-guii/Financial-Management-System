@@ -1,0 +1,7 @@
+<h2>Invoices</h2>
+
+<ul>
+  <li *ngFor="let inv of invoices" (click)="open(inv.id)">
+    #{{ inv.id }} - {{ inv.status }} - {{ inv.amount }}
+  </li>
+</ul>
