@@ -15,6 +15,7 @@ export class ContractItemsFormComponent implements OnInit {
   form!: FormGroup;
   contractId!: number;
   items: any[] = [];
+  error?: string;
 
   constructor(
     private fb: FormBuilder,
@@ -33,7 +34,6 @@ export class ContractItemsFormComponent implements OnInit {
     });
 
     this.contractId = Number(this.route.snapshot.paramMap.get('id'));
-
     this.loadItems();
   }
 
@@ -44,6 +44,27 @@ export class ContractItemsFormComponent implements OnInit {
   }
 
   submit(): void {
+    this.saveItem();
+  }
+
+ finish(): void {
+    if (this.form.valid) {
+      this.saveItem(() => this.goToInvoice());
+    } else {
+      this.goToInvoice();
+    }
+  } 
+  
+  goToInvoice(): void {
+    this.router.navigate([
+      '/contracts',
+      this.contractId,
+      'invoice',
+      'new'
+    ]);
+  }
+
+  saveItem(callback?: () => void): void {
     if (this.form.invalid) return;
 
     const payload = {
@@ -51,13 +72,17 @@ export class ContractItemsFormComponent implements OnInit {
       contractId: this.contractId
     };
 
-    this.itemService.create(payload).subscribe(() => {
-      this.form.reset({ active: true });
-      this.loadItems();
-    });
-  }
+    this.itemService.create(payload).subscribe({
+      next: () => {
+        this.form.reset({ active: true });
+        this.loadItems();
 
-  finish(): void {
-    this.router.navigate(['/contracts']);
+        if (callback) callback();
+      },
+      error: (err) => {
+        this.error = 'Erro ao salvar item';
+        console.error(err);
+      }
+    });
   }
 }

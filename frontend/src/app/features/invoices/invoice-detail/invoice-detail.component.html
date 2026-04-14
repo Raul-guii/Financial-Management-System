@@ -1,0 +1,58 @@
+<div *ngIf="invoice as inv">
+
+  <h2>Invoice #{{ inv.id }}</h2>
+
+  <hr>
+
+  <p><strong>Status:</strong> {{ inv.status }}</p>
+  <p><strong>Contrato:</strong> {{ inv.contractId }}</p>
+
+  <p><strong>Data de emissão:</strong> {{ inv.issueDate }}</p>
+  <p><strong>Data de vencimento:</strong> {{ inv.dueDay }}</p>
+
+  <div *ngIf="isOverdue()" style="color:red;">
+    <strong>Atrasado há {{ getDaysLate() }} dias</strong>
+  </div>
+
+  <hr>
+
+  <p><strong>Valor original:</strong> R$ {{ inv.amount }}</p>
+
+  <p><strong>Multa:</strong> R$ {{ inv.lateFreeAmount }}</p>
+  <p><strong>Juros:</strong> {{ inv.interestAmount }}</p>
+
+  <p>
+    <strong>Valor final:</strong>
+    R$ {{ isOverdue() ? inv.finalAmount : inv.amount }}
+  </p>
+
+  <hr>
+
+  <p><strong>Criado em:</strong> {{ inv.createdAt }}</p>
+  <p><strong>Atualizado em:</strong> {{ inv.updatedAt }}</p>
+
+  <hr>
+
+  <h3>Itens da fatura</h3>
+
+  <div *ngFor="let line of lines">
+    <p>{{ line.description }}</p>
+    <p>Qtd: {{ line.quantity }}</p>
+    <p>Preço: R$ {{ line.unitPrice }}</p>
+    <p>Total: R$ {{ line.lineTotal }}</p>
+    <hr>
+  </div>
+
+  <div style="margin-top: 20px;">
+
+    <button *ngIf="inv.status === 'PENDING'" (click)="markAsPaid()">
+      Marcar como pago
+    </button>
+
+    <button *ngIf="inv.status === 'PAID'" (click)="refund()">
+      Estornar
+    </button>
+
+  </div>
+
+</div>
