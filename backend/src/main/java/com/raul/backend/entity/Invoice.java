@@ -38,6 +38,9 @@ public class Invoice extends Auditable {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "original_amount",nullable = false)
+    private BigDecimal originalAmount;
+
     @Column(name = "late_free_amount", nullable = false)
     private BigDecimal lateFreeAmount;
 

@@ -9,7 +9,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -17,20 +19,42 @@ import java.util.List;
 public class InvoiceOverdueSchedulerService {
 
     private final InvoiceRepository invoiceRepository;
-    private final PaymentRepository paymentRepository;
 
     @Scheduled(cron = "0 * * * * *")
     @Transactional
-    public void markOverdueInvoices() {
-        List<Invoice> overdueCandidates =
-                invoiceRepository.findByStatusAndDueDayBefore(InvoiceStatus.PENDING, LocalDate.now());
+    public void applyInterestAndFees() {
 
-        for (Invoice invoice : overdueCandidates) {
-            if (paymentRepository.sumApprovedByInvoice(invoice.getId()).compareTo(invoice.getAmount()) < 0) {
-                invoice.setStatus(InvoiceStatus.OVERDUE);
+        List<Invoice> overdueInvoices =
+                invoiceRepository.findByStatus(InvoiceStatus.OVERDUE);
+
+        for (Invoice invoice : overdueInvoices) {
+
+            long daysLate = ChronoUnit.DAYS.between(
+                    invoice.getDueDay(),
+                    LocalDate.now()
+            );
+
+            if (daysLate <= 0) continue;
+
+            BigDecimal total = invoice.getAmount();
+
+            // multa fixa
+            if (invoice.getLateFreeAmount() != null) {
+                total = total.add(invoice.getLateFreeAmount());
             }
+
+            // juros por dia
+            if (invoice.getInterestAmount() != null) {
+                BigDecimal interest = total
+                        .multiply(invoice.getInterestAmount())
+                        .multiply(BigDecimal.valueOf(daysLate));
+
+                total = total.add(interest);
+            }
+
+            invoice.setAmount(total);
         }
 
-        invoiceRepository.saveAll(overdueCandidates);
+        invoiceRepository.saveAll(overdueInvoices);
     }
 }

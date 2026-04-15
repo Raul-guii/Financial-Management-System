@@ -12,6 +12,7 @@ import java.util.List;
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByContractId(Long contractId);
     List<Invoice> findByStatusAndDueDayBefore(InvoiceStatus status, LocalDate dueDay);
+    List<Invoice> findByStatus(InvoiceStatus status);
 
     @Query("""
     SELECT COALESCE(SUM(i.amount), 0)

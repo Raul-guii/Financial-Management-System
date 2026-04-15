@@ -63,7 +63,7 @@ public class InvoiceService {
         }
 
         invoice.setAmount(totalInvoice);
-
+        invoice.setOriginalAmount(totalInvoice);
         invoice = repository.save(invoice);
 
         return toDTO(invoice);
@@ -91,6 +91,38 @@ public class InvoiceService {
         return toDTO(repository.save(invoice));
     }
 
+    private BigDecimal calculateFinalAmount(Invoice invoice) {
+
+        LocalDate today = LocalDate.now();
+
+        if (today.isAfter(invoice.getDueDay())) {
+
+            BigDecimal total = invoice.getOriginalAmount();
+
+            if (invoice.getLateFreeAmount() != null) {
+                total = total.add(invoice.getLateFreeAmount());
+            }
+
+            if (invoice.getInterestAmount() != null) {
+                BigDecimal interest = total.multiply(invoice.getInterestAmount());
+                total = total.add(interest);
+            }
+
+            return total;
+        }
+
+        return invoice.getOriginalAmount();
+    }
+
+    private InvoiceStatus calculateStatus(Invoice invoice) {
+
+        if (LocalDate.now().isAfter(invoice.getDueDay())) {
+            return InvoiceStatus.OVERDUE;
+        }
+
+        return InvoiceStatus.PENDING;
+    }
+
     // GET ALL
     public List<InvoiceResponseDTO> findAll() {
         return repository.findAll()
@@ -112,45 +144,18 @@ public class InvoiceService {
         repository.deleteById(id);
     }
 
-    private BigDecimal calculateFinalAmount(Invoice invoice) {
-
-        LocalDate today = LocalDate.now();
-
-        System.out.println("HOJE: " + today);
-        System.out.println("DUE: " + invoice.getDueDay());
-
-        if (today.isAfter(invoice.getDueDay())) {
-            System.out.println("ENTROU NO IF ✅");
-
-            BigDecimal total = invoice.getAmount();
-
-            total = total.add(invoice.getLateFreeAmount());
-
-            if (invoice.getInterestAmount() != null) {
-                BigDecimal interest = total.multiply(invoice.getInterestAmount());
-                total = total.add(interest);
-            }
-
-            return total;
-        }
-
-        System.out.println("NÃO ENTROU");
-        return invoice.getAmount();
-    }
-
     private InvoiceResponseDTO mapWithCalculation(Invoice invoice) {
-        BigDecimal finalAmount = calculateFinalAmount(invoice);
-        return toDTO(invoice, finalAmount);
+        return toDTO(invoice, calculateFinalAmount(invoice));
     }
 
     // MAPPER
     private InvoiceResponseDTO toDTO(Invoice invoice, BigDecimal finalAmount) {
         return new InvoiceResponseDTO(
                 invoice.getId(),
-                invoice.getStatus(),
+                calculateStatus(invoice),
                 invoice.getIssueDate(),
                 invoice.getDueDay(),
-                invoice.getAmount(),
+                invoice.getOriginalAmount(),
                 finalAmount,
                 invoice.getLateFreeAmount(),
                 invoice.getInterestAmount(),
