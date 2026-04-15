@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 public class InvoiceStatusService {
@@ -23,14 +24,19 @@ public class InvoiceStatusService {
 
     @Transactional
     public void recalculateInvoiceStatus(Long invoiceId) {
-
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
+
+        if (invoice.getStatus() == InvoiceStatus.CANCELED || invoice.getStatus() == InvoiceStatus.REFUNDED) {
+            return;
+        }
 
         BigDecimal totalPaid = paymentRepository.sumApprovedByInvoice(invoice.getId());
 
         if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
             invoice.setStatus(InvoiceStatus.PAID);
+        } else if (LocalDate.now().isAfter(invoice.getDueDay())) {
+            invoice.setStatus(InvoiceStatus.OVERDUE);
         } else {
             invoice.setStatus(InvoiceStatus.PENDING);
         }
