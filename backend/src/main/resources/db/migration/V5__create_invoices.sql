@@ -2,6 +2,7 @@ CREATE TABLE invoices(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     status VARCHAR(20) NOT NULL,
     amount DECIMAL(15, 2) NOT NULL,
+    original_amount DECIMAL(10,2) NOT NULL,
     issue_date DATE NOT NULL,
     due_day DATE NOT NULL,
     late_free_amount DECIMAL(15, 2) NOT NULL,

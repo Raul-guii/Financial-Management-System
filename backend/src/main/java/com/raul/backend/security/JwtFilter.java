@@ -1,6 +1,7 @@
 package com.raul.backend.security;
 
 import com.raul.backend.service.JwtService;
+import com.raul.backend.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.raul.backend.service.UserService;
 
 import java.io.IOException;
 
@@ -33,21 +33,23 @@ public class JwtFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
 
+        final String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         try {
-            final String authHeader = request.getHeader("Authorization");
-
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-                filterChain.doFilter(request, response);
-                return;
-            }
-
             final String token = authHeader.substring(7);
             final String email = jwtService.extractUsername(token);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+
                 UserDetails userDetails = userService.loadUserByUsername(email);
 
                 if (jwtService.isTokenValid(token, userDetails)) {
+
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
                                     userDetails,
@@ -61,11 +63,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
             }
 
-            filterChain.doFilter(request, response);
-
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or expired token");
+            System.out.println("Erro ao validar JWT: " + e.getMessage());
         }
+
+        filterChain.doFilter(request, response);
     }
 }
