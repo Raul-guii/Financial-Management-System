@@ -52,4 +52,14 @@ public class ClientController{
         clientService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/defaulters")
+    public List<ClientResponseDTO> getDefaulters() {
+        return clientService.findDefaulters();
+    }
+
+    @PostMapping("/identify-defaulters")
+    public void identifyDefaulters() {
+        clientService.identifyDefaulters();
+    }
 }

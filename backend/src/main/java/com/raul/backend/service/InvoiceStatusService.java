@@ -35,7 +35,7 @@ public class InvoiceStatusService {
 
         if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
             invoice.setStatus(InvoiceStatus.PAID);
-        } else if (LocalDate.now().isAfter(invoice.getDueDay())) {
+        } else if (LocalDate.now().isAfter(invoice.getDueDate())) {
             invoice.setStatus(InvoiceStatus.OVERDUE);
         } else {
             invoice.setStatus(InvoiceStatus.PENDING);

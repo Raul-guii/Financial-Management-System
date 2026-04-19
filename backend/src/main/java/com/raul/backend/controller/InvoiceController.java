@@ -52,4 +52,11 @@ public class InvoiceController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_MANAGER')")
+    @PostMapping("/check-defaulters")
+    public ResponseEntity<Void> checkDefaulters() {
+        service.identifyDefaulters();
+        return ResponseEntity.ok().build();
+    }
 }

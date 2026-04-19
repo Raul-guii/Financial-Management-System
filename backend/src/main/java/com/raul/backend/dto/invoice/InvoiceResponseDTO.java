@@ -18,7 +18,7 @@ public class InvoiceResponseDTO {
     private Long id;
     private InvoiceStatus status;
     private LocalDate issueDate;
-    private LocalDate dueDay;
+    private LocalDate dueDate;
     private BigDecimal amount;
     private BigDecimal finalAmount;
     private BigDecimal lateFreeAmount;

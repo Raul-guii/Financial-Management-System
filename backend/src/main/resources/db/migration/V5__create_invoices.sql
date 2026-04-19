@@ -4,7 +4,7 @@ CREATE TABLE invoices(
     amount DECIMAL(15, 2) NOT NULL,
     original_amount DECIMAL(10,2) NOT NULL,
     issue_date DATE NOT NULL,
-    due_day DATE NOT NULL,
+    due_date DATE NOT NULL,
     late_free_amount DECIMAL(15, 2) NOT NULL,
     interest_amount DECIMAL(15, 2) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

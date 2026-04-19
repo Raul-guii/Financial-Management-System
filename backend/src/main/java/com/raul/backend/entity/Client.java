@@ -29,6 +29,9 @@ public class Client extends SoftDeletable {
     @Column(nullable = false, length = 20)
     private ClientType type;
 
+    @Column(nullable = false)
+    private Boolean defaulter = false;
+
     @NotBlank
     @Column(nullable = false, length = 20)
     private String document;
@@ -67,4 +70,5 @@ public class Client extends SoftDeletable {
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy;
+
 }

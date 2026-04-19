@@ -1,5 +1,6 @@
 package com.raul.backend.repository;
 
+import ch.qos.logback.core.status.Status;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.enums.InvoiceStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,8 +12,9 @@ import java.util.List;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByContractId(Long contractId);
-    List<Invoice> findByStatusAndDueDayBefore(InvoiceStatus status, LocalDate dueDay);
+    List<Invoice> findByStatusAndDueDateBefore(InvoiceStatus status, LocalDate date);
     List<Invoice> findByStatus(InvoiceStatus status);
+    List<Invoice> findByDueDateBeforeAndStatusNot(LocalDate date, InvoiceStatus status);
 
     @Query("""
     SELECT COALESCE(SUM(i.amount), 0)

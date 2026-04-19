@@ -4,21 +4,29 @@ import com.raul.backend.dto.client.ClientCreateDTO;
 import com.raul.backend.dto.client.ClientResponseDTO;
 import com.raul.backend.dto.client.ClientUpdateDTO;
 import com.raul.backend.entity.Client;
+import com.raul.backend.entity.Invoice;
 import com.raul.backend.enums.ClientType;
+import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.repository.ClientRepository;
+import com.raul.backend.repository.InvoiceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final InvoiceRepository invoiceRepository;
 
-    public ClientService(ClientRepository clientRepository) {
+    public ClientService(ClientRepository clientRepository, InvoiceRepository invoiceRepository) {
         this.clientRepository = clientRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
     // CREATE CLIENT --------
@@ -35,6 +43,7 @@ public class ClientService {
 
         client.setName(dto.getName());
         client.setType(dto.getType());
+        client.setDefaulter(false);
         client.setDocument(dto.getDocument());
         client.setEmail(dto.getEmail());
         client.setPhone(dto.getPhone());
@@ -113,6 +122,13 @@ public class ClientService {
         return toDTO(client);
     }
 
+    public List<ClientResponseDTO> findDefaulters() {
+        return clientRepository.findDefaulters()
+                .stream()
+                .map(this::toDTO)
+                .toList();
+    }
+
     // DELETE (SOFT)
     @Transactional
     public void delete(Long id) {
@@ -124,11 +140,33 @@ public class ClientService {
         clientRepository.save(client);
     }
 
+    @Transactional
+    public void identifyDefaulters() {
+
+        List<Invoice> overdueInvoices =
+                invoiceRepository.findByDueDateBeforeAndStatusNot(
+                        LocalDate.now(),
+                        InvoiceStatus.PAID
+                );
+
+        Set<Client> defaulters = new HashSet<>();
+
+        for (Invoice invoice : overdueInvoices) {
+            Client client = invoice.getContract().getClient();
+            defaulters.add(client);
+        }
+
+        defaulters.forEach(client -> client.setDefaulter(true));
+
+        clientRepository.saveAll(defaulters);
+    }
+
     private ClientResponseDTO toDTO(Client client) {
         return new ClientResponseDTO(
                 client.getId(),
                 client.getName(),
                 client.getType(),
+                client.getDefaulter(),
                 client.getDocument(),
                 client.getEmail(),
                 client.getPhone(),

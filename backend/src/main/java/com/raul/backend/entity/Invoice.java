@@ -32,8 +32,8 @@ public class Invoice extends Auditable {
     @Column(name = "issue_date", nullable = false)
     private LocalDate issueDate;
 
-    @Column(name = "due_day", nullable = false)
-    private LocalDate dueDay;
+    @Column(name = "due_date", nullable = false)
+    private LocalDate dueDate;
 
     @Column(nullable = false)
     private BigDecimal amount;

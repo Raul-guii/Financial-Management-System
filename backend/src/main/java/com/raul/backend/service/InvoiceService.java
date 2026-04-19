@@ -1,8 +1,10 @@
 package com.raul.backend.service;
 
+import ch.qos.logback.core.status.Status;
 import com.raul.backend.dto.invoice.*;
 import com.raul.backend.entity.*;
 import com.raul.backend.enums.InvoiceStatus;
+import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.InvoiceLineRepository;
 import com.raul.backend.repository.InvoiceRepository;
@@ -11,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class InvoiceService {
@@ -19,11 +23,15 @@ public class InvoiceService {
     private final InvoiceRepository repository;
     private final ContractRepository contractRepository;
     private final InvoiceLineRepository invoiceLineRepository;
+    private final InvoiceRepository invoiceRepository;
+    private final ClientRepository clientRepository;
 
-    public InvoiceService(InvoiceRepository repository, ContractRepository contractRepository, InvoiceLineRepository invoiceLineRepository) {
+    public InvoiceService(InvoiceRepository repository, ContractRepository contractRepository, InvoiceLineRepository invoiceLineRepository, InvoiceRepository invoiceRepository, ClientRepository clientRepository) {
         this.repository = repository;
         this.contractRepository = contractRepository;
         this.invoiceLineRepository = invoiceLineRepository;
+        this.invoiceRepository = invoiceRepository;
+        this.clientRepository = clientRepository;
     }
 
     // CREATE
@@ -37,7 +45,7 @@ public class InvoiceService {
 
         invoice.setStatus(InvoiceStatus.PENDING);
         invoice.setIssueDate(dto.getIssueDate());
-        invoice.setDueDay(dto.getDueDay());
+        invoice.setDueDate(dto.getDueDate());
         invoice.setLateFreeAmount(dto.getLateFreeAmount());
         invoice.setInterestAmount(dto.getInterestAmount());
         invoice.setContract(contract);
@@ -78,7 +86,7 @@ public class InvoiceService {
 
         if (dto.getStatus() != null) invoice.setStatus(dto.getStatus());
         if (dto.getIssueDate() != null) invoice.setIssueDate(dto.getIssueDate());
-        if (dto.getDueDay() != null) invoice.setDueDay(dto.getDueDay());
+        if (dto.getDueDate() != null) invoice.setDueDate(dto.getDueDate());
         if (dto.getLateFreeAmount() != null) invoice.setLateFreeAmount(dto.getLateFreeAmount());
         if (dto.getInterestAmount() != null) invoice.setInterestAmount(dto.getInterestAmount());
 
@@ -95,7 +103,7 @@ public class InvoiceService {
 
         LocalDate today = LocalDate.now();
 
-        if (today.isAfter(invoice.getDueDay())) {
+        if (today.isAfter(invoice.getDueDate())) {
 
             BigDecimal total = invoice.getOriginalAmount();
 
@@ -116,7 +124,7 @@ public class InvoiceService {
 
     private InvoiceStatus calculateStatus(Invoice invoice) {
 
-        if (LocalDate.now().isAfter(invoice.getDueDay())) {
+        if (LocalDate.now().isAfter(invoice.getDueDate())) {
             return InvoiceStatus.OVERDUE;
         }
 
@@ -148,13 +156,33 @@ public class InvoiceService {
         return toDTO(invoice, calculateFinalAmount(invoice));
     }
 
+    public void identifyDefaulters() {
+
+        List<Invoice> overdueInvoices =
+                invoiceRepository.findByDueDateBeforeAndStatusNot(
+                        LocalDate.now(),
+                        InvoiceStatus.PAID
+                );
+
+        Set<Client> defaulters = new HashSet<>();
+
+        for (Invoice invoice : overdueInvoices) {
+            Client client = invoice.getContract().getClient();
+            defaulters.add(client);
+        }
+
+        defaulters.forEach(client -> client.setDefaulter(true));
+
+        clientRepository.saveAll(defaulters);
+    }
+
     // MAPPER
     private InvoiceResponseDTO toDTO(Invoice invoice, BigDecimal finalAmount) {
         return new InvoiceResponseDTO(
                 invoice.getId(),
                 calculateStatus(invoice),
                 invoice.getIssueDate(),
-                invoice.getDueDay(),
+                invoice.getDueDate(),
                 invoice.getOriginalAmount(),
                 finalAmount,
                 invoice.getLateFreeAmount(),

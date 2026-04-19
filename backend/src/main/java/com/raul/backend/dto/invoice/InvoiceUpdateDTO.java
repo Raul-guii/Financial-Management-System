@@ -16,7 +16,7 @@ public class InvoiceUpdateDTO {
 
     private InvoiceStatus status;
     private LocalDate issueDate;
-    private LocalDate dueDay;
+    private LocalDate dueDate;
 
     @PositiveOrZero
     private BigDecimal amount;

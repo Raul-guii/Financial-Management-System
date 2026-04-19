@@ -30,7 +30,7 @@ public class InvoiceOverdueSchedulerService {
         for (Invoice invoice : overdueInvoices) {
 
             long daysLate = ChronoUnit.DAYS.between(
-                    invoice.getDueDay(),
+                    invoice.getDueDate(),
                     LocalDate.now()
             );
 

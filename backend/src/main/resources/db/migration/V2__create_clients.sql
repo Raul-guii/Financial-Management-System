@@ -3,6 +3,7 @@ CREATE TABLE clients (
 
      name VARCHAR(150) NOT NULL,
      type VARCHAR(20) NOT NULL,
+     defaulter BOOLEAN DEFAULT FALSE,
 
      document VARCHAR(20) NOT NULL,
      email VARCHAR(150),

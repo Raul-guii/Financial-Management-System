@@ -18,8 +18,7 @@ public class InvoiceCreateDTO {
     @NotNull
     private LocalDate issueDate;
 
-    @NotNull
-    private LocalDate dueDay;
+    private LocalDate dueDate;
 
     @NotNull
     @PositiveOrZero

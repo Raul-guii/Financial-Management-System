@@ -15,6 +15,7 @@ public class ClientResponseDTO {
     private Long id;
     private String name;
     private ClientType type;
+    private Boolean defaulter;
     private String document;
     private String email;
     private String phone;
