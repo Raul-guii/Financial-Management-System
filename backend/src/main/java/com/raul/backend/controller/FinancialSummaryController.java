@@ -1,7 +1,8 @@
 package com.raul.backend.controller;
 
 import com.raul.backend.dto.financialsummary.FinancialSummaryDTO;
-import com.raul.backend.service.FinanciaSummaryService;
+import com.raul.backend.service.FinancialSummaryService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,15 +15,24 @@ import java.time.LocalDate;
 @RequestMapping("/financial")
 public class FinancialSummaryController {
 
-    private final FinanciaSummaryService financiaSummaryService;
+    private final FinancialSummaryService financialSummaryService;
 
-    public FinancialSummaryController(FinanciaSummaryService financiaSummaryService) {
-        this.financiaSummaryService = financiaSummaryService;
+    public FinancialSummaryController(FinancialSummaryService financialSummaryService) {
+        this.financialSummaryService = financialSummaryService;
     }
 
+    /*
     @GetMapping("/summary")
     @PreAuthorize("hasAnyRole('ADMIN', 'FINANCIAL_ANALYST', 'FINANCIAL_MANAGER')")
     public FinancialSummaryDTO getSummary(@RequestParam LocalDate start, @RequestParam LocalDate end){
-        return financiaSummaryService.getSummary(start, end);
+        return financialSummaryService.getSummary(start, end);
+    }*/
+
+    @GetMapping("/financial/report")
+    public FinancialSummaryDTO getReport(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
+    ) {
+        return financialSummaryService.getFullReport(start, end);
     }
 }
