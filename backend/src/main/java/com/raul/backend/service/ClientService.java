@@ -146,18 +146,19 @@ public class ClientService {
         List<Invoice> overdueInvoices =
                 invoiceRepository.findByDueDateBeforeAndStatusNot(
                         LocalDate.now(),
-                        InvoiceStatus.PAID
+                        InvoiceStatus.PENDING
                 );
 
         Set<Client> defaulters = new HashSet<>();
 
         for (Invoice invoice : overdueInvoices) {
+            invoice.setStatus(InvoiceStatus.OVERDUE);
+
             Client client = invoice.getContract().getClient();
             defaulters.add(client);
         }
 
-        defaulters.forEach(client -> client.setDefaulter(true));
-
+        invoiceRepository.saveAll(overdueInvoices);
         clientRepository.saveAll(defaulters);
     }
 

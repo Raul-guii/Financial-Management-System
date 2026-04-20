@@ -32,6 +32,9 @@ public class DashboardService {
         Long pendingInvoices = invoiceRepository.countByStatus(InvoiceStatus.PENDING);
         Long overdueInvoices = invoiceRepository.countByStatus(InvoiceStatus.OVERDUE);
 
+        System.out.println(invoiceRepository.findByStatus(InvoiceStatus.PENDING).size());
+        System.out.println(invoiceRepository.findByStatus(InvoiceStatus.OVERDUE).size());
+
         return new DashboardSummaryDTO(
                 grossRevenue,
                 refunded,
