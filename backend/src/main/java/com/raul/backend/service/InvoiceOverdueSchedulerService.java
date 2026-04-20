@@ -20,7 +20,7 @@ public class InvoiceOverdueSchedulerService {
 
     private final InvoiceRepository invoiceRepository;
 
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void applyInterestAndFees() {
 

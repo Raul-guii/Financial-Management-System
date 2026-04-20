@@ -10,13 +10,18 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class FinancialSummaryDTO {
 
-    private BigDecimal totalReceived;
-    private BigDecimal totalInvoiced;
-    private BigDecimal totalPending;
-    private BigDecimal totalOverdue;
-    private Long totalInvoices;
-    private Long totalDefaulters;
-
     private LocalDate startDate;
     private LocalDate endDate;
+
+    private BigDecimal grossRevenue;
+    private BigDecimal totalReceived;
+    private BigDecimal totalPending;
+    private BigDecimal totalOverdue;
+
+    private Long totalInvoices;
+    private Long paidInvoices;
+    private Long pendingInvoices;
+    private Long overdueInvoices;
+
+    private Long totalDefaulters;
 }

@@ -52,4 +52,12 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     WHERE i.issueDate BETWEEN :start AND :end
     """)
     Long countByPeriod(LocalDate start, LocalDate end);
+
+    @Query("""
+    SELECT COUNT(i)
+    FROM Invoice i
+    WHERE i.status = :status
+      AND i.issueDate BETWEEN :start AND :end
+    """)
+    Long countByStatusAndPeriod(InvoiceStatus status, LocalDate start, LocalDate end);
 }

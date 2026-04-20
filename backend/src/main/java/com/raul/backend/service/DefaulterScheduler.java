@@ -12,8 +12,8 @@ public class DefaulterScheduler {
         this.clientService = clientService;
     }
 
-    // para produção -> @Scheduled(cron = "0 0 0 * * *")
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "0 0 0 * * *")
+    // @Scheduled(fixedRate = 10000)
     public void run() {
         clientService.identifyDefaulters();
     }
