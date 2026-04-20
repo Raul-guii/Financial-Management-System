@@ -13,6 +13,9 @@ public class FinancialSummaryDTO {
     private BigDecimal totalReceived;
     private BigDecimal totalInvoiced;
     private BigDecimal totalPending;
+    private BigDecimal totalOverdue;
+    private Long totalInvoices;
+    private Long totalDefaulters;
 
     private LocalDate startDate;
     private LocalDate endDate;

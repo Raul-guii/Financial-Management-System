@@ -15,4 +15,12 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
 
     @Query("SELECT c FROM Client c WHERE c.defaulter = true AND c.deletedAt IS NULL")
     List<Client> findDefaulters();
+
+    @Query("""
+    SELECT COUNT(c)
+    FROM Client c
+    WHERE c.defaulter = true
+      AND c.deletedAt IS NULL
+    """)
+    Long countDefaulters();
 }

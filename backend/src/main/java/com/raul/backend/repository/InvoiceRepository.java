@@ -37,4 +37,19 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     """)
     Long countByStatus(InvoiceStatus status);
 
+    @Query("""
+    SELECT COALESCE(SUM(i.amount), 0)
+    FROM Invoice i
+    WHERE i.dueDate < CURRENT_DATE
+      AND i.status <> 'PAID'
+      AND i.dueDate BETWEEN :start AND :end
+    """)
+    BigDecimal sumOverdueByPeriod(LocalDate start, LocalDate end);
+
+    @Query("""
+    SELECT COUNT(i)
+    FROM Invoice i
+    WHERE i.issueDate BETWEEN :start AND :end
+    """)
+    Long countByPeriod(LocalDate start, LocalDate end);
 }
