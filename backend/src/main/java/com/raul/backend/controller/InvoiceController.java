@@ -1,12 +1,17 @@
 package com.raul.backend.controller;
 
+import com.raul.backend.dto.financialsummary.FinancialSummaryDTO;
 import com.raul.backend.dto.invoice.*;
+import com.raul.backend.service.FinancialSummaryService;
 import com.raul.backend.service.InvoiceService;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -14,9 +19,11 @@ import java.util.List;
 public class InvoiceController {
 
     private final InvoiceService service;
+    private final FinancialSummaryService financialSummaryService;
 
-    public InvoiceController(InvoiceService service) {
+    public InvoiceController(InvoiceService service, FinancialSummaryService financialSummaryService) {
         this.service = service;
+        this.financialSummaryService = financialSummaryService;
     }
 
     @PostMapping
@@ -59,4 +66,6 @@ public class InvoiceController {
         service.identifyDefaulters();
         return ResponseEntity.ok().build();
     }
+
+
 }

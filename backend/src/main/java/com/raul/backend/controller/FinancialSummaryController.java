@@ -3,6 +3,8 @@ package com.raul.backend.controller;
 import com.raul.backend.dto.financialsummary.FinancialSummaryDTO;
 import com.raul.backend.service.FinancialSummaryService;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +30,43 @@ public class FinancialSummaryController {
         return financialSummaryService.getSummary(start, end);
     }*/
 
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_MANAGER')")
     @GetMapping("/financial/report")
     public FinancialSummaryDTO getReport(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
     ) {
         return financialSummaryService.getFullReport(start, end);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_MANAGER')")
+    @GetMapping("/financial/report/export")
+    public ResponseEntity<byte[]> exportReport(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end
+    ) {
+
+        FinancialSummaryDTO report = financialSummaryService.getFullReport(start, end);
+
+        String content = """
+        Relatório Financeiro
+    
+        Período: %s a %s
+        Receita Bruta: %s
+        Recebido: %s
+        Pendente: %s
+        Inadimplente: %s
+        """.formatted(
+                report.getStartDate(),
+                report.getEndDate(),
+                report.getGrossRevenue(),
+                report.getTotalReceived(),
+                report.getTotalPending(),
+                report.getTotalOverdue()
+        );
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=report.txt")
+                .body(content.getBytes());
     }
 }
