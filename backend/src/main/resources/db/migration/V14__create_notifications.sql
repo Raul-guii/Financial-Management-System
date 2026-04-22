@@ -10,7 +10,7 @@ CREATE TABLE notifications(
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
 
-    user_id BIGINT NOT NULL,
+    user_id BIGINT NULL,
 
     FOREIGN KEY (user_id) REFERENCES users(id)
 );

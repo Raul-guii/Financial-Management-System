@@ -31,7 +31,6 @@ public class AuditLog extends Auditable {
     @Column(name = "entity_type", nullable = false, length = 100)
     private String entityType;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @Column(name = "user_id")
+    private Long userId;
 }
