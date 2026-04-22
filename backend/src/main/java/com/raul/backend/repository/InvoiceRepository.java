@@ -60,4 +60,12 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
       AND i.issueDate BETWEEN :start AND :end
     """)
     Long countByStatusAndPeriod(InvoiceStatus status, LocalDate start, LocalDate end);
+
+    @Query("""
+    SELECT i
+    FROM Invoice i
+    WHERE i.status = 'PENDING'
+    AND i.dueDate BETWEEN :today AND :limit
+    """)
+    List<Invoice> findUpcomingDueInvoices(LocalDate today, LocalDate limit);
 }
