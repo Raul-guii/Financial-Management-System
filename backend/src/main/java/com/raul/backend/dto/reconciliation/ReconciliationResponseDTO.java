@@ -1,5 +1,6 @@
 package com.raul.backend.dto.reconciliation;
 
+import com.raul.backend.dto.reconciliationitem.ReconciliationItemResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,5 +19,5 @@ public class ReconciliationResponseDTO {
     private LocalDate periodEnd;
     private LocalDateTime executedAt;
     private Long executedById;
-    private List<Long> itemIds;
+    private List<ReconciliationItemResponseDTO> items;
 }

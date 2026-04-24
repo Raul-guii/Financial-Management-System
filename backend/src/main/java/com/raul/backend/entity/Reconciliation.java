@@ -1,5 +1,6 @@
 package com.raul.backend.entity;
 
+import com.raul.backend.enums.ReconciliationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
