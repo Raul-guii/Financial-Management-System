@@ -15,5 +15,4 @@ public class ReconciliationUpdateDTO {
     private LocalDate periodStart;
     private LocalDate periodEnd;
     private LocalDateTime executedAt;
-    private Long executedById;
 }

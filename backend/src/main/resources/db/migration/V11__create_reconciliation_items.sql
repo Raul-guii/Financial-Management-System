@@ -2,6 +2,7 @@ CREATE TABLE reconciliation_items(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     system_amount DECIMAL(15, 2),
     gateway_amount DECIMAL(15, 2),
+    status VARCHAR(50) NOT NULL DEFAULT 'MATCHED',
 
     reconciliation_id BIGINT,
     invoice_id BIGINT,

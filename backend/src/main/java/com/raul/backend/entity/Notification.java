@@ -2,6 +2,7 @@ package com.raul.backend.entity;
 
 import com.raul.backend.config.auditable.Auditable;
 import com.raul.backend.enums.NotificationType;
+import com.raul.backend.enums.ReconciliationStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

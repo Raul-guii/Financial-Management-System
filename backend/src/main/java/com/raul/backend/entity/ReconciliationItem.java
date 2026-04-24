@@ -1,6 +1,7 @@
 package com.raul.backend.entity;
 
 import com.raul.backend.enums.GatewayStatus;
+import com.raul.backend.enums.ReconciliationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,6 +27,10 @@ public class ReconciliationItem {
 
     @Column(name = "gateway_amount", nullable = false)
     private BigDecimal gatewayAmount;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReconciliationStatus status;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "reconciliation_id", nullable = false)

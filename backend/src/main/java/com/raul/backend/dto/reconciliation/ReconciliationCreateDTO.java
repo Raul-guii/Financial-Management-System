@@ -1,5 +1,6 @@
 package com.raul.backend.dto.reconciliation;
 
+import com.raul.backend.entity.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +21,4 @@ public class ReconciliationCreateDTO {
     private LocalDate periodEnd;
 
     private LocalDateTime executedAt;
-    private Long executedById;
 }

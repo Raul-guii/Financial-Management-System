@@ -5,6 +5,9 @@ import com.raul.backend.entity.Payment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -37,6 +40,12 @@ public class MercadoPagoClient {
         payer.put("email", "test_user_123@testuser.com");
         body.put("payer", payer);
 
+        System.out.println("=== MERCADO PAGO DEBUG ===");
+        System.out.println("URL: " + url);
+        System.out.println("ACCESS TOKEN: " + accessToken);
+        System.out.println("HEADERS: " + headers);
+        System.out.println("BODY: " + body);
+
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
@@ -49,7 +58,6 @@ public class MercadoPagoClient {
 
             System.out.println("RESPOSTA MP:" + responseBody);
 
-            // extrair dados
             Map<String, Object> poi =
                     (Map<String, Object>) responseBody.get("point_of_interaction");
 
@@ -71,10 +79,24 @@ public class MercadoPagoClient {
 
             return gatewayResponse;
 
-        } catch (Exception e) {
-            System.out.println("ERRO MERCADO PAGO: " + e.getMessage());
+        } catch (HttpClientErrorException e) {
 
-            throw new RuntimeException("Erro ao chamar Mercado pago", e);
+            System.out.println("ERRO CLIENTE MP: " + e.getResponseBodyAsString());
+
+            throw new RuntimeException("Erro de requisição ao gateway (dados inválidos ou não autorizado)");
+
+        } catch (HttpServerErrorException e) {
+
+            System.out.println("ERRO SERVIDOR MP: " + e.getResponseBodyAsString());
+
+            throw new RuntimeException("Gateway de pagamento indisponível no momento");
+
+        } catch (ResourceAccessException e) {
+
+            System.out.println("ERRO CONEXÃO MP: " + e.getMessage());
+
+            throw new RuntimeException("Erro de conexão com o gateway");
+
         }
     }
 
