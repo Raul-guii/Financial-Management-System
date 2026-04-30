@@ -122,15 +122,6 @@ public class InvoiceService {
         return invoice.getOriginalAmount();
     }
 
-    private InvoiceStatus calculateStatus(Invoice invoice) {
-
-        if (LocalDate.now().isAfter(invoice.getDueDate())) {
-            return InvoiceStatus.OVERDUE;
-        }
-
-        return InvoiceStatus.PENDING;
-    }
-
     // GET ALL
     public List<InvoiceResponseDTO> findAll() {
         return repository.findAll()
@@ -180,10 +171,10 @@ public class InvoiceService {
     private InvoiceResponseDTO toDTO(Invoice invoice, BigDecimal finalAmount) {
         return new InvoiceResponseDTO(
                 invoice.getId(),
-                calculateStatus(invoice),
+                invoice.getStatus(),
                 invoice.getIssueDate(),
                 invoice.getDueDate(),
-                invoice.getOriginalAmount(),
+                invoice.getAmount(),
                 finalAmount,
                 invoice.getLateFreeAmount(),
                 invoice.getInterestAmount(),

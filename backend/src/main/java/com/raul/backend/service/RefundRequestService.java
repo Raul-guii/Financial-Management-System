@@ -2,6 +2,7 @@ package com.raul.backend.service;
 
 import com.raul.backend.dto.refundrequest.RefundRequestCreateDTO;
 import com.raul.backend.dto.refundrequest.RefundRequestResponseDTO;
+import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
 import com.raul.backend.entity.RefundRequest;
 import com.raul.backend.entity.User;
@@ -15,6 +16,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -114,6 +117,38 @@ public class RefundRequestService {
 
         refundRequest = refundRequestRepository.save(refundRequest);
         return toDTO(refundRequest);
+    }
+
+    private void updateInvoiceStatus(Invoice invoice) {
+        if (invoice == null) return;
+
+        BigDecimal totalApproved = paymentRepository.sumApprovedByInvoice(invoice.getId());
+
+        boolean hasRefunded = invoice.getPayment().stream()
+                .anyMatch(p -> p.getPaymentStatus() == PaymentStatus.REFUNDED);
+
+        // Nenhum pagamento aprovado
+        if (totalApproved.compareTo(BigDecimal.ZERO) == 0) {
+
+            if (hasRefunded) {
+                invoice.setStatus(InvoiceStatus.REFUNDED);
+            } else if (invoice.getDueDate().isBefore(LocalDate.now())) {
+                invoice.setStatus(InvoiceStatus.OVERDUE);
+            } else {
+                invoice.setStatus(InvoiceStatus.PENDING);
+            }
+
+            return;
+        }
+
+        // Pagamento parcial
+        if (totalApproved.compareTo(invoice.getAmount()) < 0) {
+            invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
+            return;
+        }
+
+        // Totalmente pago
+        invoice.setStatus(InvoiceStatus.PAID);
     }
 
     private RefundRequestResponseDTO toDTO(RefundRequest refundRequest) {
