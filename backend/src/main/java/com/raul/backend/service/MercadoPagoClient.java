@@ -22,7 +22,34 @@ public class MercadoPagoClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    private static final int MAX_RETRIES = 3;
+
     public GatewayResponse createPayment(Payment payment) {
+
+        int attempt = 0;
+
+        while (true) {
+            try {
+                return doCreatePayment(payment);
+
+            } catch (HttpServerErrorException | ResourceAccessException e) {
+
+                attempt++;
+
+                System.out.println("Tentativa " + attempt + " falhou");
+
+                if (attempt >= MAX_RETRIES) {
+                    throw new RuntimeException("Gateway indisponível após retries");
+                }
+
+                try {
+                    Thread.sleep(1000 * attempt);
+                } catch (InterruptedException ignored) {}
+            }
+        }
+    }
+
+    private GatewayResponse doCreatePayment(Payment payment) {
 
         String url = "https://api.mercadopago.com/v1/payments";
 
@@ -32,20 +59,18 @@ public class MercadoPagoClient {
         headers.add("X-Idempotency-Key", UUID.randomUUID().toString());
 
         Map<String, Object> body = new HashMap<>();
-        body.put("transaction_amount", payment.getAmount());
+        body.put("transaction_amount", payment.getAmount().doubleValue());
         body.put("payment_method_id", "pix");
         body.put("description", "Pagamento teste");
 
-        Map<String, String> payer = new HashMap<>();
-        payer.put("email", "test_user_123@testuser.com");
+        Map<String, Object> payer = new HashMap<>();
+        payer.put("email", "test_user_3942810040893257769@testuser.com");
+
         body.put("payer", payer);
 
-        System.out.println("=== MERCADO PAGO DEBUG ===");
         System.out.println("URL: " + url);
-        System.out.println("ACCESS TOKEN: " + accessToken);
         System.out.println("HEADERS: " + headers);
         System.out.println("BODY: " + body);
-
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
@@ -55,8 +80,6 @@ public class MercadoPagoClient {
                     restTemplate.postForEntity(url, request, Map.class);
 
             Map<String, Object> responseBody = response.getBody();
-
-            System.out.println("RESPOSTA MP:" + responseBody);
 
             Map<String, Object> poi =
                     (Map<String, Object>) responseBody.get("point_of_interaction");
@@ -83,19 +106,19 @@ public class MercadoPagoClient {
 
             System.out.println("ERRO CLIENTE MP: " + e.getResponseBodyAsString());
 
-            throw new RuntimeException("Erro de requisição ao gateway (dados inválidos ou não autorizado)");
+            throw e;
 
         } catch (HttpServerErrorException e) {
 
             System.out.println("ERRO SERVIDOR MP: " + e.getResponseBodyAsString());
 
-            throw new RuntimeException("Gateway de pagamento indisponível no momento");
+            throw e;
 
         } catch (ResourceAccessException e) {
 
             System.out.println("ERRO CONEXÃO MP: " + e.getMessage());
 
-            throw new RuntimeException("Erro de conexão com o gateway");
+            throw e;
 
         }
     }
@@ -120,4 +143,6 @@ public class MercadoPagoClient {
 
         return res;
     }
+
+
 }

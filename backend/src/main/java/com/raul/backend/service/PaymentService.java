@@ -21,12 +21,14 @@ public class PaymentService {
     private final PaymentRepository repository;
     private final InvoiceRepository invoiceRepository;
     private final InvoiceStatusService invoiceStatusService;
+    private final InvoiceCalculatorService invoiceCalculatorService;
 
-    public PaymentService(GatewayTransactionService gatewayTransactionService, PaymentRepository repository, InvoiceRepository invoiceRepository, InvoiceStatusService invoiceStatusService) {
+    public PaymentService(GatewayTransactionService gatewayTransactionService, PaymentRepository repository, InvoiceRepository invoiceRepository, InvoiceStatusService invoiceStatusService, InvoiceCalculatorService invoiceCalculatorService) {
         this.gatewayTransactionService = gatewayTransactionService;
         this.repository = repository;
         this.invoiceRepository = invoiceRepository;
         this.invoiceStatusService = invoiceStatusService;
+        this.invoiceCalculatorService = invoiceCalculatorService;
     }
 
     // CREATE
@@ -36,20 +38,28 @@ public class PaymentService {
         Invoice invoice = invoiceRepository.findById(dto.getInvoiceId())
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
 
-        Payment payment = new Payment();
+        BigDecimal remaining = invoiceCalculatorService.getRemainingAmount(invoice);
 
+        if (dto.getAmount().compareTo(remaining) > 0) {
+            throw new RuntimeException("Valor maior que o restante da fatura");
+        }
+
+        Payment payment = new Payment();
         payment.setAmount(dto.getAmount());
         payment.setPaymentDate(dto.getPaymentDate());
         payment.setPaymentMethod(dto.getPaymentMethod());
         payment.setPaymentStatus(PaymentStatus.PENDING);
         payment.setInvoice(invoice);
 
-        payment = repository.save(payment);
+        try {
+            gatewayTransactionService.processPayment(payment);
 
-        // chama gateway
-        gatewayTransactionService.processPayment(payment);
+            payment = repository.save(payment);
 
-        payment = repository.findById(payment.getId()).get();
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao processar pagamento no gateway", e);
+        }
+
         return toDTO(payment);
     }
 

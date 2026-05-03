@@ -1,7 +1,9 @@
 package com.raul.backend.service;
 
 import com.raul.backend.entity.Invoice;
+import com.raul.backend.entity.Payment;
 import com.raul.backend.enums.InvoiceStatus;
+import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,40 +21,64 @@ import java.util.List;
 public class InvoiceOverdueSchedulerService {
 
     private final InvoiceRepository invoiceRepository;
+    private final FinancialParameterService financialParameterService;
+    private final InvoiceCalculatorService invoiceCalculatorService;
 
-    @Scheduled(cron = "0 0 0 * * *")
+    //  @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(fixedRate = 10000) // a cada 10 segundos
     @Transactional
     public void applyInterestAndFees() {
 
         List<Invoice> overdueInvoices =
-                invoiceRepository.findByStatus(InvoiceStatus.OVERDUE);
+                invoiceRepository.findByDueDateBeforeAndStatusNot(
+                        LocalDate.now(),
+                        InvoiceStatus.PAID
+                );
+
+        BigDecimal lateFeePercent = financialParameterService.getActiveValueByName("LATE_FEE");
+        BigDecimal dailyInterest = financialParameterService.getActiveValueByName("DAILY_INTEREST");
+        int graceDays = financialParameterService
+                .getActiveValueByName("GRACE_PERIOD_DAYS")
+                .intValue();
 
         for (Invoice invoice : overdueInvoices) {
 
-            long daysLate = ChronoUnit.DAYS.between(
-                    invoice.getDueDate(),
-                    LocalDate.now()
-            );
+            LocalDate dueWithGrace = invoice.getDueDate().plusDays(graceDays);
 
-            if (daysLate <= 0) continue;
+            if (!LocalDate.now().isAfter(dueWithGrace)) continue;
 
-            BigDecimal total = invoice.getAmount();
-
-            // multa fixa
-            if (invoice.getLateFreeAmount() != null) {
-                total = total.add(invoice.getLateFreeAmount());
+            if (invoice.getStatus() != InvoiceStatus.OVERDUE) {
+                invoice.setStatus(InvoiceStatus.OVERDUE);
             }
 
-            // juros por dia
-            if (invoice.getInterestAmount() != null) {
-                BigDecimal interest = total
-                        .multiply(invoice.getInterestAmount())
-                        .multiply(BigDecimal.valueOf(daysLate));
+            long daysLate = ChronoUnit.DAYS.between(dueWithGrace, LocalDate.now());
 
-                total = total.add(interest);
-            }
+            BigDecimal totalPaid = invoice.getPayment()
+                    .stream()
+                    .filter(p -> p.getPaymentStatus() == PaymentStatus.APPROVED)
+                    .map(Payment::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+            BigDecimal remaining = invoiceCalculatorService.getRemainingAmount(invoice);
+
+            if (remaining.compareTo(BigDecimal.ZERO) <= 0) continue;
+
+            BigDecimal multa = remaining
+                    .multiply(lateFeePercent)
+                    .divide(BigDecimal.valueOf(100));
+
+            BigDecimal juros = remaining
+                    .multiply(dailyInterest)
+                    .divide(BigDecimal.valueOf(100))
+                    .multiply(BigDecimal.valueOf(daysLate));
+
+            BigDecimal total = remaining.add(multa).add(juros);
+
+            invoice.setLateFreeAmount(multa);
+            invoice.setInterestAmount(juros);
             invoice.setAmount(total);
+
+            System.out.println("Invoice " + invoice.getId() + " atualizada.");
         }
 
         invoiceRepository.saveAll(overdueInvoices);

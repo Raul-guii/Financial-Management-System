@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Set;
@@ -16,6 +17,7 @@ import java.util.Set;
 public class DataInitializer {
 
     @Bean
+    @Order(1)
     CommandLineRunner initUsers(UserRepository userRepository,
                                 PasswordEncoder passwordEncoder) {
 

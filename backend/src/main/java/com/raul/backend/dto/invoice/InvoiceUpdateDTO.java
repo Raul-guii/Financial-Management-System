@@ -21,11 +21,5 @@ public class InvoiceUpdateDTO {
     @PositiveOrZero
     private BigDecimal amount;
 
-    @PositiveOrZero
-    private BigDecimal lateFreeAmount;
-
-    @PositiveOrZero
-    private BigDecimal interestAmount;
-
     private Long contractId;
 }

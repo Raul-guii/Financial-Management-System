@@ -21,13 +21,5 @@ public class InvoiceCreateDTO {
     private LocalDate dueDate;
 
     @NotNull
-    @PositiveOrZero
-    private BigDecimal lateFreeAmount;
-
-    @NotNull
-    @PositiveOrZero
-    private BigDecimal interestAmount;
-
-    @NotNull
     private Long contractId;
 }
