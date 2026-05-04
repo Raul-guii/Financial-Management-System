@@ -12,6 +12,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +41,12 @@ public class Payment extends Auditable {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus;
+
+    @Column(name = "payer_email")
+    private String payerEmail;
+
+    @Column(name = "date_of_expiration")
+    private OffsetDateTime dateOfExpiration;
 
     @ManyToOne
     @JoinColumn(name = "invoice_id")

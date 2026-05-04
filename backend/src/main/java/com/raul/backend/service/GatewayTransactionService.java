@@ -1,6 +1,7 @@
 package com.raul.backend.service;
 
 import com.raul.backend.dto.gatewaytransaction.GatewayResponse;
+import com.raul.backend.dto.payment.PaymentCreateDTO;
 import com.raul.backend.entity.GatewayTransaction;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
@@ -28,10 +29,10 @@ public class GatewayTransactionService {
     }
 
     @Transactional
-    public GatewayTransaction processPayment(Payment payment) {
+    public GatewayTransaction processPayment(Payment payment, PaymentCreateDTO dto) {
 
      // chamar gateway
-     GatewayResponse response = mercadoPagoClient.createPayment(payment);
+     GatewayResponse response = mercadoPagoClient.createPayment(payment, dto);
 
      // criar transaction
      GatewayTransaction transaction = new GatewayTransaction();

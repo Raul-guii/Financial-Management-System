@@ -40,6 +40,10 @@ public class PaymentService {
 
         BigDecimal remaining = invoiceCalculatorService.getRemainingAmount(invoice);
 
+        if (dto.getPayerEmail() == null || dto.getPayerEmail().isBlank()) {
+            throw new RuntimeException("payerEmail é obrigatório");
+        }
+
         if (dto.getAmount().compareTo(remaining) > 0) {
             throw new RuntimeException("Valor maior que o restante da fatura");
         }
@@ -50,12 +54,13 @@ public class PaymentService {
         payment.setPaymentMethod(dto.getPaymentMethod());
         payment.setPaymentStatus(PaymentStatus.PENDING);
         payment.setInvoice(invoice);
+        payment.setPayerEmail(dto.getPayerEmail());
+        payment.setDateOfExpiration(dto.getDateOfExpiration());
+
+        payment = repository.save(payment);
 
         try {
-            gatewayTransactionService.processPayment(payment);
-
-            payment = repository.save(payment);
-
+            gatewayTransactionService.processPayment(payment, dto);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao processar pagamento no gateway", e);
         }

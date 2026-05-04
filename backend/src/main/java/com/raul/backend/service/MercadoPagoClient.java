@@ -1,15 +1,14 @@
 package com.raul.backend.service;
 
 import com.raul.backend.dto.gatewaytransaction.GatewayResponse;
+import com.raul.backend.dto.payment.PaymentCreateDTO;
 import com.raul.backend.entity.Payment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,18 +23,17 @@ public class MercadoPagoClient {
 
     private static final int MAX_RETRIES = 3;
 
-    public GatewayResponse createPayment(Payment payment) {
+    public GatewayResponse createPayment(Payment payment, PaymentCreateDTO dto) {
 
         int attempt = 0;
 
         while (true) {
             try {
-                return doCreatePayment(payment);
+                return doCreatePayment(payment, dto);
 
             } catch (HttpServerErrorException | ResourceAccessException e) {
 
                 attempt++;
-
                 System.out.println("Tentativa " + attempt + " falhou");
 
                 if (attempt >= MAX_RETRIES) {
@@ -43,13 +41,13 @@ public class MercadoPagoClient {
                 }
 
                 try {
-                    Thread.sleep(1000 * attempt);
+                    Thread.sleep(1000L * attempt);
                 } catch (InterruptedException ignored) {}
             }
         }
     }
 
-    private GatewayResponse doCreatePayment(Payment payment) {
+    private GatewayResponse doCreatePayment(Payment payment, PaymentCreateDTO dto) {
 
         String url = "https://api.mercadopago.com/v1/payments";
 
@@ -59,12 +57,26 @@ public class MercadoPagoClient {
         headers.add("X-Idempotency-Key", UUID.randomUUID().toString());
 
         Map<String, Object> body = new HashMap<>();
-        body.put("transaction_amount", payment.getAmount().doubleValue());
+
+        body.put("transaction_amount", payment.getAmount());
         body.put("payment_method_id", "pix");
         body.put("description", "Pagamento teste");
 
+        OffsetDateTime expiration = dto.getDateOfExpiration() != null
+                ? dto.getDateOfExpiration().toInstant().atOffset(OffsetDateTime.now().getOffset())
+                : OffsetDateTime.now().plusMinutes(30);
+
+        body.put("date_of_expiration", expiration.toString());
+
+        Map<String, Object> identification = new HashMap<>();
+        identification.put("type", "CPF");
+        identification.put("number", dto.getPayerDocument());
+
         Map<String, Object> payer = new HashMap<>();
-        payer.put("email", "test_user_3942810040893257769@testuser.com");
+        payer.put("email", dto.getPayerEmail());
+        payer.put("first_name", dto.getPayerFirstName());
+        payer.put("last_name", dto.getPayerLastName());
+        payer.put("identification", identification);
 
         body.put("payer", payer);
 
@@ -105,25 +117,22 @@ public class MercadoPagoClient {
         } catch (HttpClientErrorException e) {
 
             System.out.println("ERRO CLIENTE MP: " + e.getResponseBodyAsString());
-
             throw e;
 
         } catch (HttpServerErrorException e) {
 
             System.out.println("ERRO SERVIDOR MP: " + e.getResponseBodyAsString());
-
             throw e;
 
         } catch (ResourceAccessException e) {
 
             System.out.println("ERRO CONEXÃO MP: " + e.getMessage());
-
             throw e;
-
         }
     }
 
     public GatewayResponse getPayment(String id) {
+
         String url = "https://api.mercadopago.com/v1/payments/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -143,6 +152,4 @@ public class MercadoPagoClient {
 
         return res;
     }
-
-
 }
