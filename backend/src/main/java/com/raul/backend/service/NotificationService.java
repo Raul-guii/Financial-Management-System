@@ -1,5 +1,6 @@
 package com.raul.backend.service;
 
+import com.raul.backend.dto.notifications.NotificationResponseDTO;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Notification;
 import com.raul.backend.entity.User;
@@ -85,8 +86,19 @@ public class NotificationService {
     }
 
 
-    public List<Notification> getUserNotifications(Long userId) {
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+    public List<NotificationResponseDTO> getUserNotifications(Long userId) {
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId)
+                .stream()
+                .map(n -> new NotificationResponseDTO(
+                        n.getId(),
+                        n.getTitle(),
+                        n.getMessage(),
+                        n.getType(),
+                        n.getIsRead(),
+                        n.getUser().getId(),
+                        n.getCreatedAt()
+                ))
+                .toList();
     }
 }
 

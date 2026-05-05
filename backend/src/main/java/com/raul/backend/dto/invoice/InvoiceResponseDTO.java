@@ -20,6 +20,8 @@ public class InvoiceResponseDTO {
     private LocalDate issueDate;
     private LocalDate dueDate;
     private BigDecimal amount;
+    private BigDecimal paidAmount;
+    private BigDecimal overpaidAmount;
     private BigDecimal remainingAmount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

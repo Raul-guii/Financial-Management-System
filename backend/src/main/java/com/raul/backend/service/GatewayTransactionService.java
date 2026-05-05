@@ -29,16 +29,16 @@ public class GatewayTransactionService {
     }
 
     @Transactional
-    public GatewayTransaction processPayment(Payment payment, PaymentCreateDTO dto) {
+    public GatewayTransaction processPayment(Payment payment) {
 
      // chamar gateway
-     GatewayResponse response = mercadoPagoClient.createPayment(payment, dto);
+     GatewayResponse response = mercadoPagoClient.createPayment(payment);
 
      // criar transaction
      GatewayTransaction transaction = new GatewayTransaction();
 
      transaction.setPayment(payment);
-     transaction.setExternalId(String.valueOf(response.getTransactionId()));
+     transaction.setExternalId(response.getOrderId());
      transaction.setGatewayName("MERCADO_PAGO");
      transaction.setAmount(payment.getAmount());
 
@@ -57,6 +57,8 @@ public class GatewayTransactionService {
 
      paymentRepository.save(payment);
 
+        System.out.println("EXTERNAL ID SALVO: " + transaction.getExternalId());
+
      invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
      return transaction;
     }
@@ -67,6 +69,7 @@ public class GatewayTransactionService {
             case "approved" -> GatewayStatus.APPROVED;
             case "pending" -> GatewayStatus.PENDING;
             case "rejected" -> GatewayStatus.REJECTED;
+            case "action_required" -> GatewayStatus.PENDING;
             default -> GatewayStatus.ERROR;
         };
     }

@@ -27,14 +27,16 @@ public class InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
     private final FinancialParameterService financialParameterService;
+    private final InvoiceCalculatorService invoiceCalculatorService;
 
-    public InvoiceService(InvoiceRepository repository, ContractRepository contractRepository, InvoiceLineRepository invoiceLineRepository, InvoiceRepository invoiceRepository, ClientRepository clientRepository, FinancialParameterService financialParameterService) {
+    public InvoiceService(InvoiceRepository repository, ContractRepository contractRepository, InvoiceLineRepository invoiceLineRepository, InvoiceRepository invoiceRepository, ClientRepository clientRepository, FinancialParameterService financialParameterService, InvoiceCalculatorService invoiceCalculatorService) {
         this.repository = repository;
         this.contractRepository = contractRepository;
         this.invoiceLineRepository = invoiceLineRepository;
         this.invoiceRepository = invoiceRepository;
         this.clientRepository = clientRepository;
         this.financialParameterService = financialParameterService;
+        this.invoiceCalculatorService = invoiceCalculatorService;
     }
 
     // CREATE
@@ -99,39 +101,6 @@ public class InvoiceService {
         return toDTO(repository.save(invoice));
     }
 
-    private BigDecimal calculateFinalAmount(Invoice invoice) {
-
-        LocalDate today = LocalDate.now();
-
-        if (!today.isAfter(invoice.getDueDate())) {
-            return invoice.getOriginalAmount();
-        }
-
-        BigDecimal lateFeePercent = financialParameterService.getActiveValueByName("LATE_FEE");
-        BigDecimal dailyInterest = financialParameterService.getActiveValueByName("DAILY_INTEREST");
-        int graceDays = financialParameterService.getActiveValueByName("GRACE_PERIOD_DAYS").intValue();
-
-        LocalDate dueWithGrace = invoice.getDueDate().plusDays(graceDays);
-
-        if (!today.isAfter(dueWithGrace)) {
-            return invoice.getOriginalAmount();
-        }
-
-        long daysLate = java.time.temporal.ChronoUnit.DAYS.between(dueWithGrace, today);
-
-        BigDecimal multa = invoice.getOriginalAmount()
-                .multiply(lateFeePercent)
-                .divide(BigDecimal.valueOf(100));
-
-        BigDecimal juros = invoice.getOriginalAmount()
-                .multiply(dailyInterest)
-                .multiply(BigDecimal.valueOf(daysLate));
-
-        return invoice.getOriginalAmount()
-                .add(multa)
-                .add(juros);
-    }
-
     // GET ALL
     public List<InvoiceResponseDTO> findAll() {
         return repository.findAll()
@@ -173,25 +142,12 @@ public class InvoiceService {
         clientRepository.saveAll(defaulters);
     }
 
-    private BigDecimal calculateRemainingAmount(Invoice invoice) {
-
-        if (invoice.getPayment() == null || invoice.getPayment().isEmpty()) {
-            return invoice.getAmount();
-        }
-
-        BigDecimal totalPaid = invoice.getPayment()
-                .stream()
-                .filter(p -> p.getPaymentStatus() == PaymentStatus.APPROVED)
-                .map(Payment::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        return invoice.getAmount().subtract(totalPaid);
-    }
-
     // MAPPER
     private InvoiceResponseDTO toDTO(Invoice invoice) {
 
-        BigDecimal remainingAmount = calculateRemainingAmount(invoice);
+        BigDecimal paidAmount = invoiceCalculatorService.getTotalPaid(invoice);
+        BigDecimal remainingAmount = invoiceCalculatorService.getRemainingAmountCapped(invoice);
+        BigDecimal overpaidAmount = invoiceCalculatorService.getOverpaidAmount(invoice);
 
         return new InvoiceResponseDTO(
                 invoice.getId(),
@@ -199,6 +155,8 @@ public class InvoiceService {
                 invoice.getIssueDate(),
                 invoice.getDueDate(),
                 invoice.getAmount(),
+                paidAmount,
+                overpaidAmount,
                 remainingAmount,
                 invoice.getCreatedAt(),
                 invoice.getUpdatedAt(),

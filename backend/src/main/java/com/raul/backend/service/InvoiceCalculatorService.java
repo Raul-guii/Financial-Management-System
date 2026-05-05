@@ -11,6 +11,9 @@ import java.math.BigDecimal;
 public class InvoiceCalculatorService {
 
     public BigDecimal getTotalPaid(Invoice invoice) {
+        if (invoice.getPayment() == null || invoice.getPayment().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
         return invoice.getPayment()
                 .stream()
                 .filter(p -> p.getPaymentStatus() == PaymentStatus.APPROVED)
@@ -28,4 +31,19 @@ public class InvoiceCalculatorService {
         return getTotalWithFees(invoice)
                 .subtract(getTotalPaid(invoice));
     }
+
+    public BigDecimal getOverpaidAmount(Invoice invoice) {
+        BigDecimal remaining = getRemainingAmount(invoice);
+        return remaining.compareTo(BigDecimal.ZERO) < 0
+                ? remaining.abs()
+                : BigDecimal.ZERO;
+    }
+
+    public BigDecimal getRemainingAmountCapped(Invoice invoice) {
+        BigDecimal remaining = getRemainingAmount(invoice);
+        return remaining.compareTo(BigDecimal.ZERO) < 0
+                ? BigDecimal.ZERO
+                : remaining;
+    }
+
 }

@@ -40,6 +40,12 @@ public class ReconciliationService {
         List<Payment> payments = paymentRepository
                 .findByPaymentDateBetween(start, end);
 
+        System.out.println("PERIODO: " + start + " até " + end);
+        System.out.println("PAYMENTS ENCONTRADOS: " + payments.size());
+        for (Payment p : payments) {
+            System.out.println("PAYMENT: " + p.getId() + " - " + p.getPaymentDate());
+        }
+
         List<GatewayTransaction> gatewayTransactions = gatewayTransactionRepository
                 .findByPayment_PaymentDateBetween(start, end);
 

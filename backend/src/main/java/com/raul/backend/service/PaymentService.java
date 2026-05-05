@@ -60,7 +60,7 @@ public class PaymentService {
         payment = repository.save(payment);
 
         try {
-            gatewayTransactionService.processPayment(payment, dto);
+            gatewayTransactionService.processPayment(payment);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao processar pagamento no gateway", e);
         }
@@ -131,6 +131,9 @@ public class PaymentService {
                         ? payment.getRefundRequests().stream().map(r -> r.getId()).toList()
                         : List.of(),
                 payment.getPaymentStatus(),
+                payment.getGatewayTransaction() != null
+                        ? payment.getGatewayTransaction().getExternalId()
+                        : null,
                 payment.getGatewayTransaction() != null
                         ? payment.getGatewayTransaction().getQrCode()
                         : null,

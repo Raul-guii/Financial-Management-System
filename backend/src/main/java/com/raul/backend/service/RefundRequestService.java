@@ -9,6 +9,7 @@ import com.raul.backend.entity.User;
 import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.enums.RefundStatus;
+import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
 import com.raul.backend.repository.RefundRequestRepository;
 import com.raul.backend.repository.UserRepository;
@@ -27,11 +28,13 @@ public class RefundRequestService {
     private final RefundRequestRepository refundRequestRepository;
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
+    private final InvoiceRepository invoiceRepository;
 
-    public RefundRequestService(RefundRequestRepository refundRequestRepository, PaymentRepository paymentRepository, UserRepository userRepository) {
+    public RefundRequestService(RefundRequestRepository refundRequestRepository, PaymentRepository paymentRepository, UserRepository userRepository, InvoiceRepository invoiceRepository) {
         this.refundRequestRepository = refundRequestRepository;
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
+        this.invoiceRepository = invoiceRepository;
     }
 
     @Transactional
@@ -94,10 +97,9 @@ public class RefundRequestService {
         }
 
         payment.setPaymentStatus(PaymentStatus.REFUNDED);
+        paymentRepository.save(payment);  // salva o payment
 
-        if (payment.getInvoice() != null) {
-            payment.getInvoice().setStatus(InvoiceStatus.REFUNDED);
-        }
+        updateInvoiceStatus(payment.getInvoice());  // recalcula e salva a invoice
 
         refundRequest = refundRequestRepository.save(refundRequest);
 
@@ -127,9 +129,7 @@ public class RefundRequestService {
         boolean hasRefunded = invoice.getPayment().stream()
                 .anyMatch(p -> p.getPaymentStatus() == PaymentStatus.REFUNDED);
 
-        // Nenhum pagamento aprovado
         if (totalApproved.compareTo(BigDecimal.ZERO) == 0) {
-
             if (hasRefunded) {
                 invoice.setStatus(InvoiceStatus.REFUNDED);
             } else if (invoice.getDueDate().isBefore(LocalDate.now())) {
@@ -137,18 +137,13 @@ public class RefundRequestService {
             } else {
                 invoice.setStatus(InvoiceStatus.PENDING);
             }
-
-            return;
-        }
-
-        // Pagamento parcial
-        if (totalApproved.compareTo(invoice.getAmount()) < 0) {
+        } else if (totalApproved.compareTo(invoice.getAmount()) < 0) {
             invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
-            return;
+        } else {
+            invoice.setStatus(InvoiceStatus.PAID);
         }
 
-        // Totalmente pago
-        invoice.setStatus(InvoiceStatus.PAID);
+        invoiceRepository.save(invoice);
     }
 
     private RefundRequestResponseDTO toDTO(RefundRequest refundRequest) {

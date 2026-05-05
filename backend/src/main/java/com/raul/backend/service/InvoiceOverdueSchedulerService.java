@@ -43,6 +43,12 @@ public class InvoiceOverdueSchedulerService {
 
         for (Invoice invoice : overdueInvoices) {
 
+            BigDecimal remaining = invoiceCalculatorService.getRemainingAmount(invoice);
+            if (remaining.compareTo(BigDecimal.ZERO) <= 0) {
+                invoice.setStatus(InvoiceStatus.PAID);
+                continue;
+            }
+
             LocalDate dueWithGrace = invoice.getDueDate().plusDays(graceDays);
 
             if (!LocalDate.now().isAfter(dueWithGrace)) continue;
@@ -53,26 +59,18 @@ public class InvoiceOverdueSchedulerService {
 
             long daysLate = ChronoUnit.DAYS.between(dueWithGrace, LocalDate.now());
 
-            BigDecimal totalPaid = invoice.getPayment()
-                    .stream()
-                    .filter(p -> p.getPaymentStatus() == PaymentStatus.APPROVED)
-                    .map(Payment::getAmount)
-                    .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-            BigDecimal remaining = invoiceCalculatorService.getRemainingAmount(invoice);
-
             if (remaining.compareTo(BigDecimal.ZERO) <= 0) continue;
 
-            BigDecimal multa = remaining
+            BigDecimal multa = invoice.getOriginalAmount()
                     .multiply(lateFeePercent)
                     .divide(BigDecimal.valueOf(100));
 
-            BigDecimal juros = remaining
-                    .multiply(dailyInterest)
-                    .divide(BigDecimal.valueOf(100))
+            BigDecimal fatorDiario = dailyInterest.divide(BigDecimal.valueOf(100));
+            BigDecimal juros = invoice.getOriginalAmount()
+                    .multiply(fatorDiario)
                     .multiply(BigDecimal.valueOf(daysLate));
 
-            BigDecimal total = remaining.add(multa).add(juros);
+            BigDecimal total = invoice.getOriginalAmount().add(multa).add(juros);
 
             invoice.setLateFreeAmount(multa);
             invoice.setInterestAmount(juros);
