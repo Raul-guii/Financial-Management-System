@@ -1,7 +1,9 @@
 package com.raul.backend.controller;
 
+import com.raul.backend.dto.notifications.NotificationResponseDTO;
 import com.raul.backend.entity.Notification;
 import com.raul.backend.entity.User;
+import com.raul.backend.repository.UserRepository;
 import com.raul.backend.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,6 +21,7 @@ import java.util.List;
 public class NotificationController {
 
     private final NotificationService notificationService;
+    private final UserRepository userRepository;
 
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     @PostMapping("/test")
@@ -29,10 +32,10 @@ public class NotificationController {
 
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     @GetMapping
-    public List<Notification> getMyNotifications(Authentication authentication) {
-
-        User user = (User) authentication.getPrincipal();
-
+    public List<NotificationResponseDTO> getMyNotifications(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         return notificationService.getUserNotifications(user.getId());
     }
 

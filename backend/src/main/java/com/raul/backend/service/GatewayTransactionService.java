@@ -1,6 +1,7 @@
 package com.raul.backend.service;
 
 import com.raul.backend.dto.gatewaytransaction.GatewayResponse;
+import com.raul.backend.dto.payment.PaymentCreateDTO;
 import com.raul.backend.entity.GatewayTransaction;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
@@ -37,7 +38,7 @@ public class GatewayTransactionService {
      GatewayTransaction transaction = new GatewayTransaction();
 
      transaction.setPayment(payment);
-     transaction.setExternalId(String.valueOf(response.getTransactionId()));
+     transaction.setExternalId(response.getOrderId());
      transaction.setGatewayName("MERCADO_PAGO");
      transaction.setAmount(payment.getAmount());
 
@@ -56,6 +57,8 @@ public class GatewayTransactionService {
 
      paymentRepository.save(payment);
 
+        System.out.println("EXTERNAL ID SALVO: " + transaction.getExternalId());
+
      invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
      return transaction;
     }
@@ -66,6 +69,7 @@ public class GatewayTransactionService {
             case "approved" -> GatewayStatus.APPROVED;
             case "pending" -> GatewayStatus.PENDING;
             case "rejected" -> GatewayStatus.REJECTED;
+            case "action_required" -> GatewayStatus.PENDING;
             default -> GatewayStatus.ERROR;
         };
     }

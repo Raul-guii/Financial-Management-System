@@ -40,7 +40,7 @@ public class WebhookService {
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
         //atualizar status
-        GatewayResponse response = mercadoPagoClient.getPayment(externalId);
+        GatewayResponse response = mercadoPagoClient.getOrder(externalId);
 
         response.setStatus("approved");
 

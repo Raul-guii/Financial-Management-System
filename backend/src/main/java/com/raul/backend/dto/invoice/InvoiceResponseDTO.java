@@ -20,9 +20,9 @@ public class InvoiceResponseDTO {
     private LocalDate issueDate;
     private LocalDate dueDate;
     private BigDecimal amount;
-    private BigDecimal finalAmount;
-    private BigDecimal lateFreeAmount;
-    private BigDecimal interestAmount;
+    private BigDecimal paidAmount;
+    private BigDecimal overpaidAmount;
+    private BigDecimal remainingAmount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Long contractId;

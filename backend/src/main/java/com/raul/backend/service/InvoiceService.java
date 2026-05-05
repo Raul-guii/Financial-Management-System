@@ -4,6 +4,7 @@ import ch.qos.logback.core.status.Status;
 import com.raul.backend.dto.invoice.*;
 import com.raul.backend.entity.*;
 import com.raul.backend.enums.InvoiceStatus;
+import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.InvoiceLineRepository;
@@ -25,13 +26,17 @@ public class InvoiceService {
     private final InvoiceLineRepository invoiceLineRepository;
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
+    private final FinancialParameterService financialParameterService;
+    private final InvoiceCalculatorService invoiceCalculatorService;
 
-    public InvoiceService(InvoiceRepository repository, ContractRepository contractRepository, InvoiceLineRepository invoiceLineRepository, InvoiceRepository invoiceRepository, ClientRepository clientRepository) {
+    public InvoiceService(InvoiceRepository repository, ContractRepository contractRepository, InvoiceLineRepository invoiceLineRepository, InvoiceRepository invoiceRepository, ClientRepository clientRepository, FinancialParameterService financialParameterService, InvoiceCalculatorService invoiceCalculatorService) {
         this.repository = repository;
         this.contractRepository = contractRepository;
         this.invoiceLineRepository = invoiceLineRepository;
         this.invoiceRepository = invoiceRepository;
         this.clientRepository = clientRepository;
+        this.financialParameterService = financialParameterService;
+        this.invoiceCalculatorService = invoiceCalculatorService;
     }
 
     // CREATE
@@ -46,8 +51,8 @@ public class InvoiceService {
         invoice.setStatus(InvoiceStatus.PENDING);
         invoice.setIssueDate(dto.getIssueDate());
         invoice.setDueDate(dto.getDueDate());
-        invoice.setLateFreeAmount(dto.getLateFreeAmount());
-        invoice.setInterestAmount(dto.getInterestAmount());
+        invoice.setLateFreeAmount(BigDecimal.ZERO);
+        invoice.setInterestAmount(BigDecimal.ZERO);
         invoice.setContract(contract);
 
         BigDecimal totalInvoice = BigDecimal.ZERO;
@@ -87,9 +92,6 @@ public class InvoiceService {
         if (dto.getStatus() != null) invoice.setStatus(dto.getStatus());
         if (dto.getIssueDate() != null) invoice.setIssueDate(dto.getIssueDate());
         if (dto.getDueDate() != null) invoice.setDueDate(dto.getDueDate());
-        if (dto.getLateFreeAmount() != null) invoice.setLateFreeAmount(dto.getLateFreeAmount());
-        if (dto.getInterestAmount() != null) invoice.setInterestAmount(dto.getInterestAmount());
-
         if (dto.getContractId() != null) {
             Contract contract = contractRepository.findById(dto.getContractId())
                     .orElseThrow(() -> new RuntimeException("Contrato não encontrado"));
@@ -99,34 +101,11 @@ public class InvoiceService {
         return toDTO(repository.save(invoice));
     }
 
-    private BigDecimal calculateFinalAmount(Invoice invoice) {
-
-        LocalDate today = LocalDate.now();
-
-        if (today.isAfter(invoice.getDueDate())) {
-
-            BigDecimal total = invoice.getOriginalAmount();
-
-            if (invoice.getLateFreeAmount() != null) {
-                total = total.add(invoice.getLateFreeAmount());
-            }
-
-            if (invoice.getInterestAmount() != null) {
-                BigDecimal interest = total.multiply(invoice.getInterestAmount());
-                total = total.add(interest);
-            }
-
-            return total;
-        }
-
-        return invoice.getOriginalAmount();
-    }
-
     // GET ALL
     public List<InvoiceResponseDTO> findAll() {
         return repository.findAll()
                 .stream()
-                .map(this::mapWithCalculation)
+                .map(this::toDTO)
                 .toList();
     }
 
@@ -135,16 +114,12 @@ public class InvoiceService {
         Invoice invoice = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
 
-        return mapWithCalculation(invoice);
+        return toDTO(invoice);
     }
 
     // DELETE
     public void delete(Long id) {
         repository.deleteById(id);
-    }
-
-    private InvoiceResponseDTO mapWithCalculation(Invoice invoice) {
-        return toDTO(invoice, calculateFinalAmount(invoice));
     }
 
     public void identifyDefaulters() {
@@ -168,16 +143,21 @@ public class InvoiceService {
     }
 
     // MAPPER
-    private InvoiceResponseDTO toDTO(Invoice invoice, BigDecimal finalAmount) {
+    private InvoiceResponseDTO toDTO(Invoice invoice) {
+
+        BigDecimal paidAmount = invoiceCalculatorService.getTotalPaid(invoice);
+        BigDecimal remainingAmount = invoiceCalculatorService.getRemainingAmountCapped(invoice);
+        BigDecimal overpaidAmount = invoiceCalculatorService.getOverpaidAmount(invoice);
+
         return new InvoiceResponseDTO(
                 invoice.getId(),
                 invoice.getStatus(),
                 invoice.getIssueDate(),
                 invoice.getDueDate(),
                 invoice.getAmount(),
-                finalAmount,
-                invoice.getLateFreeAmount(),
-                invoice.getInterestAmount(),
+                paidAmount,
+                overpaidAmount,
+                remainingAmount,
                 invoice.getCreatedAt(),
                 invoice.getUpdatedAt(),
                 invoice.getContract() != null ? invoice.getContract().getId() : null,
@@ -188,9 +168,5 @@ public class InvoiceService {
                         ? invoice.getInvoiceLines().stream().map(InvoiceLine::getId).toList()
                         : List.of()
         );
-    }
-
-    private InvoiceResponseDTO toDTO(Invoice invoice) {
-        return toDTO(invoice, invoice.getAmount());
     }
 }

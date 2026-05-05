@@ -27,7 +27,8 @@ public class InvoiceStatusService {
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
 
-        if (invoice.getStatus() == InvoiceStatus.CANCELED || invoice.getStatus() == InvoiceStatus.REFUNDED) {
+        if (invoice.getStatus() == InvoiceStatus.CANCELED
+                || invoice.getStatus() == InvoiceStatus.REFUNDED) {
             return;
         }
 

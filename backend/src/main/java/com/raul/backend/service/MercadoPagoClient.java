@@ -1,15 +1,14 @@
 package com.raul.backend.service;
 
 import com.raul.backend.dto.gatewaytransaction.GatewayResponse;
+import com.raul.backend.dto.payment.PaymentCreateDTO;
 import com.raul.backend.entity.Payment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.*;
 
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,84 +23,84 @@ public class MercadoPagoClient {
 
     public GatewayResponse createPayment(Payment payment) {
 
-        String url = "https://api.mercadopago.com/v1/payments";
+        String url = "https://api.mercadopago.com/v1/orders";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.add("X-Idempotency-Key", UUID.randomUUID().toString());
 
-        Map<String, Object> body = new HashMap<>();
-        body.put("transaction_amount", payment.getAmount());
-        body.put("payment_method_id", "pix");
-        body.put("description", "Pagamento teste");
-
+        // Payer
         Map<String, String> payer = new HashMap<>();
-        payer.put("email", "test_user_123@testuser.com");
+        payer.put("email", payment.getPayerEmail()); // e-mail real do pagador
+        payer.put("first_name", "APRO"); // remover em produção
+
+        // Payment method
+        Map<String, String> paymentMethod = new HashMap<>();
+        paymentMethod.put("id", "pix");
+        paymentMethod.put("type", "bank_transfer");
+
+        // Payment entry
+        Map<String, Object> paymentEntry = new HashMap<>();
+        paymentEntry.put("amount", payment.getAmount().toString());
+        paymentEntry.put("payment_method", paymentMethod);
+
+        // Transactions
+        Map<String, Object> transactions = new HashMap<>();
+        transactions.put("payments", java.util.List.of(paymentEntry));
+
+        // Body
+        Map<String, Object> body = new HashMap<>();
+        body.put("type", "online");
+        body.put("external_reference", UUID.randomUUID().toString());
+        body.put("total_amount", payment.getAmount().toString());
         body.put("payer", payer);
-
-        System.out.println("=== MERCADO PAGO DEBUG ===");
-        System.out.println("URL: " + url);
-        System.out.println("ACCESS TOKEN: " + accessToken);
-        System.out.println("HEADERS: " + headers);
-        System.out.println("BODY: " + body);
-
+        body.put("transactions", transactions);
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
         try {
-
             ResponseEntity<Map> response =
                     restTemplate.postForEntity(url, request, Map.class);
 
             Map<String, Object> responseBody = response.getBody();
+            System.out.println("RESPOSTA MP: " + responseBody);
+            System.out.println("ORDER ID: " + responseBody.get("id"));
 
-            System.out.println("RESPOSTA MP:" + responseBody);
+            Map<String, Object> transactionsResp =
+                    (Map<String, Object>) responseBody.get("transactions");
 
-            Map<String, Object> poi =
-                    (Map<String, Object>) responseBody.get("point_of_interaction");
+            java.util.List<Map<String, Object>> payments =
+                    (java.util.List<Map<String, Object>>) transactionsResp.get("payments");
 
-            Map<String, Object> transactionData =
-                    (Map<String, Object>) poi.get("transaction_data");
+            Map<String, Object> firstPayment = payments.get(0);
+            System.out.println("PAYMENT ID: " + firstPayment.get("id"));
+
+            Map<String, Object> paymentMethodResp =
+                    (Map<String, Object>) firstPayment.get("payment_method");
 
             GatewayResponse gatewayResponse = new GatewayResponse();
+            gatewayResponse.setOrderId(responseBody.get("id").toString());
 
             gatewayResponse.setTransactionId(
-                    Long.valueOf(responseBody.get("id").toString())
+                    firstPayment.get("id").toString()
             );
 
             gatewayResponse.setStatus(responseBody.get("status").toString());
-
-            gatewayResponse.setQrCode((String) transactionData.get("qr_code"));
-            gatewayResponse.setTicketUrl((String) transactionData.get("ticket_url"));
-
+            gatewayResponse.setQrCode((String) paymentMethodResp.get("qr_code"));
+            gatewayResponse.setTicketUrl((String) paymentMethodResp.get("ticket_url"));
             gatewayResponse.setRawResponse(responseBody.toString());
 
             return gatewayResponse;
 
-        } catch (HttpClientErrorException e) {
-
-            System.out.println("ERRO CLIENTE MP: " + e.getResponseBodyAsString());
-
-            throw new RuntimeException("Erro de requisição ao gateway (dados inválidos ou não autorizado)");
-
-        } catch (HttpServerErrorException e) {
-
-            System.out.println("ERRO SERVIDOR MP: " + e.getResponseBodyAsString());
-
-            throw new RuntimeException("Gateway de pagamento indisponível no momento");
-
-        } catch (ResourceAccessException e) {
-
-            System.out.println("ERRO CONEXÃO MP: " + e.getMessage());
-
-            throw new RuntimeException("Erro de conexão com o gateway");
-
+        } catch (Exception e) {
+            System.out.println("ERRO MERCADO PAGO: " + e.getMessage());
+            throw new RuntimeException("Erro ao chamar Mercado Pago", e);
         }
     }
 
-    public GatewayResponse getPayment(String id) {
-        String url = "https://api.mercadopago.com/v1/payments/" + id;
+    public GatewayResponse getOrder(String orderId) {
+        String url = "https://api.mercadopago.com/v1/orders/" + orderId;
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
@@ -112,7 +111,6 @@ public class MercadoPagoClient {
                 restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
 
         Map<String, Object> body = response.getBody();
-
         System.out.println("Resposta GET MP: " + body);
 
         GatewayResponse res = new GatewayResponse();
