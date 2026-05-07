@@ -21,58 +21,56 @@ public class WebhookService {
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
     private final MercadoPagoClient mercadoPagoClient;
+    private final InvoiceStatusService invoiceStatusService;
 
-    public WebhookService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceRepository invoiceRepository, MercadoPagoClient mercadoPagoClient) {
+    public WebhookService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceRepository invoiceRepository, MercadoPagoClient mercadoPagoClient, InvoiceStatusService invoiceStatusService) {
         this.repository = repository;
         this.paymentRepository = paymentRepository;
         this.invoiceRepository = invoiceRepository;
         this.mercadoPagoClient = mercadoPagoClient;
+        this.invoiceStatusService = invoiceStatusService;
     }
 
     @Transactional
     public void process(Map<String, Object> payload) {
 
-        // pegar ID da transação do gateway
         String externalId = extractExternalId(payload);
+        if (externalId == null) {
+            System.out.println("WEBHOOK: externalId não encontrado no payload");
+            return;
+        }
 
         GatewayTransaction transaction = repository
                 .findByExternalId(externalId)
-                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+                .orElse(null);
 
-        //atualizar status
+        if (transaction == null) {
+            System.out.println("WEBHOOK: transaction não encontrada para externalId: " + externalId);
+            return;
+        }
+
+        // busca status real do MP
         GatewayResponse response = mercadoPagoClient.getOrder(externalId);
 
-        response.setStatus("approved");
-
         transaction.setStatus(mapStatus(response.getStatus()));
-
         repository.save(transaction);
 
         Payment payment = transaction.getPayment();
         payment.setPaymentStatus(mapToPaymentStatus(transaction.getStatus()));
-
         paymentRepository.save(payment);
 
-        updateInvoiceStatus(payment.getInvoice());
+        invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
     }
 
     private String extractExternalId(Map<String, Object> payload) {
-
-        Map<String, Object> data = (Map<String, Object>) payload.get("data");
-        return data.get("id").toString();
-    }
-
-    private void updateInvoiceStatus(Invoice invoice) {
-
-        var totalPaid = paymentRepository.sumApprovedByInvoice(invoice.getId());
-
-        if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
-            invoice.setStatus(com.raul.backend.enums.InvoiceStatus.PAID);
-        } else {
-            invoice.setStatus(com.raul.backend.enums.InvoiceStatus.PENDING);
+        try {
+            Map<String, Object> data = (Map<String, Object>) payload.get("data");
+            if (data == null) return null;
+            Object id = data.get("id");
+            return id != null ? id.toString() : null;
+        } catch (Exception e) {
+            return null;
         }
-
-        invoiceRepository.save(invoice);
     }
 
     private GatewayStatus mapStatus(String status){
@@ -82,6 +80,8 @@ public class WebhookService {
             case "approved" -> GatewayStatus.APPROVED;
             case "pending" -> GatewayStatus.PENDING;
             case "rejected" -> GatewayStatus.REJECTED;
+            case "action_required" -> GatewayStatus.PENDING;
+            case "processing" -> GatewayStatus.PENDING;
             default -> GatewayStatus.ERROR;
         };
     }

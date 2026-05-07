@@ -27,7 +27,7 @@ public class InvoiceStatusService {
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
 
-        if (invoice.getStatus() == InvoiceStatus.CANCELED
+        if (invoice.getStatus() == InvoiceStatus.CANCELLED
                 || invoice.getStatus() == InvoiceStatus.REFUNDED) {
             return;
         }
@@ -36,6 +36,8 @@ public class InvoiceStatusService {
 
         if (totalPaid.compareTo(invoice.getAmount()) >= 0) {
             invoice.setStatus(InvoiceStatus.PAID);
+        } else if (totalPaid.compareTo(BigDecimal.ZERO) > 0) {
+            invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
         } else if (LocalDate.now().isAfter(invoice.getDueDate())) {
             invoice.setStatus(InvoiceStatus.OVERDUE);
         } else {

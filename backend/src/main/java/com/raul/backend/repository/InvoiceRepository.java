@@ -15,6 +15,9 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByStatusAndDueDateBefore(InvoiceStatus status, LocalDate date);
     List<Invoice> findByStatus(InvoiceStatus status);
     List<Invoice> findByDueDateBeforeAndStatusNot(LocalDate date, InvoiceStatus status);
+    boolean existsByContractIdAndIssueDateBetween(Long contractId, LocalDate start, LocalDate end);
+    boolean existsByContractIdAndIssueDateBetweenAndStatusNot(Long contractId, LocalDate start, LocalDate end, InvoiceStatus status);
+    List<Invoice> findByStatusIn(List<InvoiceStatus> statuses);
 
     @Query("""
     SELECT COALESCE(SUM(i.amount), 0)

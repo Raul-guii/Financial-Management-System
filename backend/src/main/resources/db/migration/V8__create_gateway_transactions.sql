@@ -2,6 +2,7 @@ CREATE TABLE gateway_transactions(
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     status VARCHAR(20) NOT NULL,
     external_id VARCHAR(254) NOT NULL UNIQUE,
+    transaction_id VARCHAR(254),
     gateway_name VARCHAR(254) NOT NULL,
     raw_response TEXT,
     amount DECIMAL(15, 2) NOT NULL,

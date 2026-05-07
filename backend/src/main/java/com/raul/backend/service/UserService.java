@@ -38,7 +38,6 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado: " + email));
 
-
         if (user.getDeletedAt() != null) {
             throw new UsernameNotFoundException("Usuário desativado");
         }
@@ -82,11 +81,26 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
+        // se está rebaixando um admin, garante que não é o último
+        if (dto.getRole() != null
+                && user.getRole() == Roles.ADMIN
+                && dto.getRole() != Roles.ADMIN) {
+            long activeAdmins = userRepository.countByRoleAndDeletedAtIsNull(Roles.ADMIN);
+            if (activeAdmins <= 1) {
+                throw new RuntimeException("Não é possível rebaixar o único administrador ativo do sistema");
+            }
+        }
+
         if (dto.getName() != null && !dto.getName().isBlank()) {
             user.setName(dto.getName());
         }
 
+        // Validação de email duplicado no update
         if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
+            if (userRepository.existsByEmail(dto.getEmail())
+                    && !dto.getEmail().equalsIgnoreCase(user.getEmail())) {
+                throw new RuntimeException("Email já cadastrado");
+            }
             user.setEmail(dto.getEmail());
         }
 
@@ -134,22 +148,19 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void deactivateUser(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        user.setDeletedAt(LocalDateTime.now());
-
-        userRepository.save(user);
-    }
-
-    @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        user.setDeletedAt(LocalDateTime.now());
+        // bloqueia delete do último admin ativo
+        if (user.getRole() == Roles.ADMIN) {
+            long activeAdmins = userRepository.countByRoleAndDeletedAtIsNull(Roles.ADMIN);
+            if (activeAdmins <= 1) {
+                throw new RuntimeException("Não é possível excluir o único administrador ativo do sistema");
+            }
+        }
 
+        user.setDeletedAt(LocalDateTime.now());
         userRepository.save(user);
     }
 }
