@@ -118,4 +118,22 @@ public class MercadoPagoClient {
 
         return res;
     }
+
+    public void refundPayment(String mercadoPagoPaymentId) {
+        String url = "https://api.mercadopago.com/v1/payments/" + mercadoPagoPaymentId + "/refunds";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.add("X-Idempotency-Key", UUID.randomUUID().toString());
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        try {
+            restTemplate.postForEntity(url, request, Map.class);
+        } catch (Exception e) {
+            System.out.println("ERRO REFUND MP: " + e.getMessage());
+            throw new RuntimeException("Erro ao processar reembolso no Mercado Pago", e);
+        }
+    }
 }

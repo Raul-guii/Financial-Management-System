@@ -29,12 +29,16 @@ public class RefundRequestService {
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
     private final InvoiceRepository invoiceRepository;
+    private final GatewayTransactionService gatewayTransactionService;
+    private final InvoiceStatusService invoiceStatusService;
 
-    public RefundRequestService(RefundRequestRepository refundRequestRepository, PaymentRepository paymentRepository, UserRepository userRepository, InvoiceRepository invoiceRepository) {
+    public RefundRequestService(RefundRequestRepository refundRequestRepository, PaymentRepository paymentRepository, UserRepository userRepository, InvoiceRepository invoiceRepository, GatewayTransactionService gatewayTransactionService, InvoiceStatusService invoiceStatusService) {
         this.refundRequestRepository = refundRequestRepository;
         this.paymentRepository = paymentRepository;
         this.userRepository = userRepository;
         this.invoiceRepository = invoiceRepository;
+        this.gatewayTransactionService = gatewayTransactionService;
+        this.invoiceStatusService = invoiceStatusService;
     }
 
     @Transactional
@@ -96,10 +100,13 @@ public class RefundRequestService {
             throw new RuntimeException("Pagamento não encontrado para esta solicitação");
         }
 
+        gatewayTransactionService.processRefund(payment);
+
         payment.setPaymentStatus(PaymentStatus.REFUNDED);
         paymentRepository.save(payment);  // salva o payment
 
-        updateInvoiceStatus(payment.getInvoice());  // recalcula e salva a invoice
+        // recalcula e salva a invoice
+        invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
 
         refundRequest = refundRequestRepository.save(refundRequest);
 
@@ -119,31 +126,6 @@ public class RefundRequestService {
 
         refundRequest = refundRequestRepository.save(refundRequest);
         return toDTO(refundRequest);
-    }
-
-    private void updateInvoiceStatus(Invoice invoice) {
-        if (invoice == null) return;
-
-        BigDecimal totalApproved = paymentRepository.sumApprovedByInvoice(invoice.getId());
-
-        boolean hasRefunded = invoice.getPayment().stream()
-                .anyMatch(p -> p.getPaymentStatus() == PaymentStatus.REFUNDED);
-
-        if (totalApproved.compareTo(BigDecimal.ZERO) == 0) {
-            if (hasRefunded) {
-                invoice.setStatus(InvoiceStatus.REFUNDED);
-            } else if (invoice.getDueDate().isBefore(LocalDate.now())) {
-                invoice.setStatus(InvoiceStatus.OVERDUE);
-            } else {
-                invoice.setStatus(InvoiceStatus.PENDING);
-            }
-        } else if (totalApproved.compareTo(invoice.getAmount()) < 0) {
-            invoice.setStatus(InvoiceStatus.PARTIALLY_PAID);
-        } else {
-            invoice.setStatus(InvoiceStatus.PAID);
-        }
-
-        invoiceRepository.save(invoice);
     }
 
     private RefundRequestResponseDTO toDTO(RefundRequest refundRequest) {

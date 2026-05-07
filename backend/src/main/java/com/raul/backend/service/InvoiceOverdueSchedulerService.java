@@ -30,9 +30,8 @@ public class InvoiceOverdueSchedulerService {
     public void applyInterestAndFees() {
 
         List<Invoice> overdueInvoices =
-                invoiceRepository.findByDueDateBeforeAndStatusNot(
-                        LocalDate.now(),
-                        InvoiceStatus.PAID
+                invoiceRepository.findByStatusIn(
+                        List.of(InvoiceStatus.OVERDUE, InvoiceStatus.PENDING)
                 );
 
         BigDecimal lateFeePercent = financialParameterService.getActiveValueByName("LATE_FEE");

@@ -1,6 +1,7 @@
 package com.raul.backend.entity;
 
 import com.raul.backend.config.auditable.Auditable;
+import com.raul.backend.config.auditable.SoftDeletable;
 import com.raul.backend.enums.InvoiceStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "invoices")
-public class Invoice extends Auditable {
+public class Invoice extends SoftDeletable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

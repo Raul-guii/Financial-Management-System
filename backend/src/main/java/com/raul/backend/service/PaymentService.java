@@ -5,7 +5,6 @@ import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
 import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.enums.PaymentStatus;
-import com.raul.backend.repository.GatewayTransactionRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
@@ -23,7 +22,11 @@ public class PaymentService {
     private final InvoiceStatusService invoiceStatusService;
     private final InvoiceCalculatorService invoiceCalculatorService;
 
-    public PaymentService(GatewayTransactionService gatewayTransactionService, PaymentRepository repository, InvoiceRepository invoiceRepository, InvoiceStatusService invoiceStatusService, InvoiceCalculatorService invoiceCalculatorService) {
+    public PaymentService(GatewayTransactionService gatewayTransactionService,
+                          PaymentRepository repository,
+                          InvoiceRepository invoiceRepository,
+                          InvoiceStatusService invoiceStatusService,
+                          InvoiceCalculatorService invoiceCalculatorService) {
         this.gatewayTransactionService = gatewayTransactionService;
         this.repository = repository;
         this.invoiceRepository = invoiceRepository;
@@ -37,6 +40,11 @@ public class PaymentService {
 
         Invoice invoice = invoiceRepository.findById(dto.getInvoiceId())
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
+
+        // Bloqueia pagamento em fatura cancelada
+        if (invoice.getStatus() == InvoiceStatus.CANCELLED) {
+            throw new RuntimeException("Não é possível registrar pagamento em uma fatura cancelada");
+        }
 
         BigDecimal remaining = invoiceCalculatorService.getRemainingAmount(invoice);
 
@@ -75,16 +83,40 @@ public class PaymentService {
         Payment payment = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Payment não encontrado"));
 
-        if (dto.getAmount() != null) payment.setAmount(dto.getAmount());
-        if (dto.getPaymentDate() != null) payment.setPaymentDate(dto.getPaymentDate());
-        if (dto.getPaymentMethod() != null) { payment.setPaymentMethod(dto.getPaymentMethod());}
-        if (dto.getInvoiceId() != null) {
-            Invoice invoice = invoiceRepository.findById(dto.getInvoiceId())
-                    .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
-            payment.setInvoice(invoice);
+        if (payment.getPaymentStatus() != PaymentStatus.PENDING) {
+            throw new RuntimeException(
+                    "Não é possível editar um pagamento com status " +
+                            payment.getPaymentStatus() + ". Apenas pagamentos PENDING podem ser alterados."
+            );
         }
 
+        // amount e invoiceId bloqueados mesmo em PENDING — afetam integridade financeira
+        if (dto.getAmount() != null) {
+            throw new RuntimeException(
+                    "O valor do pagamento não pode ser alterado após o registro. " +
+                            "Cancele o pagamento e registre um novo se necessário."
+            );
+        }
+
+        if (dto.getInvoiceId() != null) {
+            throw new RuntimeException(
+                    "A fatura vinculada ao pagamento não pode ser alterada após o registro."
+            );
+        }
+
+        if (dto.getPaymentDate() != null) payment.setPaymentDate(dto.getPaymentDate());
+        if (dto.getPaymentMethod() != null) payment.setPaymentMethod(dto.getPaymentMethod());
+
         payment = repository.save(payment);
+
+        try {
+            gatewayTransactionService.processPayment(payment);
+        } catch (Exception e) {
+            throw new RuntimeException("Erro ao processar pagamento no gateway", e);
+        }
+
+        payment = repository.findById(payment.getId())
+                .orElseThrow(() -> new RuntimeException("Payment não encontrado"));
 
         return toDTO(payment);
     }

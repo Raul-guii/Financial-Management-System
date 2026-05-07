@@ -39,6 +39,7 @@ public class GatewayTransactionService {
 
      transaction.setPayment(payment);
      transaction.setExternalId(response.getOrderId());
+     transaction.setTransactionId(response.getTransactionId());
      transaction.setGatewayName("MERCADO_PAGO");
      transaction.setAmount(payment.getAmount());
 
@@ -58,11 +59,11 @@ public class GatewayTransactionService {
      paymentRepository.save(payment);
 
         System.out.println("EXTERNAL ID SALVO: " + transaction.getExternalId());
+        System.out.println("STATUS RECEBIDO DO MP: " + response.getStatus());
 
      invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
      return transaction;
     }
-
 
     private GatewayStatus mapStatus(String status){
         return switch (status){
@@ -70,6 +71,7 @@ public class GatewayTransactionService {
             case "pending" -> GatewayStatus.PENDING;
             case "rejected" -> GatewayStatus.REJECTED;
             case "action_required" -> GatewayStatus.PENDING;
+            case "processing" -> GatewayStatus.PENDING;
             default -> GatewayStatus.ERROR;
         };
     }
@@ -81,5 +83,19 @@ public class GatewayTransactionService {
             case PENDING -> PaymentStatus.PENDING;
             default -> PaymentStatus.ERROR;
         };
+    }
+
+    @Transactional
+    public void processRefund(Payment payment) {
+        GatewayTransaction transaction = payment.getGatewayTransaction();
+
+        if (transaction == null) {
+            throw new RuntimeException("Pagamento não possui transação no gateway");
+        }
+
+        mercadoPagoClient.refundPayment(transaction.getTransactionId());
+
+        transaction.setStatus(GatewayStatus.REFUNDED);
+        repository.save(transaction);
     }
 }

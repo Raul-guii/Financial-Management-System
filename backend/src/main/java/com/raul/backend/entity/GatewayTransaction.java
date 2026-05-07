@@ -30,6 +30,9 @@ public class GatewayTransaction extends Auditable {
     @Column(name = "external_id", nullable = false, unique = true, length = 254)
     private String externalId;
 
+    @Column(name = "transaction_id", length = 254)
+    private String transactionId;
+
     @NotBlank
     @Column(name = "gateway_name", nullable = false, length = 254)
     private String gatewayName;

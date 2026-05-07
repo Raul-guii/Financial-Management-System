@@ -9,6 +9,7 @@ CREATE TABLE invoices(
     interest_amount DECIMAL(15, 2) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NULL ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at DATETIME NULL,
 
     contract_id BIGINT,
 
