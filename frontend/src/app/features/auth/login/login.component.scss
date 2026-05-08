@@ -1,34 +1,228 @@
 .login-container {
-  height: 100vh;
   display: flex;
-  justify-content: center;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+// ============================
+// PAINEL ESQUERDO (AZUL)
+// ============================
+.left-panel {
+  flex: 1;
+  background: linear-gradient(135deg, #4A90E2 0%, #185FA5 100%);
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  background: #f5f7fa;
+  justify-content: center;
+  padding: 60px 40px;
+  color: #fff;
+  position: relative;
 }
 
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  padding: 2rem;
+.logo-placeholder {
+  width: 180px;
+  height: 180px;
   border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  span {
+    font-size: 48px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  // Quando você adicionar uma imagem de logo, use:
+  // img {
+  //   max-width: 140px;
+  //   max-height: 140px;
+  // }
 }
 
-.full-width {
+.brand-text {
+  text-align: center;
+  max-width: 400px;
+
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    font-size: 14px;
+    line-height: 1.6;
+    opacity: 0.9;
+  }
+}
+
+// ============================
+// PAINEL DIREITO (BRANCO)
+// ============================
+.right-panel {
+  flex: 1;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+}
+
+.login-form {
   width: 100%;
-  margin-bottom: 1rem;
+  max-width: 360px;
 }
 
-h2 {
+.form-header {
+  margin-bottom: 32px;
+
+  h2 {
+    font-size: 26px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 8px 0;
+  }
+
+  p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+// ============================
+// FORM INPUTS
+// ============================
+.form-group {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 6px;
+  }
+
+  input {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    background: #fff;
+    color: #1a1a1a;
+    transition: all 0.15s ease;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #185FA5;
+      box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.12);
+    }
+  }
+}
+
+// ============================
+// BOTÃO
+// ============================
+.btn-login {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  background: #185FA5;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  margin-top: 8px;
+
+  &:hover {
+    background: #0C447C;
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// ============================
+// MENSAGEM DE ERRO
+// ============================
+.error-message {
+  margin-top: 16px;
+  padding: 10px 12px;
+  background: #FCEBEB;
+  color: #A32D2D;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid #F7C1C1;
   text-align: center;
-  margin-bottom: 1.5rem;
 }
 
-button {
-  margin-top: 1rem;
-}
-
-.error {
-  color: red;
-  margin-top: 1rem;
+// ============================
+// ESQUECI A SENHA
+// ============================
+.forgot-password {
   text-align: center;
+  margin-top: 20px;
+
+  a {
+    font-size: 13px;
+    color: #6b7280;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover {
+      color: #185FA5;
+    }
+  }
+}
+
+// ============================
+// RESPONSIVO (MOBILE)
+// ============================
+@media (max-width: 768px) {
+  .login-container {
+    flex-direction: column;
+  }
+
+  .left-panel {
+    padding: 40px 24px;
+    min-height: 280px;
+
+    .logo-placeholder {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 20px;
+
+      span {
+        font-size: 32px;
+      }
+    }
+
+    .brand-text h1 {
+      font-size: 20px;
+    }
+
+    .brand-text p {
+      font-size: 13px;
+    }
+  }
+
+  .right-panel {
+    padding: 40px 24px;
+  }
 }

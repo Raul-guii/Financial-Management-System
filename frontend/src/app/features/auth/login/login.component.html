@@ -1,29 +1,61 @@
 <div class="login-container">
-  <mat-card class="login-card">
+  <!-- Painel esquerdo - azul com logo -->
+  <div class="left-panel">
+    <div class="logo-placeholder">
+      <!-- Coloque sua logo aqui -->
+      <span>SGF</span>
+    </div>
+    <div class="brand-text">
+      <h1>Sistema de Gestão Financeira</h1>
+      <p>Controle completo de contratos, faturas e pagamentos recorrentes</p>
+    </div>
+  </div>
 
-    <h2>Login</h2>
+  <!-- Painel direito - formulário branco -->
+  <div class="right-panel">
+    <div class="login-form">
+      <div class="form-header">
+        <h2>Bem-vindo</h2>
+        <p>Entre com suas credenciais para acessar o sistema</p>
+      </div>
 
-    <form (ngSubmit)="login()">
+      <form (ngSubmit)="login()">
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input 
+            type="email" 
+            id="email"
+            [(ngModel)]="email" 
+            name="email" 
+            placeholder="seu@email.com"
+            required
+          />
+        </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Email</mat-label>
-        <input matInput [(ngModel)]="email" name="email" required>
-      </mat-form-field>
+        <div class="form-group">
+          <label for="password">Senha</label>
+          <input 
+            type="password" 
+            id="password"
+            [(ngModel)]="password" 
+            name="password" 
+            placeholder="••••••••"
+            required
+          />
+        </div>
 
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Senha</mat-label>
-        <input matInput type="password" [(ngModel)]="password" name="password" required>
-      </mat-form-field>
+        <button type="submit" class="btn-login">
+          Entrar
+        </button>
 
-      <button mat-raised-button color="primary" class="full-width">
-        Entrar
-      </button>
+        <div class="error-message" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
 
-      <p class="error" *ngIf="errorMessage">
-        {{ errorMessage }}
-      </p>
-
-    </form>
-
-  </mat-card>
+        <div class="forgot-password">
+          <a href="#">Esqueceu sua senha?</a>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
