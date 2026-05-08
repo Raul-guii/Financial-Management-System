@@ -1,10 +1,12 @@
-import { InvoiceStatus } from "../../core/enums/invoice.enum";
+import { InvoiceStatus } from './invoice-status.enum';
 
-export interface InvoiceUpdate {
+export interface InvoiceUpdateRequest {
   status?: InvoiceStatus;
+
   issueDate?: string;
-  dueDay?: string;
-  lateFreeAmount?: number;
-  interestAmount?: number;
+  dueDate?: string;
+
+  amount?: number;
+
   contractId?: number;
 }

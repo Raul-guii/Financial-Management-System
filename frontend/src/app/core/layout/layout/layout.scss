@@ -1,6 +1,7 @@
 .layout {
   display: flex;
   height: 100vh;
+  overflow: hidden; // evita scroll duplo
 }
 
 .sidebar {
@@ -8,6 +9,7 @@
   background: #1e293b;
   color: white;
   padding: 1rem;
+  flex-shrink: 0; // impede a sidebar de encolher
 }
 
 .sidebar a {
@@ -21,6 +23,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0; // evita overflow horizontal
 }
 
 .header {
@@ -30,9 +33,11 @@
   justify-content: space-between;
   align-items: center;
   padding: 0 1rem;
+  flex-shrink: 0; // header não encolhe
 }
 
 .content {
   flex: 1;
+  overflow-y: auto; 
   padding: 1rem;
 }

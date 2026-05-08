@@ -1,91 +1,270 @@
-.header {
+.page {
+  padding: 24px;
+  background: #F8F9FC;
+  min-height: 100vh;
+}
+
+.page-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  justify-content: space-between;
+  margin-bottom: 24px;
 }
 
-.new {
-  background: #1677ff;
-  color: white;
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
 }
 
-/* tabela */
+.page-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+// ============================
+// TABELA
+// ============================
+.table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  font-size: 13px;
 }
 
-th, td {
-  padding: 12px;
+thead tr {
+  background: #f9fafb;
+}
+
+thead th {
   text-align: left;
-}
-
-thead {
-  background: #f5f6fa;
-}
-
-tbody tr:hover {
-  background: #f9fafc;
-}
-
-/* roles */
-.role {
-  padding: 4px 10px;
-  border-radius: 8px;
+  padding: 11px 16px;
   font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.1s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f9fafb; }
+}
+
+tbody td {
+  padding: 12px 16px;
+  color: #1a1a1a;
+  vertical-align: middle;
+}
+
+.text-secondary {
+  color: #6b7280 !important;
+}
+
+// ============================
+// AVATAR + CÉLULA DE USUÁRIO
+// ============================
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+
+  &.av-red    { background: #FCEBEB; color: #A32D2D; }
+  &.av-purple { background: #EEEDFE; color: #534AB7; }
+  &.av-teal   { background: #E1F5EE; color: #0F6E56; }
+}
+
+.user-name {
   font-weight: 500;
 }
 
-.role.admin {
-  background: #e6f4ff;
-  color: #1677ff;
+// ============================
+// BADGES DE ROLE
+// ============================
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.badge-admin    { background: #FCEBEB; color: #A32D2D; }
+  &.badge-gestor   { background: #EEEDFE; color: #534AB7; }
+  &.badge-analista { background: #E1F5EE; color: #0F6E56; }
 }
 
-.role.financial_analyst {
-  background: #f6ffed;
-  color: #52c41a;
-}
-
-/* ações */
+// ============================
+// AÇÕES
+// ============================
 .actions {
   display: flex;
   gap: 6px;
+  justify-content: flex-end;
 }
 
-button {
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
+.icon-btn {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
   cursor: pointer;
-  font-size: 12px;
+  color: #6b7280;
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.15s;
+
+  &:hover {
+    background: #f3f4f6;
+    color: #1a1a1a;
+  }
+
+  &.icon-btn-danger:hover {
+    background: #FCEBEB;
+    color: #A32D2D;
+    border-color: #F7C1C1;
+  }
 }
 
-/* botões */
-.edit {
-  background: #1677ff;
-  color: white;
+// ============================
+// EMPTY STATE
+// ============================
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+
+  i {
+    font-size: 36px;
+    color: #d1d5db;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 16px;
+  }
 }
 
-.deactivate {
-  background: #faad14;
-  color: white;
+// ============================
+// BOTÕES
+// ============================
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: background 0.15s;
 }
 
-.delete {
-  background: #ff4d4f;
-  color: white;
+.btn-primary {
+  background: #185FA5;
+  color: #fff;
+  &:hover { background: #0C447C; }
 }
 
-.empty {
-  margin-top: 20px;
-  color: #999;
+.btn-secondary {
+  background: #fff;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  &:hover { background: #f9fafb; }
+}
+
+.btn-danger {
+  background: #FCEBEB;
+  color: #A32D2D;
+  border: 1px solid #F7C1C1;
+  &:hover { background: #f5c6c6; }
+}
+
+// ============================
+// MODAL
+// ============================
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px;
+  width: 380px;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.modal-icon-wrap {
+  margin-bottom: 16px;
+}
+
+.modal-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #FCEBEB;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  color: #A32D2D;
+  font-size: 20px;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.modal-text {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+  margin: 0 0 24px 0;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
 }

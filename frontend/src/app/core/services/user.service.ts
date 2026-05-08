@@ -1,38 +1,39 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { User } from '../../models/user.model';
+import { environment } from '../../../environments/environment';
+import { UserResponse } from '../../models/users/user-response.model';
+import { UserCreateRequest } from '../../models/users/user-create.model';
+import { UserUpdateRequest } from '../../models/users/user-update.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+
+@Injectable({ providedIn: 'root' })
 export class UserService {
-
-  private api = 'http://localhost:8080/users';
+  private api = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<User[]> {
-    return this.http.get<User[]>(this.api);
+  getAll(): Observable<UserResponse[]> {
+    return this.http.get<UserResponse[]>(this.api);
   }
 
-  getById(id: number): Observable<User> {
-    return this.http.get<User>(`${this.api}/${id}`);
+  getById(id: number): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.api}/${id}`);
   }
 
-  create(data: any): Observable<User> {
-    return this.http.post<User>(this.api, data);
+  create(data: UserCreateRequest): Observable<UserResponse> {
+    return this.http.post<UserResponse>(this.api, data);
   }
 
-  update(id: number, data: any): Observable<User> {
-    return this.http.put<User>(`${this.api}/${id}`, data);
+  update(id: number, data: UserUpdateRequest): Observable<UserResponse> {
+    return this.http.put<UserResponse>(`${this.api}/${id}`, data);
   }
 
-  deactivate(id: number) {
-    return this.http.patch(`${this.api}/${id}/deactivate`, {});
+  deactivate(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.api}/${id}/deactivate`, {});
   }
-  
-  delete(id: number) {
-    return this.http.delete(`${this.api}/${id}`);
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.api}/${id}`);
   }
 }

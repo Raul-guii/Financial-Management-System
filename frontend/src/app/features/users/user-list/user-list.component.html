@@ -1,50 +1,85 @@
-<div class="header">
-  <h2>Usuários</h2>
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Usuários</h1>
+      <p class="page-subtitle">{{ users.length }} usuário{{ users.length !== 1 ? 's' : '' }} cadastrado{{ users.length !== 1 ? 's' : '' }}</p>
+    </div>
+    <a routerLink="/users/new" class="btn btn-primary">
+      <i class="ti ti-plus"></i>
+      Novo usuário
+    </a>
+  </div>
 
-  <button class="new" routerLink="/users/new">
-    + Novo Usuário
-  </button>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>E-mail</th>
+          <th>Role</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>
+            <div class="user-cell">
+              <div class="avatar" [ngClass]="getAvatarClass(user.role)">
+                {{ getInitials(user.name) }}
+              </div>
+              <span class="user-name">{{ user.name }}</span>
+            </div>
+          </td>
+          <td class="text-secondary">{{ user.email }}</td>
+          <td>
+            <span class="badge" [ngClass]="getRoleBadgeClass(user.role)">
+              {{ getRoleLabel(user.role) }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <a [routerLink]="['/users', user.id, 'edit']" class="icon-btn" title="Editar">
+                <i class="ti ti-edit"></i>
+              </a>
+              <button class="icon-btn icon-btn-danger" (click)="openDeleteConfirm(user)" title="Remover">
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="users.length === 0">
+          <td colspan="4">
+            <div class="empty-state">
+              <i class="ti ti-users"></i>
+              <p>Nenhum usuário cadastrado</p>
+              <a routerLink="/users/new" class="btn btn-primary">Criar primeiro usuário</a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
-<table *ngIf="users.length > 0; else empty">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Nome</th>
-      <th>Email</th>
-      <th>Perfil</th>
-      <th>Ações</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr *ngFor="let user of users">
-      <td>{{ user.id }}</td>
-      <td>{{ user.name }}</td>
-      <td>{{ user.email }}</td>
-
-      <!-- ROLE COM ESTILO -->
-      <td>
-        <span class="role" [ngClass]="user.role.toLowerCase()">
-          {{ user.role }}
-        </span>
-      </td>
-
-      <!-- AÇÕES -->
-      <td class="actions">
-
-        <button class="delete" (click)="delete(user.id)">
-          Excluir
-        </button>
-        <button class="edit" [routerLink]="['/users/edit', user.id]">
-          Editar
-        </button>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- ESTADO VAZIO -->
-<ng-template #empty>
-  <p class="empty">Nenhum usuário encontrado</p>
-</ng-template>
+<!-- MODAL DE CONFIRMAÇÃO DE DELETE -->
+<div class="modal-overlay" *ngIf="userToDelete" (click)="cancelDelete()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon-wrap">
+      <div class="modal-icon">
+        <i class="ti ti-trash"></i>
+      </div>
+    </div>
+    <h3 class="modal-title">Remover usuário?</h3>
+    <p class="modal-text">
+      O usuário <strong>{{ userToDelete.name }}</strong> será removido permanentemente. Esta ação não pode ser desfeita.
+    </p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-danger" (click)="confirmDelete()">
+        <i class="ti ti-trash"></i>
+        Remover
+      </button>
+    </div>
+  </div>
+</div>
