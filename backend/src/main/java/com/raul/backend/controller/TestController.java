@@ -19,18 +19,7 @@ public class TestController {
         this.invoiceStatusService = invoiceStatusService;
     }
 
-    @PostMapping("/simulate-approval/{paymentId}")
-    public void simulateApproval(@PathVariable Long paymentId) {
-        Payment payment = paymentRepository.findById(paymentId)
-                .orElseThrow(() -> new RuntimeException("Payment não encontrado"));
-
-        payment.setPaymentStatus(PaymentStatus.APPROVED);
-        paymentRepository.save(payment);
-
-        invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
-    }
-
-    @PostMapping("/test/simulate-refund/{paymentId}")
+    @PostMapping("/simulate-refund/{paymentId}")
     public void simulateRefund(@PathVariable Long paymentId) {
         Payment payment = paymentRepository.findById(paymentId)
                 .orElseThrow(() -> new RuntimeException("Payment não encontrado"));
@@ -40,4 +29,5 @@ public class TestController {
 
         invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
     }
+
 }

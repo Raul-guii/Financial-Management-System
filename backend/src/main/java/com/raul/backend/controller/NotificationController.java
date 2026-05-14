@@ -6,12 +6,10 @@ import com.raul.backend.entity.User;
 import com.raul.backend.repository.UserRepository;
 import com.raul.backend.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,5 +42,15 @@ public class NotificationController {
     public String testNotifications() {
         notificationService.notifyUpcomingInvoices();
         return "Executado";
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
+    @PatchMapping("/read-all")
+    public ResponseEntity<Void> markAllAsRead(Authentication authentication) {
+        String email = authentication.getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        notificationService.markAllAsRead(user.getId());
+        return ResponseEntity.noContent().build();
     }
 }
