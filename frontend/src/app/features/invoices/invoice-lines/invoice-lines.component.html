@@ -1,0 +1,84 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Linhas da fatura</h1>
+      <p class="page-subtitle">Fatura #{{ invoiceId }} — {{ lines.length }} item{{ lines.length !== 1 ? 's' : '' }}</p>
+    </div>
+    <a routerLink="/invoices" class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i>
+      Voltar para faturas
+    </a>
+  </div>
+
+  <!-- RESUMO DA FATURA -->
+  <div class="summary-card" *ngIf="invoice">
+    <div class="summary-item">
+      <span class="summary-label">Status</span>
+      <span class="badge" [ngClass]="getStatusBadgeClass(invoice.status)">
+        {{ getStatusLabel(invoice.status) }}
+      </span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Emissão</span>
+      <span class="summary-value">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Vencimento</span>
+      <span class="summary-value">{{ invoice.dueDate ? (invoice.dueDate | date:'dd/MM/yyyy') : '—' }}</span>
+    </div>
+    <div class="summary-item">
+      <span class="summary-label">Total</span>
+      <span class="summary-value highlight">{{ invoice.amount | currency:'BRL' }}</span>
+    </div>
+    <div class="summary-item" *ngIf="invoice.remainingAmount > 0">
+      <span class="summary-label">Restante</span>
+      <span class="summary-value warn">{{ invoice.remainingAmount | currency:'BRL' }}</span>
+    </div>
+  </div>
+
+  <!-- TABELA DE LINHAS -->
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Descrição</th>
+          <th>Qtd</th>
+          <th>Preço unit.</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let line of lines">
+          <td class="text-secondary">#{{ line.id }}</td>
+          <td style="font-weight: 500">{{ line.description }}</td>
+          <td class="text-secondary">{{ line.quantity }}</td>
+          <td class="text-secondary">{{ line.unitPrice | currency:'BRL' }}</td>
+          <td style="font-weight: 600">{{ line.lineTotal | currency:'BRL' }}</td>
+        </tr>
+
+        <tr *ngIf="lines.length === 0">
+          <td colspan="5">
+            <div class="empty-state">
+              <i class="ti ti-receipt-off"></i>
+              <p>Nenhuma linha encontrada para esta fatura</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot *ngIf="lines.length > 0">
+        <tr class="total-row">
+          <td colspan="4" style="text-align: right; font-weight: 500; color: #6b7280;">Total</td>
+          <td style="font-weight: 600">{{ getTotal() | currency:'BRL' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="page-actions">
+    <a [routerLink]="['/invoices', invoiceId, 'edit']" class="btn btn-secondary">
+      <i class="ti ti-edit"></i>
+      Editar fatura
+    </a>
+  </div>
+</div>

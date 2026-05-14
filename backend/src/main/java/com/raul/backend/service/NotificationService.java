@@ -10,6 +10,7 @@ import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -85,6 +86,14 @@ public class NotificationService {
         }
     }
 
+    @Transactional
+    public void markAllAsRead(Long userId) {
+        List<Notification> notifications = notificationRepository
+                .findByUserIdOrderByCreatedAtDesc(userId);
+
+        notifications.forEach(n -> n.setIsRead(true));
+        notificationRepository.saveAll(notifications);
+    }
 
     public List<NotificationResponseDTO> getUserNotifications(Long userId) {
         return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId)

@@ -1,0 +1,104 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEditing ? 'Editar parâmetro' : 'Novo parâmetro' }}</h1>
+      <p class="page-subtitle">{{ isEditing ? 'Atualize os dados do parâmetro' : 'Cadastre um novo parâmetro financeiro' }}</p>
+    </div>
+    <a routerLink="/financial-parameters" class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i>
+      Voltar
+    </a>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+
+        <div class="form-group full">
+          <label for="name">Nome do parâmetro</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Ex: DAILY_INTEREST"
+            [class.invalid]="isInvalid('name')"
+          />
+          <span class="field-hint">Use letras maiúsculas e underline. Ex: LATE_FEE, DAILY_INTEREST</span>
+          <span class="field-error" *ngIf="isInvalid('name')">Nome é obrigatório</span>
+        </div>
+
+        <div class="form-group full">
+          <label for="description">Descrição</label>
+          <input
+            id="description"
+            type="text"
+            formControlName="description"
+            placeholder="Ex: Juros diário aplicado em faturas vencidas"
+            [class.invalid]="isInvalid('description')"
+          />
+          <span class="field-error" *ngIf="isInvalid('description')">Descrição é obrigatória</span>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Tipo</label>
+          <select id="type" formControlName="type" [class.invalid]="isInvalid('type')">
+            <option value="">Selecione</option>
+            <option value="DECIMAL">Decimal</option>
+            <option value="INTEGER">Inteiro</option>
+            <option value="STRING">Texto</option>
+            <option value="BOOLEAN">Booleano</option>
+          </select>
+          <span class="field-error" *ngIf="isInvalid('type')">Tipo é obrigatório</span>
+        </div>
+
+        <div class="form-group">
+          <label for="category">Categoria <span class="optional">(opcional)</span></label>
+          <select id="category" formControlName="category">
+            <option value="">Selecione</option>
+            <option value="MONETARY">Monetário</option>
+            <option value="PERCENTAGE">Percentual</option>
+            <option value="DAYS">Dias</option>
+            <option value="FLAG">Flag</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="value">Valor <span class="optional">(opcional)</span></label>
+          <input
+            id="value"
+            type="number"
+            formControlName="value"
+            placeholder="Ex: 0.033"
+            step="0.001"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Ativo</label>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" formControlName="active" />
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">{{ form.get('active')?.value ? 'Sim' : 'Não' }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="global-error" *ngIf="errorMessage">
+        <i class="ti ti-alert-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-footer">
+        <a routerLink="/financial-parameters" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          <i class="ti" [ngClass]="loading ? 'ti-loader' : (isEditing ? 'ti-check' : 'ti-plus')"></i>
+          {{ loading ? 'Salvando...' : (isEditing ? 'Salvar alterações' : 'Criar parâmetro') }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

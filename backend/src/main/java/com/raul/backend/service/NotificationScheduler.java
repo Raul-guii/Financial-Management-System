@@ -13,8 +13,8 @@ public class NotificationScheduler {
 
     private final NotificationService notificationService;
 
-    @Scheduled(cron = "0 0 8 * * *")
-    // @Scheduled(fixedRate = 60000)
+    // @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(fixedRate = 10000) // a cada 10 segundos
     public void run() {
         System.out.println("[" + LocalDateTime.now() + "] Scheduler rodando...");
         notificationService.notifyUpcomingInvoices();

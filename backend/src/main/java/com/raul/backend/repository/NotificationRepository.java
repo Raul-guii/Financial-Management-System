@@ -1,6 +1,7 @@
 package com.raul.backend.repository;
 
 import com.raul.backend.entity.Notification;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

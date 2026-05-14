@@ -1,0 +1,122 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Clientes</h1>
+      <p class="page-subtitle">{{ clients.length }} cliente{{ clients.length !== 1 ? 's' : '' }} cadastrado{{ clients.length !== 1 ? 's' : '' }}</p>
+    </div>
+    <a routerLink="/clients/new" class="btn btn-primary">
+      <i class="ti ti-plus"></i>
+      Novo cliente
+    </a>
+    <div class="filter-tabs">
+      <button 
+        class="filter-tab" 
+        [class.active]="filterMode === 'all'"
+        (click)="setFilter('all')">
+        Todos ({{ clients.length }})
+      </button>
+      <button 
+        class="filter-tab filter-tab-danger" 
+        [class.active]="filterMode === 'defaulters'"
+        (click)="setFilter('defaulters')">
+        <i class="ti ti-alert-triangle"></i>
+        Inadimplentes ({{ getDefaultersCount() }})
+      </button>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Tipo</th>
+          <th>Documento</th>
+          <th>Contato</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of getFilteredClients()">
+          <td>
+            <div class="client-cell">
+              <div class="avatar" [ngClass]="getAvatarClass(client.type)">
+                {{ getInitials(client.name) }}
+              </div>
+              <div>
+                <div class="client-name">{{ client.name }}</div>
+                <div class="client-email">{{ client.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getTypeBadgeClass(client.type)">
+              {{ getTypeLabel(client.type) }}
+            </span>
+          </td>
+          <td class="text-secondary">{{ client.document }}</td>
+          <td class="text-secondary">{{ client.phone }}</td>
+          <td>
+            <div class="status-cell">
+              <span class="badge" [ngClass]="client.active ? 'badge-active' : 'badge-inactive'">
+                {{ client.active ? 'Ativo' : 'Inativo' }}
+              </span>
+              <span class="badge badge-defaulter" *ngIf="client.defaulter">
+                Inadimplente
+              </span>
+            </div>
+          </td>
+          <td>
+            <div class="actions">
+              <a [routerLink]="['/clients', client.id, 'edit']" class="icon-btn" title="Editar">
+                <i class="ti ti-edit"></i>
+              </a>
+              <button
+                class="icon-btn"
+                [title]="client.active ? 'Desativar' : 'Ativar'"
+                (click)="toggleActive(client)">
+                <i class="ti" [ngClass]="client.active ? 'ti-eye-off' : 'ti-eye'"></i>
+              </button>
+              <button class="icon-btn icon-btn-danger" (click)="openDeleteConfirm(client)" title="Remover">
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="getFilteredClients().length === 0">
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="ti ti-building"></i>
+              <p>Nenhum cliente cadastrado</p>
+              <a routerLink="/clients/new" class="btn btn-primary">Criar primeiro cliente</a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO DE DELETE -->
+<div class="modal-overlay" *ngIf="clientToDelete" (click)="cancelDelete()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon-wrap">
+      <div class="modal-icon">
+        <i class="ti ti-trash"></i>
+      </div>
+    </div>
+    <h3 class="modal-title">Remover cliente?</h3>
+    <p class="modal-text">
+      O cliente <strong>{{ clientToDelete.name }}</strong> será removido permanentemente. Esta ação não pode ser desfeita.
+    </p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-danger" (click)="confirmDelete()">
+        <i class="ti ti-trash"></i>
+        Remover
+      </button>
+    </div>
+  </div>
+</div>
