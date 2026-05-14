@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { DashboardSummary } from '../../../models/dashboard.model';
 import { CommonModule } from '@angular/common';
@@ -23,7 +23,7 @@ export class DashboardComponent implements OnInit {
   lineChartData?: ChartConfiguration<'line'>['data'];
   lineChartOptions?: ChartConfiguration<'line'>['options'];
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.loadDashboard();
@@ -34,6 +34,7 @@ export class DashboardComponent implements OnInit {
       next: (data) => {
         this.summary = data;
         this.buildCharts();
+        this.cdr.detectChanges();
 
         console.log('PIE DATA:', this.pieChartData);
         console.log('LINE DATA:', this.lineChartData);

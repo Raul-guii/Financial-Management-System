@@ -1,0 +1,170 @@
+.page {
+  padding: 24px;
+  background: #F8F9FC;
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+// ============================
+// RESUMO
+// ============================
+.summary-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  align-items: center;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.summary-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+}
+
+.summary-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+
+  &.highlight {
+    font-size: 18px;
+    font-weight: 600;
+    color: #185FA5;
+  }
+
+  &.warn {
+    color: #854F0B;
+    font-weight: 600;
+  }
+}
+
+// ============================
+// BADGES
+// ============================
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+
+  &.badge-pending       { background: #FAEEDA; color: #854F0B; }
+  &.badge-paid          { background: #EAF3DE; color: #3B6D11; }
+  &.badge-overdue       { background: #FCEBEB; color: #A32D2D; }
+  &.badge-cancelled     { background: #F1EFE8; color: #5F5E5A; }
+  &.badge-refunded      { background: #EEEDFE; color: #534AB7; }
+  &.badge-partially     { background: #E6F1FB; color: #185FA5; }
+}
+
+// ============================
+// TABELA
+// ============================
+.table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead tr { background: #f9fafb; }
+
+thead th {
+  text-align: left;
+  padding: 11px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.1s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f9fafb; }
+}
+
+tbody td {
+  padding: 12px 16px;
+  color: #1a1a1a;
+  vertical-align: middle;
+}
+
+tfoot .total-row td {
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.text-secondary { color: #6b7280 !important; }
+
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+
+  i { font-size: 36px; color: #d1d5db; display: block; margin-bottom: 8px; }
+  p { font-size: 14px; color: #6b7280; }
+}
+
+.page-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.btn-secondary { background: #fff; color: #374151; border: 1px solid #e5e7eb; &:hover { background: #f9fafb; } }

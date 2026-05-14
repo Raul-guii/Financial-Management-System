@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ContractResponse } from '../../models/contracts/contract-response.model';
+import { ContractUpdateRequest } from '../../models/contracts/contract-update.model';
+import { ContractCreateRequest } from '../../models/contracts/contract-create.model';
 
 @Injectable({ providedIn: 'root' })
 export class ContractService {
@@ -9,20 +12,28 @@ export class ContractService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<any[]> {
-    return this.http.get<any[]>(this.api);
+  getAll(): Observable<ContractResponse[]> {
+    return this.http.get<ContractResponse[]>(this.api);
   }
 
-  getById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.api}/${id}`);
+  getById(id: number): Observable<ContractResponse> {
+    return this.http.get<ContractResponse>(`${this.api}/${id}`);
   }
 
-  create(data: any): Observable<any> {
-    return this.http.post<any>(this.api, data);
+  getByClientId(clientId: number): Observable<ContractResponse[]> {
+    return this.http.get<ContractResponse[]>(`${this.api}/client/${clientId}`);
   }
 
-  update(id: number, data: any): Observable<any> {
-    return this.http.put<any>(`${this.api}/${id}`, data);
+  create(data: ContractCreateRequest): Observable<ContractResponse> {
+    return this.http.post<ContractResponse>(this.api, data);
+  }
+
+  update(id: number, data: ContractUpdateRequest): Observable<ContractResponse> {
+    return this.http.put<ContractResponse>(`${this.api}/${id}`, data);
+  }
+
+  cancel(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.api}/${id}/cancel`, {});
   }
 
   delete(id: number): Observable<void> {

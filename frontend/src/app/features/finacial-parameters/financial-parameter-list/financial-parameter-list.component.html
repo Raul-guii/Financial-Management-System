@@ -1,0 +1,101 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Parâmetros Financeiros</h1>
+      <p class="page-subtitle">{{ parameters.length }} parâmetro{{ parameters.length !== 1 ? 's' : '' }} cadastrado{{ parameters.length !== 1 ? 's' : '' }}</p>
+    </div>
+    <a routerLink="/financial-parameters/new" class="btn btn-primary">
+      <i class="ti ti-plus"></i>
+      Novo parâmetro
+    </a>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Valor</th>
+          <th>Tipo</th>
+          <th>Categoria</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let param of parameters">
+          <td style="font-weight: 500">{{ param.name }}</td>
+          <td class="text-secondary">{{ param.description }}</td>
+          <td>
+            <span class="param-value">{{ formatValue(param) }}</span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getTypeBadgeClass(param.type)">
+              {{ getTypeLabel(param.type) }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getCategoryBadgeClass(param.category)" *ngIf="param.category">
+              {{ getCategoryLabel(param.category) }}
+            </span>
+            <span class="text-secondary" *ngIf="!param.category">—</span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="param.active ? 'badge-active' : 'badge-inactive'">
+              {{ param.active ? 'Ativo' : 'Inativo' }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <a [routerLink]="['/financial-parameters', param.id, 'edit']" class="icon-btn" title="Editar">
+                <i class="ti ti-edit"></i>
+              </a>
+              <button
+                class="icon-btn icon-btn-warning"
+                (click)="openDeactivateConfirm(param)"
+                title="Desativar"
+                [disabled]="!param.active">
+                <i class="ti ti-eye-off"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="parameters.length === 0">
+          <td colspan="7">
+            <div class="empty-state">
+              <i class="ti ti-settings-2"></i>
+              <p>Nenhum parâmetro cadastrado</p>
+              <a routerLink="/financial-parameters/new" class="btn btn-primary">
+                Criar primeiro parâmetro
+              </a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO DE DESATIVAÇÃO -->
+<div class="modal-overlay" *ngIf="paramToDeactivate" (click)="cancelDeactivate()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon-wrap">
+      <div class="modal-icon modal-icon-warning">
+        <i class="ti ti-eye-off"></i>
+      </div>
+    </div>
+    <h3 class="modal-title">Desativar parâmetro?</h3>
+    <p class="modal-text">
+      O parâmetro <strong>{{ paramToDeactivate.name }}</strong> será desativado e não será mais usado nos cálculos financeiros.
+    </p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDeactivate()">Cancelar</button>
+      <button class="btn btn-warning-solid" (click)="confirmDeactivate()">
+        <i class="ti ti-eye-off"></i>
+        Desativar
+      </button>
+    </div>
+  </div>
+</div>

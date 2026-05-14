@@ -1,0 +1,205 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Itens do contrato</h1>
+      <p class="page-subtitle">Contrato #{{ contractId }} — {{ items.length }} item{{ items.length !== 1 ? 's' : '' }} adicionado{{ items.length !== 1 ? 's' : '' }}</p>
+    </div>
+    <a routerLink="/contracts" class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i>
+      Voltar para contratos
+    </a>
+  </div>
+
+  <!-- STEP INDICATOR -->
+  <div class="step-bar">
+    <div class="step done">
+      <div class="step-num"><i class="ti ti-check"></i></div>
+      <span>Contrato</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step active">
+      <div class="step-num">2</div>
+      <span>Itens</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <span>Fatura</span>
+    </div>
+  </div>
+
+  <!-- LISTA DE ITENS JÁ ADICIONADOS -->
+  <div class="table-wrap" *ngIf="items.length > 0">
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Qtd</th>
+          <th>Preço unit.</th>
+          <th>Subtotal</th>
+          <th>Ativo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of items">
+          <td style="font-weight: 500">{{ item.name }}</td>
+          <td class="text-secondary">{{ item.description || '—' }}</td>
+          <td class="text-secondary">{{ item.quantity }}</td>
+          <td class="text-secondary">{{ item.unitPrice | currency:'BRL' }}</td>
+          <td style="font-weight: 500">{{ item.quantity * item.unitPrice | currency:'BRL' }}</td>
+          <td>
+            <span class="badge" [ngClass]="item.active ? 'badge-active' : 'badge-inactive'">
+              {{ item.active ? 'Sim' : 'Não' }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <button class="icon-btn" (click)="editItem(item)" title="Editar">
+                <i class="ti ti-edit"></i>
+              </button>
+              <button class="icon-btn icon-btn-danger" (click)="openDeleteConfirm(item)" title="Remover">
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr class="total-row">
+          <td colspan="4" style="text-align: right; font-weight: 500; color: #6b7280;">Total</td>
+          <td style="font-weight: 600">{{ getTotal() | currency:'BRL' }}</td>
+          <td colspan="2"></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- FORMULÁRIO DE ITEM -->
+  <div class="form-card">
+    <div class="form-card-title">
+      {{ editingItem ? 'Editar item' : 'Adicionar item' }}
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="name">Nome do item</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Ex: Suporte mensal"
+            [class.invalid]="isInvalid('name')"
+          />
+          <span class="field-error" *ngIf="isInvalid('name')">Nome é obrigatório</span>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Descrição <span class="optional">(opcional)</span></label>
+          <input
+            id="description"
+            type="text"
+            formControlName="description"
+            placeholder="Descrição do serviço"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="quantity">Quantidade</label>
+          <input
+            id="quantity"
+            type="number"
+            formControlName="quantity"
+            placeholder="1"
+            min="1"
+            [class.invalid]="isInvalid('quantity')"
+          />
+          <span class="field-error" *ngIf="isInvalid('quantity')">Quantidade é obrigatória</span>
+        </div>
+
+        <div class="form-group">
+          <label for="unitPrice">Preço unitário (R$)</label>
+          <input
+            id="unitPrice"
+            type="number"
+            formControlName="unitPrice"
+            placeholder="0,00"
+            min="0"
+            step="0.01"
+            [class.invalid]="isInvalid('unitPrice')"
+          />
+          <span class="field-error" *ngIf="isInvalid('unitPrice')">Preço é obrigatório</span>
+        </div>
+
+        <div class="form-group">
+          <label>Ativo</label>
+          <div class="toggle-wrap">
+            <label class="toggle">
+              <input type="checkbox" formControlName="active" />
+              <span class="toggle-slider"></span>
+            </label>
+            <span class="toggle-label">{{ form.get('active')?.value ? 'Sim' : 'Não' }}</span>
+          </div>
+        </div>
+
+        <!-- PREVIEW DO SUBTOTAL -->
+        <div class="form-group subtotal-preview" *ngIf="form.get('quantity')?.value && form.get('unitPrice')?.value">
+          <label>Subtotal</label>
+          <div class="subtotal-value">
+            {{ form.get('quantity')?.value * form.get('unitPrice')?.value | currency:'BRL' }}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="global-error" *ngIf="errorMessage">
+        <i class="ti ti-alert-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-footer">
+        <button type="button" class="btn btn-secondary" (click)="cancelEdit()" *ngIf="editingItem">
+          Cancelar edição
+        </button>
+        <button type="submit" class="btn btn-secondary" [disabled]="loading">
+          <i class="ti" [ngClass]="editingItem ? 'ti-check' : 'ti-plus'"></i>
+          {{ editingItem ? 'Salvar edição' : 'Adicionar item' }}
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="finish()"
+          [disabled]="items.length === 0">
+          Concluir e ver contratos
+          <i class="ti ti-arrow-right"></i>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO DE DELETE -->
+<div class="modal-overlay" *ngIf="itemToDelete" (click)="cancelDelete()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon-wrap">
+      <div class="modal-icon">
+        <i class="ti ti-trash"></i>
+      </div>
+    </div>
+    <h3 class="modal-title">Remover item?</h3>
+    <p class="modal-text">
+      O item <strong>{{ itemToDelete.name }}</strong> será removido permanentemente.
+    </p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-danger" (click)="confirmDelete()">
+        <i class="ti ti-trash"></i>
+        Remover
+      </button>
+    </div>
+  </div>
+</div>

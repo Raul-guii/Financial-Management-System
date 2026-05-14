@@ -1,0 +1,106 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Faturas</h1>
+      <p class="page-subtitle">{{ invoices.length }} fatura{{ invoices.length !== 1 ? 's' : '' }} encontrada{{ invoices.length !== 1 ? 's' : '' }}</p>
+    </div>
+    <a routerLink="/invoices/new" class="btn btn-primary">
+      <i class="ti ti-plus"></i>
+      Nova fatura
+    </a>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Contrato</th>
+          <th>Emissão</th>
+          <th>Vencimento</th>
+          <th>Valor</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let invoice of invoices">
+          <td class="text-secondary">#{{ invoice.id }}</td>
+          <td>
+            <div class="contract-ref">
+              <div class="avatar av-blue">C</div>
+              <span class="ref-label">Contrato #{{ invoice.contractId }}</span>
+            </div>
+          </td>
+          <td class="text-secondary">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
+          <td class="text-secondary">
+            {{ invoice.dueDate ? (invoice.dueDate | date:'dd/MM/yyyy') : '—' }}
+          </td>
+          <td>
+            <div class="amount-cell">
+              <span class="amount-total">{{ invoice.amount | currency:'BRL' }}</span>
+              <span class="amount-remaining" *ngIf="invoice.remainingAmount > 0">
+                Restante: {{ invoice.remainingAmount | currency:'BRL' }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="getStatusBadgeClass(invoice.status)">
+              {{ getStatusLabel(invoice.status) }}
+            </span>
+          </td>
+          <td>
+            <div class="actions">
+              <a [routerLink]="['/invoices', invoice.id, 'lines']" class="icon-btn" title="Ver linhas">
+                <i class="ti ti-list"></i>
+              </a>
+              <a [routerLink]="['/invoices', invoice.id, 'edit']" class="icon-btn" title="Editar">
+                <i class="ti ti-edit"></i>
+              </a>
+              <a [routerLink]="['/invoices', invoice.id, 'detail']" class="icon-btn" title="Ver detalhes">
+                <i class="ti ti-eye"></i>
+              </a>
+              <button
+                class="icon-btn icon-btn-danger"
+                (click)="openDeleteConfirm(invoice)"
+                title="Remover"
+                [disabled]="invoice.status === InvoiceStatus.PAID">
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="invoices.length === 0">
+          <td colspan="7">
+            <div class="empty-state">
+              <i class="ti ti-receipt"></i>
+              <p>Nenhuma fatura encontrada</p>
+              <a routerLink="/invoices/new" class="btn btn-primary">Gerar primeira fatura</a>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODAL DE CONFIRMAÇÃO -->
+<div class="modal-overlay" *ngIf="invoiceToDelete" (click)="cancelDelete()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon-wrap">
+      <div class="modal-icon"><i class="ti ti-trash"></i></div>
+    </div>
+    <h3 class="modal-title">Remover fatura?</h3>
+    <p class="modal-text">
+      A fatura <strong>#{{ invoiceToDelete.id }}</strong> será removida permanentemente.
+    </p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-danger" (click)="confirmDelete()">
+        <i class="ti ti-trash"></i>
+        Remover
+      </button>
+    </div>
+  </div>
+</div>

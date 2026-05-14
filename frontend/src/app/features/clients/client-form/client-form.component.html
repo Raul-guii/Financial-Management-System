@@ -1,0 +1,137 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">{{ isEditing ? 'Editar cliente' : 'Novo cliente' }}</h1>
+      <p class="page-subtitle">{{ isEditing ? 'Atualize os dados do cliente' : 'Preencha os dados para cadastrar um cliente' }}</p>
+    </div>
+    <a routerLink="/clients" class="btn btn-secondary">
+      <i class="ti ti-arrow-left"></i>
+      Voltar
+    </a>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+
+      <!-- DADOS PRINCIPAIS -->
+      <div class="section-title">Dados principais</div>
+      <div class="form-grid">
+
+        <div class="form-group full">
+          <label for="name">Nome / Razão social</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Ex: Empresa Alpha Ltda"
+            [class.invalid]="isInvalid('name')"
+          />
+          <span class="field-error" *ngIf="isInvalid('name')">Nome é obrigatório</span>
+        </div>
+
+        <div class="form-group">
+          <label for="type">Tipo</label>
+          <select id="type" formControlName="type" [class.invalid]="isInvalid('type')">
+            <option value="">Selecione</option>
+            <option value="PERSON">Pessoa Física</option>
+            <option value="COMPANY">Empresa</option>
+          </select>
+          <span class="field-error" *ngIf="isInvalid('type')">Tipo é obrigatório</span>
+        </div>
+
+        <div class="form-group">
+          <label for="document">{{ form.get('type')?.value === 'PERSON' ? 'CPF' : 'CNPJ' }}</label>
+          <input
+            id="document"
+            type="text"
+            formControlName="document"
+            [placeholder]="form.get('type')?.value === 'PERSON' ? '000.000.000-00' : '00.000.000/0000-00'"
+            [class.invalid]="isInvalid('document')"
+          />
+          <span class="field-error" *ngIf="isInvalid('document')">Documento é obrigatório</span>
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input
+            id="email"
+            type="email"
+            formControlName="email"
+            placeholder="contato@empresa.com"
+            [class.invalid]="isInvalid('email')"
+          />
+          <span class="field-error" *ngIf="isInvalid('email')">E-mail inválido</span>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Telefone</label>
+          <input
+            id="phone"
+            type="text"
+            formControlName="phone"
+            placeholder="(11) 99999-9999"
+            [class.invalid]="isInvalid('phone')"
+          />
+          <span class="field-error" *ngIf="isInvalid('phone')">Telefone é obrigatório</span>
+        </div>
+
+      </div>
+
+      <!-- ENDEREÇO -->
+      <div class="section-title">Endereço <span class="optional">(opcional)</span></div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="addressPostalCode">CEP</label>
+          <input id="addressPostalCode" type="text" formControlName="addressPostalCode" placeholder="00000-000" />
+        </div>
+
+        <div class="form-group">
+          <label for="addressStreet">Rua / Logradouro</label>
+          <input id="addressStreet" type="text" formControlName="addressStreet" placeholder="Ex: Rua das Flores" />
+        </div>
+
+        <div class="form-group">
+          <label for="addressNumber">Número</label>
+          <input id="addressNumber" type="text" formControlName="addressNumber" placeholder="Ex: 123" />
+        </div>
+
+        <div class="form-group">
+          <label for="addressNeighborhood">Bairro</label>
+          <input id="addressNeighborhood" type="text" formControlName="addressNeighborhood" placeholder="Ex: Centro" />
+        </div>
+
+        <div class="form-group">
+          <label for="addressCity">Cidade</label>
+          <input id="addressCity" type="text" formControlName="addressCity" placeholder="Ex: São Paulo" />
+        </div>
+
+        <div class="form-group">
+          <label for="addressState">Estado</label>
+          <input id="addressState" type="text" formControlName="addressState" placeholder="Ex: SP" maxlength="2" />
+        </div>
+
+        <div class="form-group">
+          <label for="addressCountry">País</label>
+          <input id="addressCountry" type="text" formControlName="addressCountry" placeholder="Ex: Brasil" />
+        </div>
+
+      </div>
+
+      <!-- ERRO GLOBAL -->
+      <div class="global-error" *ngIf="errorMessage">
+        <i class="ti ti-alert-circle"></i>
+        {{ errorMessage }}
+      </div>
+
+      <div class="form-footer">
+        <a routerLink="/clients" class="btn btn-secondary">Cancelar</a>
+        <button type="submit" class="btn btn-primary" [disabled]="loading">
+          <i class="ti" [ngClass]="loading ? 'ti-loader' : (isEditing ? 'ti-check' : 'ti-plus')"></i>
+          {{ loading ? 'Salvando...' : (isEditing ? 'Salvar alterações' : 'Cadastrar cliente') }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
