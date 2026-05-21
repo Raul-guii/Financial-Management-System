@@ -5,6 +5,10 @@ import com.raul.backend.dto.invoice.*;
 import com.raul.backend.service.FinancialSummaryService;
 import com.raul.backend.service.InvoiceService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -14,17 +18,12 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/invoices")
 public class InvoiceController {
 
     private final InvoiceService service;
-    private final FinancialSummaryService financialSummaryService;
-
-    public InvoiceController(InvoiceService service, FinancialSummaryService financialSummaryService) {
-        this.service = service;
-        this.financialSummaryService = financialSummaryService;
-    }
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
@@ -41,10 +40,12 @@ public class InvoiceController {
         return ResponseEntity.ok(service.update(id, dto));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     @GetMapping
-    public ResponseEntity<List<InvoiceResponseDTO>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
+    public ResponseEntity<Page<InvoiceResponseDTO>> findAll(
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(service.findAll(pageable, search));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")

@@ -48,7 +48,7 @@ public class Invoice extends SoftDeletable {
     @Column(name = "interest_amount", nullable = false)
     private BigDecimal interestAmount;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "contract_id")
     private Contract contract;
 

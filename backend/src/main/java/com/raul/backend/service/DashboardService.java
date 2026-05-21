@@ -2,23 +2,21 @@ package com.raul.backend.service;
 
 import com.raul.backend.dto.dashboard.DashboardSummaryDTO;
 import com.raul.backend.enums.InvoiceStatus;
+import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@RequiredArgsConstructor
 @Service
 public class DashboardService {
 
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
-
-    public DashboardService(PaymentRepository paymentRepository,
-                            InvoiceRepository invoiceRepository) {
-        this.paymentRepository = paymentRepository;
-        this.invoiceRepository = invoiceRepository;
-    }
+    private final ClientRepository clientRepository;
 
     public DashboardSummaryDTO getSummary() {
 
@@ -32,6 +30,8 @@ public class DashboardService {
         Long pendingInvoices = invoiceRepository.countByStatus(InvoiceStatus.PENDING);
         Long overdueInvoices = invoiceRepository.countByStatus(InvoiceStatus.OVERDUE);
 
+        Long clientDefaulters = clientRepository.countDefaulters();
+
         System.out.println(invoiceRepository.findByStatus(InvoiceStatus.PENDING).size());
         System.out.println(invoiceRepository.findByStatus(InvoiceStatus.OVERDUE).size());
 
@@ -42,7 +42,9 @@ public class DashboardService {
                 totalPending,
                 paidInvoices,
                 pendingInvoices,
-                overdueInvoices
+                overdueInvoices,
+                clientDefaulters
+
         );
     }
 }

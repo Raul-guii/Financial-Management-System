@@ -8,11 +8,15 @@ import com.raul.backend.repository.FinancialParameterRepository;
 import com.raul.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
+
+@Profile("dev")
+@Order(2)
 @Component
 @RequiredArgsConstructor
 public class FinancialParameterInitializer implements CommandLineRunner {
@@ -21,7 +25,6 @@ public class FinancialParameterInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
 
     @Override
-    @Order(2)
     public void run(String... args) {
 
         if (repository.count() > 0) return; // evita duplicar

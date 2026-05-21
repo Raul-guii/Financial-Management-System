@@ -8,6 +8,9 @@ import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.InvoiceLineRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,29 +20,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Service
 public class InvoiceService {
 
     private final InvoiceRepository repository;
     private final ContractRepository contractRepository;
-    private final InvoiceLineRepository invoiceLineRepository;
     private final ClientRepository clientRepository;
-    private final FinancialParameterService financialParameterService;
     private final InvoiceCalculatorService invoiceCalculatorService;
-
-    public InvoiceService(InvoiceRepository repository,
-                          ContractRepository contractRepository,
-                          InvoiceLineRepository invoiceLineRepository,
-                          ClientRepository clientRepository,
-                          FinancialParameterService financialParameterService,
-                          InvoiceCalculatorService invoiceCalculatorService) {
-        this.repository = repository;
-        this.contractRepository = contractRepository;
-        this.invoiceLineRepository = invoiceLineRepository;
-        this.clientRepository = clientRepository;
-        this.financialParameterService = financialParameterService;
-        this.invoiceCalculatorService = invoiceCalculatorService;
-    }
 
     // CREATE
     @Transactional
@@ -118,11 +106,9 @@ public class InvoiceService {
     }
 
     // GET ALL
-    public List<InvoiceResponseDTO> findAll() {
-        return repository.findAll()
-                .stream()
-                .map(this::toDTO)
-                .toList();
+    public Page<InvoiceResponseDTO> findAll(Pageable pageable) {
+        return repository.findAll(pageable)
+                .map(this::toDTO);
     }
 
     // GET BY ID
@@ -169,6 +155,18 @@ public class InvoiceService {
 
         defaulters.forEach(client -> client.setDefaulter(true));
         clientRepository.saveAll(defaulters);
+    }
+
+    public Page<InvoiceResponseDTO> findAll(Pageable pageable, String search) {
+        if (search != null && !search.isBlank()) {
+            try {
+                Long contractId = Long.parseLong(search);
+                return repository.findByContractId(contractId, pageable).map(this::toDTO);
+            } catch (NumberFormatException e) {
+                return repository.findAll(pageable).map(this::toDTO);
+            }
+        }
+        return repository.findAll(pageable).map(this::toDTO);
     }
 
     // MAPPER

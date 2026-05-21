@@ -39,7 +39,7 @@ public class Contract extends SoftDeletable {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
@@ -47,7 +47,7 @@ public class Contract extends SoftDeletable {
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
 
-    @OneToMany(mappedBy = "contract")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contract")
     private List<Invoice> invoices;
 
     @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL, orphanRemoval = true)

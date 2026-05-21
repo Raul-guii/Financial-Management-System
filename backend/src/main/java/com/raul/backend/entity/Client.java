@@ -67,7 +67,7 @@ public class Client extends SoftDeletable {
 
     private Boolean active;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by")
     private User createdBy;
 

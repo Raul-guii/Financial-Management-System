@@ -9,6 +9,8 @@ import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -88,10 +90,9 @@ public class ContractService {
     }
 
     // LIST ALL CONTRACTS
-    public List<ContractResponseDTO> findAll() {
-        return contractRepository.findAll().stream()
-                .map(this::toDTO)
-                .toList();
+    public Page<ContractResponseDTO> findAll(Pageable pageable) {
+        return contractRepository.findAll(pageable)
+                .map(this::toDTO);
     }
 
     // GET CONTRACT BY ID
@@ -116,6 +117,15 @@ public class ContractService {
         contract.setStatus(ContractStatus.CANCELLED);
 
         contractRepository.save(contract);
+    }
+
+    public Page<ContractResponseDTO> findAll(Pageable pageable, String search) {
+        if (search != null && !search.isBlank()) {
+            return contractRepository
+                    .findByClientNameContainingIgnoreCase(search, pageable)
+                    .map(this::toDTO);
+        }
+        return contractRepository.findAll(pageable).map(this::toDTO);
     }
 
     private ContractResponseDTO toDTO(Contract contract) {

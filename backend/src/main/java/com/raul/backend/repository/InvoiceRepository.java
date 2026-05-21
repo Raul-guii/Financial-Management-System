@@ -3,6 +3,8 @@ package com.raul.backend.repository;
 import ch.qos.logback.core.status.Status;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.enums.InvoiceStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -11,13 +13,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
-    List<Invoice> findByContractId(Long contractId);
-    List<Invoice> findByStatusAndDueDateBefore(InvoiceStatus status, LocalDate date);
     List<Invoice> findByStatus(InvoiceStatus status);
     List<Invoice> findByDueDateBeforeAndStatusNot(LocalDate date, InvoiceStatus status);
-    boolean existsByContractIdAndIssueDateBetween(Long contractId, LocalDate start, LocalDate end);
     boolean existsByContractIdAndIssueDateBetweenAndStatusNot(Long contractId, LocalDate start, LocalDate end, InvoiceStatus status);
     List<Invoice> findByStatusIn(List<InvoiceStatus> statuses);
+    Page<Invoice> findByDeletedAtIsNull(Pageable pageable);
+    Page<Invoice> findByContractId(Long contractId, Pageable pageable);
 
     @Query("""
     SELECT COALESCE(SUM(i.amount), 0)

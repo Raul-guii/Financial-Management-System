@@ -5,6 +5,9 @@ import com.raul.backend.dto.client.ClientResponseDTO;
 import com.raul.backend.dto.client.ClientUpdateDTO;
 import com.raul.backend.service.ClientService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,10 +37,12 @@ public class ClientController{
         return ResponseEntity.ok(clientService.update(id, dto));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCIAL_ANALYST', 'FINANCIAL_MANAGER')")
     @GetMapping
-    public ResponseEntity<List<ClientResponseDTO>> findAll() {
-        return ResponseEntity.ok(clientService.findAll());
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCIAL_ANALYST', 'FINANCIAL_MANAGER')")
+    public ResponseEntity<Page<ClientResponseDTO>> findAll(
+            @PageableDefault(size = 20, sort = "name") Pageable pageable,
+            @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(clientService.findAll(pageable, search));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'FINANCIAL_ANALYST', 'FINANCIAL_MANAGER')")

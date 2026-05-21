@@ -7,6 +7,7 @@ import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -18,117 +19,77 @@ public class ClientInitializer implements CommandLineRunner {
     private final UserRepository userRepository;
 
     @Override
+    @Profile("dev")
     @Order(3)
     public void run(String... args) {
 
+        System.out.println("[ClientInitializer] Iniciando criação de clientes...");
+
         if (repository.count() > 0) return;
 
-        User user = userRepository.findById(1L)
+        User user = userRepository.findByEmail("admin@sgf.com")
                 .orElseThrow(() -> new RuntimeException("Usuário padrão não encontrado"));
 
-        // CPF
-        save(
-                "João Silva",
-                ClientType.PERSON,
-                false,
-                "52998224725",
-                "joao.silva@email.com",
-                "61999990001",
-                "Rua das Flores",
-                "120",
-                "Centro",
-                "Formosa",
-                "GO",
-                "73800000",
-                "Brasil",
-                user
-        );
+        String[] cities = {
+                "São Paulo", "Rio de Janeiro", "Belo Horizonte",
+                "Curitiba", "Goiânia", "Brasília",
+                "Salvador", "Fortaleza"
+        };
 
-        save(
-                "Maria Oliveira",
-                ClientType.PERSON,
-                false,
-                "12345678909",
-                "maria.oliveira@email.com",
-                "61999990002",
-                "Avenida Brasil",
-                "450",
-                "Bosque",
-                "Brasília",
-                "DF",
-                "70000000",
-                "Brasil",
-                user
-        );
+        String[] states = {
+                "SP", "RJ", "MG", "PR",
+                "GO", "DF", "BA", "CE"
+        };
 
-        save(
-                "Carlos Pereira",
-                ClientType.PERSON,
-                false,
-                "11144477735",
-                "carlos.pereira@email.com",
-                "61999990003",
-                "Rua Goiás",
-                "89",
-                "Jardim América",
-                "Goiânia",
-                "GO",
-                "74000000",
-                "Brasil",
-                user
-        );
+        for (int i = 1; i <= 1000; i++) {
 
-        // CNPJ
-        save(
-                "Tech Solutions LTDA",
-                ClientType.COMPANY,
-                false,
-                "11222333000181",
-                "contato@techsolutions.com",
-                "1133334444",
-                "Rua da Tecnologia",
-                "1000",
-                "Industrial",
-                "São Paulo",
-                "SP",
-                "01000000",
-                "Brasil",
-                user
-        );
+            boolean company = i % 2 == 0;
 
-        save(
-                "Mercado Central ME",
-                ClientType.COMPANY,
-                false,
-                "11444777000161",
-                "financeiro@mercadocentral.com",
-                "6233335555",
-                "Avenida Central",
-                "250",
-                "Setor Oeste",
-                "Anápolis",
-                "GO",
-                "75000000",
-                "Brasil",
-                user
-        );
+            save(
+                    company
+                            ? "Empresa " + i + " LTDA"
+                            : "Cliente " + i,
 
-        save(
-                "Alpha Sistemas SA",
-                ClientType.COMPANY,
-                false,
-                "12345678000195",
-                "suporte@alphasistemas.com",
-                "2133336666",
-                "Rua Empresarial",
-                "700",
-                "Centro",
-                "Rio de Janeiro",
-                "RJ",
-                "20000000",
-                "Brasil",
-                user
-        );
+                    company
+                            ? ClientType.COMPANY
+                            : ClientType.PERSON,
+
+                    false,
+
+                    generateDocument(i, company),
+
+                    "cliente" + i + "@email.com",
+
+                    "6199999" + String.format("%04d", i),
+
+                    "Rua " + i,
+
+                    String.valueOf(i),
+
+                    "Centro",
+
+                    cities[i % cities.length],
+
+                    states[i % states.length],
+
+                    "73800" + String.format("%03d", i % 999),
+
+                    "Brasil",
+
+                    user
+            );
+        }
+
+        System.out.println("1000 clientes criados com sucesso.");
+    }
+
+    private String generateDocument(int i, boolean company) {
+
+        if (company) {
+            return String.format("%014d", i);
+        }
+
+        return String.format("%011d", i);
     }
 
     private void save(

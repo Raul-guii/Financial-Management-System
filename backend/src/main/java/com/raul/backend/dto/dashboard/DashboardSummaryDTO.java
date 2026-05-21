@@ -18,4 +18,6 @@ public class DashboardSummaryDTO {
     private Long paidInvoices;
     private Long pendingInvoices;
     private Long overdueInvoices;
+
+    private Long defaulterClients;
 }

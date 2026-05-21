@@ -5,11 +5,12 @@ import com.raul.backend.dto.contract.ContractResponseDTO;
 import com.raul.backend.dto.contract.ContractUpdateDTO;
 import com.raul.backend.service.ContractService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/contracts")
@@ -36,8 +37,10 @@ public class ContractController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
-    public ResponseEntity<List<ContractResponseDTO>> findAll() {
-        return ResponseEntity.ok(contractService.findAll());
+    public ResponseEntity<Page<ContractResponseDTO>> findAll(
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(contractService.findAll(pageable, search));
     }
 
     @GetMapping("/{id}")

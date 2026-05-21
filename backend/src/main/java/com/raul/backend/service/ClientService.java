@@ -10,7 +10,9 @@ import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -106,11 +108,19 @@ public class ClientService {
     }
 
     // GET ALL --------------
-    public List<ClientResponseDTO> findAll() {
-        return clientRepository.findAll().stream()
-                .filter(c -> c.getDeletedAt() == null)
-                .map(this::toDTO)
-                .toList();
+    public Page<ClientResponseDTO> findAll(Pageable pageable) {
+        return clientRepository.findByDeletedAtIsNull(pageable)
+                .map(this::toDTO);
+    }
+
+    public Page<ClientResponseDTO> findAll(Pageable pageable, String search) {
+        if (search != null && !search.isBlank()) {
+            return clientRepository
+                    .findByDeletedAtIsNullAndNameContainingIgnoreCaseOrDeletedAtIsNullAndDocumentContainingIgnoreCase(
+                            search, search, pageable)
+                    .map(this::toDTO);
+        }
+        return clientRepository.findByDeletedAtIsNull(pageable).map(this::toDTO);
     }
 
     // GET BY ID
