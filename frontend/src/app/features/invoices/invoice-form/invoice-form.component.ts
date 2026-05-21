@@ -59,14 +59,19 @@ export class InvoiceFormComponent implements OnInit {
         contracts: this.contractService.getAll(),
         clients:   this.clientService.getAll()
       }).subscribe({
-        next: ({ contracts, clients }) => {
-          this.contracts = contracts;
-          this.clientMap = clients.reduce((acc, c) => {
-            acc[c.id] = c.name;
-            return acc;
-          }, {} as Record<number, string>);
-          this.cdr.detectChanges();
-        },
+          next: ({ contracts, clients }) => {
+            this.contracts = contracts.content;
+
+            this.clientMap = clients.content.reduce(
+              (acc: Record<number, string>, c) => {
+                acc[c.id] = c.name;
+                return acc;
+              },
+              {}
+            );
+
+            this.cdr.detectChanges();
+          },
         error: (err) => console.error(err)
       });
     }

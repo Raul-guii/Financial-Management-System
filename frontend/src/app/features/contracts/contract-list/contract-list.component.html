@@ -78,6 +78,29 @@
       </tbody>
     </table>
   </div>
+
+  <!-- PAGINAÇÃO -->
+<div class="pagination" *ngIf="totalPages > 1">
+  <button 
+    class="page-btn" 
+    (click)="goToPage(currentPage - 1)"
+    [disabled]="currentPage === 0">
+    <i class="ti ti-chevron-left"></i>
+  </button>
+
+  <div class="page-info">
+    Página {{ currentPage + 1 }} de {{ totalPages }}
+    <span class="total-info">({{ totalElements }} registros)</span>
+  </div>
+
+  <button 
+    class="page-btn"
+    (click)="goToPage(currentPage + 1)"
+    [disabled]="currentPage === totalPages - 1">
+    <i class="ti ti-chevron-right"></i>
+  </button>
+</div>
+
 </div>
 
 <!-- MODAL DE CONFIRMAÇÃO -->

@@ -45,9 +45,9 @@ export class ContractFormComponent implements OnInit {
     });
 
     if (!this.isEditing) {
-      this.clientService.getAll().subscribe({
+      this.clientService.getAll(0, 1000).subscribe({
         next: (data) => {
-          this.clients = data;
+          this.clients = data.content;
           this.cdr.detectChanges();
         },
         error: (err) => console.error('Erro ao carregar clientes:', err)

@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { ClientResponse } from '../../models/clients/client-reponse.model';
 import { ClientCreateRequest } from '../../models/clients/client-create.model';
 import { ClientUpdateRequest } from '../../models/clients/client-update.model';
+import { Page } from '../../models/pages/page.model';
 
 @Injectable({ providedIn: 'root' })
 export class ClientService {
@@ -12,8 +13,11 @@ export class ClientService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<ClientResponse[]> {
-    return this.http.get<ClientResponse[]>(this.api);
+getAll(page: number = 0, size: number = 20, search: string = ''): Observable<Page<ClientResponse>> {
+    const params = search 
+      ? `?page=${page}&size=${size}&sort=name&search=${encodeURIComponent(search)}`
+      : `?page=${page}&size=${size}&sort=name`;
+    return this.http.get<Page<ClientResponse>>(`${this.api}${params}`);
   }
 
   getById(id: number): Observable<ClientResponse> {

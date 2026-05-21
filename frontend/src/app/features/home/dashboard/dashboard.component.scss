@@ -178,6 +178,29 @@
   }
 }
 
+.metric-card-clickable {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    border-color: #185FA5;
+  }
+}
+
+.summary-item-clickable {
+  text-decoration: none;
+  color: inherit;
+
+  &:hover {
+    background: #f3f4f6;
+    border-radius: 8px;
+  }
+}
+
 // ============================
 // RESPONSIVO
 // ============================

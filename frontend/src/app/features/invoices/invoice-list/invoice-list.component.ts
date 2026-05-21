@@ -16,6 +16,10 @@ export class InvoiceListComponent implements OnInit {
   invoices: InvoiceResponse[] = [];
   invoiceToDelete: InvoiceResponse | null = null;
   InvoiceStatus = InvoiceStatus;
+  currentPage = 0;
+  pageSize = 20;
+  totalElements = 0;
+  totalPages = 0;
 
   constructor(
     private invoiceService: InvoiceService,
@@ -27,13 +31,22 @@ export class InvoiceListComponent implements OnInit {
   }
 
   loadInvoices(): void {
-    this.invoiceService.getAll().subscribe({
+    this.invoiceService.getAll(this.currentPage, this.pageSize).subscribe({
       next: (data) => {
-        this.invoices = data;
+        this.invoices = data.content;
+        this.totalElements = data.totalElements;
+        this.totalPages = data.totalPages;
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar faturas:', err)
     });
+  }
+
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages) return;
+
+    this.currentPage = page;
+    this.loadInvoices();
   }
 
   getStatusBadgeClass(status: InvoiceStatus): string {

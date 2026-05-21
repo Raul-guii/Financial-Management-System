@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
+import { RouterModule } from '@angular/router';
 
 // Registre os componentes do Chart.js
 Chart.register(...registerables);
@@ -12,16 +13,17 @@ Chart.register(...registerables);
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective],
+  imports: [CommonModule, BaseChartDirective, RouterModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
+
 export class DashboardComponent implements OnInit {
   summary?: DashboardSummary;
   pieChartData?: ChartConfiguration<'pie'>['data'];
   pieChartOptions?: ChartConfiguration<'pie'>['options'];
-  lineChartData?: ChartConfiguration<'line'>['data'];
-  lineChartOptions?: ChartConfiguration<'line'>['options'];
+  lineChartData?: ChartConfiguration<'bar'>['data'];
+  lineChartOptions?: ChartConfiguration<'bar'>['options'];
 
   constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef) {}
 
@@ -49,7 +51,7 @@ export class DashboardComponent implements OnInit {
     if (!this.summary){
       console.log('SUMMARY ESTÁ UNDEFINED');
       return;
-    } 
+    }
 
     // Gráfico de Pizza
     this.pieChartData = {
@@ -81,16 +83,18 @@ export class DashboardComponent implements OnInit {
 
     // Gráfico de Linha
     this.lineChartData = {
-      labels: ['Dez', 'Jan', 'Fev', 'Mar', 'Abr', 'Mai'],
+      labels: ['Receita Bruta', 'Reembolsos', 'Receita Líquida', 'Em Aberto'],
       datasets: [{
-        label: 'Receita Líquida',
-        data: [65000, 72000, 68000, 78000, 82000, this.summary.netRevenue],
-        borderColor: '#185FA5',
-        backgroundColor: 'rgba(24, 95, 165, 0.1)',
-        tension: 0.3,
-        fill: true,
-        pointRadius: 4,
-        pointBackgroundColor: '#185FA5'
+        label: 'Valores (R$)',
+        data: [
+          Number(this.summary.grossRevenue),
+          Number(this.summary.refunded),
+          Number(this.summary.netRevenue),
+          Number(this.summary.totalPending)
+        ],
+        backgroundColor: ['#3B6D11', '#A32D2D', '#185FA5', '#854F0B'],
+        borderWidth: 0,
+        borderRadius: 6
       }]
     };
 
@@ -103,6 +107,7 @@ export class DashboardComponent implements OnInit {
       scales: {
         y: {
           beginAtZero: true,
+          min: 0,
           ticks: {
             callback: (value) => {
               return 'R$ ' + (Number(value) / 1000) + 'k';

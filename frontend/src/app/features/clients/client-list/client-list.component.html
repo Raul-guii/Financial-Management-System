@@ -9,7 +9,7 @@
       Novo cliente
     </a>
     <div class="filter-tabs">
-      <button 
+      <button
         class="filter-tab" 
         [class.active]="filterMode === 'all'"
         (click)="setFilter('all')">
@@ -22,7 +22,17 @@
         <i class="ti ti-alert-triangle"></i>
         Inadimplentes ({{ getDefaultersCount() }})
       </button>
+
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por nome ou documento..."
+        (input)="onSearch($event.target.value)"
+      />
     </div>
+        </div>
   </div>
 
   <div class="table-wrap">
@@ -97,6 +107,28 @@
       </tbody>
     </table>
   </div>
+</div>
+
+<!-- PAGINAÇÃO -->
+<div class="pagination" *ngIf="totalPages > 1">
+  <button 
+    class="page-btn" 
+    (click)="goToPage(currentPage - 1)"
+    [disabled]="currentPage === 0">
+    <i class="ti ti-chevron-left"></i>
+  </button>
+
+  <div class="page-info">
+    Página {{ currentPage + 1 }} de {{ totalPages }}
+    <span class="total-info">({{ totalElements }} registros)</span>
+  </div>
+
+  <button 
+    class="page-btn"
+    (click)="goToPage(currentPage + 1)"
+    [disabled]="currentPage === totalPages - 1">
+    <i class="ti ti-chevron-right"></i>
+  </button>
 </div>
 
 <!-- MODAL DE CONFIRMAÇÃO DE DELETE -->

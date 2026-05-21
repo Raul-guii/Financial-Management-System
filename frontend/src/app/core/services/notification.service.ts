@@ -21,6 +21,4 @@ export class NotificationService {
   markAllAsRead(): Observable<void> {
     return this.http.patch<void>(`${this.api}/read-all`, {});
   }
-
-  
 }

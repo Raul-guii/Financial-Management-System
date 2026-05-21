@@ -6,4 +6,5 @@ export interface DashboardSummary {
   paidInvoices: number;
   pendingInvoices: number;
   overdueInvoices: number;
+  defaulterClients: number;
 }

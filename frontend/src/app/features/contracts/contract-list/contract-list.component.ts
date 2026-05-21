@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { ContractService } from '../../../core/services/contract.service';
 import { ClientService } from '../../../core/services/client.service';
 import { ContractResponse } from '../../../models/contracts/contract-response.model';
 import { ContractStatus } from '../../../models/contracts/contract-status.enum';
 import { BillingPeriod } from '../../../models/contracts/billing-period.enum';
+import { ClientResponse } from '../../../models/clients/client-reponse.model';
 
 @Component({
   selector: 'app-contract-list',
@@ -20,6 +21,12 @@ export class ContractListComponent implements OnInit {
   clientMap: Record<number, string> = {};
   contractToDelete: ContractResponse | null = null;
   ContractStatus = ContractStatus;
+  currentPage = 0;
+  pageSize = 20;
+  totalElements = 0;
+  totalPages = 0;
+  searchTerm = '';
+  private searchSubject = new Subject<string>();
 
   constructor(
     private contractService: ContractService,
@@ -33,17 +40,24 @@ export class ContractListComponent implements OnInit {
 
   loadData(): void {
     forkJoin({
-      contracts: this.contractService.getAll(),
+      contracts: this.contractService.getAll(this.currentPage, this.pageSize),
       clients:   this.clientService.getAll()
     }).subscribe({
-      next: ({ contracts, clients }) => {
-        this.contracts = contracts;
-        this.clientMap = clients.reduce((acc, c) => {
-          acc[c.id] = c.name;
-          return acc;
-        }, {} as Record<number, string>);
-        this.cdr.detectChanges();
-      },
+        next: ({ contracts, clients }) => {
+          this.contracts = contracts.content;
+          this.totalPages = contracts.totalPages;
+          this.totalElements = contracts.totalElements;
+
+          this.clientMap = clients.content.reduce(
+            (acc: Record<number, string>, c: ClientResponse) => {
+              acc[c.id] = c.name;
+              return acc;
+            },
+            {}
+          );
+
+          this.cdr.detectChanges();
+        },
       error: (err) => console.error('Erro ao carregar dados:', err)
     });
   }
@@ -111,5 +125,12 @@ export class ContractListComponent implements OnInit {
       },
       error: (err) => console.error('Erro ao cancelar contrato:', err)
     });
+  }
+
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages) return;
+
+    this.currentPage = page;
+    this.loadData();
   }
 }
