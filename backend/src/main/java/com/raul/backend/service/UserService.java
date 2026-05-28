@@ -7,6 +7,8 @@ import com.raul.backend.entity.User;
 import com.raul.backend.enums.Roles;
 import com.raul.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -122,17 +124,25 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public List<UserResponseDTO> findAll() {
-        return userRepository.findAll().stream()
-                .filter(user -> user.getDeletedAt() == null)
-                .map(user -> new UserResponseDTO(
-                        user.getId(),
-                        user.getName(),
-                        user.getEmail(),
-                        user.getRole()
-                ))
-                .toList();
+    public Page<UserResponseDTO> findAll(Pageable pageable, String search) {
+        Page<User> users;
+
+        if (search != null && !search.isBlank()) {
+            users = userRepository
+                    .findByDeletedAtIsNullAndNameContainingIgnoreCaseOrDeletedAtIsNullAndEmailContainingIgnoreCase(
+                            search, search, pageable);
+        } else {
+            users = userRepository.findByDeletedAtIsNull(pageable);
+        }
+
+        return users.map(user -> new UserResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        ));
     }
+
 
     public UserResponseDTO findById(Long id) {
         User user = userRepository.findById(id)

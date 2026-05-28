@@ -2,14 +2,22 @@ package com.raul.backend.repository;
 
 import com.raul.backend.entity.User;
 import com.raul.backend.enums.Roles;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
-    Optional<User> findById(Long id);
-    public boolean existsByEmail(String email);
+    boolean existsByEmail(String email);
     long countByRoleAndDeletedAtIsNull(Roles role);
+    Page<User> findByDeletedAtIsNull(Pageable pageable);
 
+    // busca por nome OU email
+    Page<User> findByDeletedAtIsNullAndNameContainingIgnoreCaseOrDeletedAtIsNullAndEmailContainingIgnoreCase(
+            String name, String email, Pageable pageable);
 }
