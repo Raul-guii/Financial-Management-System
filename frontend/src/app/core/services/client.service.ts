@@ -13,7 +13,7 @@ export class ClientService {
 
   constructor(private http: HttpClient) {}
 
-getAll(page: number = 0, size: number = 20, search: string = ''): Observable<Page<ClientResponse>> {
+  getAll(page: number = 0, size: number = 20, search: string = ''): Observable<Page<ClientResponse>> {
     const params = search 
       ? `?page=${page}&size=${size}&sort=name&search=${encodeURIComponent(search)}`
       : `?page=${page}&size=${size}&sort=name`;

@@ -4,11 +4,13 @@ import { RouterModule } from '@angular/router';
 import { InvoiceService } from '../../../core/services/invoice.service';
 import { InvoiceResponse } from '../../../models/invoices/invoice-response.model';
 import { InvoiceStatus } from '../../../models/invoices/invoice-status.enum';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-invoice-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.scss']
 })
@@ -20,6 +22,10 @@ export class InvoiceListComponent implements OnInit {
   pageSize = 20;
   totalElements = 0;
   totalPages = 0;
+  searchTerm = '';
+  statusFilter: string = '';
+  amountFilter: string = '';  
+  private searchSubject = new Subject<string>();
 
   constructor(
     private invoiceService: InvoiceService,
@@ -28,6 +34,18 @@ export class InvoiceListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadInvoices();
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.currentPage = 0;
+      this.loadInvoices();
+    });
+  }
+
+  onSearch(term: string): void {
+    this.searchSubject.next(term);
   }
 
   loadInvoices(): void {
@@ -44,9 +62,39 @@ export class InvoiceListComponent implements OnInit {
 
   goToPage(page: number): void {
     if (page < 0 || page >= this.totalPages) return;
-
     this.currentPage = page;
     this.loadInvoices();
+  }
+
+  getFilteredInvoices(): InvoiceResponse[] {
+    return this.invoices.filter(inv => {
+      const matchStatus = !this.statusFilter || inv.status === this.statusFilter;
+      const matchAmount = this.matchesAmountFilter(inv.amount);
+      return matchStatus && matchAmount;
+    });
+  }
+
+  matchesAmountFilter(amount: number): boolean {
+    switch (this.amountFilter) {
+      case 'under100':    return amount < 100;
+      case '100to500':    return amount >= 100 && amount < 500;
+      case '500to1000':   return amount >= 500 && amount < 1000;
+      case 'above1000':   return amount >= 1000;
+      default:            return true;
+    }
+  }
+
+  countByStatus(status: string): number {
+    return this.invoices.filter(i => i.status === status).length;
+  }
+
+  getStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      PENDING: 'Pendente', PAID: 'Paga',
+      OVERDUE: 'Vencida', CANCELLED: 'Cancelada',
+      REFUNDED: 'Reembolsada', PARTIALLY_PAID: 'Parcial'
+    };
+    return map[status] ?? status;
   }
 
   getStatusBadgeClass(status: InvoiceStatus): string {
@@ -59,18 +107,6 @@ export class InvoiceListComponent implements OnInit {
       [InvoiceStatus.PARTIALLY_PAID]:'badge-partially',
     };
     return map[status] ?? '';
-  }
-
-  getStatusLabel(status: InvoiceStatus): string {
-    const map: Record<InvoiceStatus, string> = {
-      [InvoiceStatus.PENDING]:       'Pendente',
-      [InvoiceStatus.PAID]:          'Paga',
-      [InvoiceStatus.OVERDUE]:       'Vencida',
-      [InvoiceStatus.CANCELLED]:     'Cancelada',
-      [InvoiceStatus.REFUNDED]:      'Reembolsada',
-      [InvoiceStatus.PARTIALLY_PAID]:'Parcialmente paga',
-    };
-    return map[status] ?? status;
   }
 
   openDeleteConfirm(invoice: InvoiceResponse): void {

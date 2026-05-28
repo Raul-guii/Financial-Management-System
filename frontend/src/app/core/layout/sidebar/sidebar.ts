@@ -12,7 +12,17 @@ import { CommonModule } from '@angular/common';
 })
 export class SidebarComponent {
 
+  isOpen = false;
+
   constructor(private authService: AuthService){}
+
+  toggle() {
+    this.isOpen = !this.isOpen;
+  }
+
+  close() {
+    this.isOpen = false;
+  }
 
   isAdmin(): boolean {
     return this.authService.getUser()?.role === 'ADMIN';

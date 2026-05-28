@@ -1,21 +1,31 @@
-<aside class="sidebar">
+<!-- Botão hamburguer (só aparece no mobile) -->
+<button class="hamburger" (click)="toggle()">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- Overlay escuro atrás do sidebar -->
+<div class="overlay" [class.active]="isOpen" (click)="close()"></div>
+
+<aside class="sidebar" [class.open]="isOpen">
   <div class="logo">SGF</div>
 
   <nav>
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/dashboard" routerLinkActive="active" (click)="close()">Dashboard</a>
 
-    <a routerLink="/users" routerLinkActive="active" *ngIf="isAdmin()">
+    <a routerLink="/users" routerLinkActive="active" *ngIf="isAdmin()" (click)="close()">
       Usuários
     </a>
 
-    <a routerLink="/clients" routerLinkActive="active">Clientes</a>
-    <a routerLink="/contracts" routerLinkActive="active">Contratos</a>
-    <a routerLink="/invoices" routerLinkActive="active">Faturas</a>
+    <a routerLink="/clients" routerLinkActive="active" (click)="close()">Clientes</a>
+    <a routerLink="/contracts" routerLinkActive="active" (click)="close()">Contratos</a>
+    <a routerLink="/invoices" routerLinkActive="active" (click)="close()">Faturas</a>
 
-    <a routerLink="/financial-parameters" routerLinkActive="active" *ngIf="isAdminOrGestor()">
+    <a routerLink="/financial-parameters" routerLinkActive="active" *ngIf="isAdminOrGestor()" (click)="close()">
       Parâmetros
     </a>
 
-    <a routerLink="/reconciliation" routerLinkActive="active">Reconciliação</a>
+    <a routerLink="/reconciliation" routerLinkActive="active" (click)="close()">Reconciliação</a>
   </nav>
 </aside>

@@ -8,6 +8,53 @@
       <i class="ti ti-plus"></i>
       Nova fatura
     </a>
+    <div class="filters-row">
+
+      <!-- STATUS -->
+      <select
+        class="filter-select"
+        [(ngModel)]="statusFilter">
+
+        <option value="">Todos os status</option>
+        <option value="PENDING">
+          Pendente ({{ countByStatus('PENDING') }})
+        </option>
+        <option value="PAID">
+          Paga ({{ countByStatus('PAID') }})
+        </option>
+        <option value="OVERDUE">
+          Vencida ({{ countByStatus('OVERDUE') }})
+        </option>
+        <option value="CANCELLED">
+          Cancelada ({{ countByStatus('CANCELLED') }})
+        </option>
+        <option value="PARTIALLY_PAID">
+          Parcial
+        </option>
+      </select>
+
+      <!-- VALOR -->
+      <select
+        class="filter-select"
+        [(ngModel)]="amountFilter">
+
+        <option value="">Todos os valores</option>
+        <option value="under100">Até R$100</option>
+        <option value="100to500">R$100–500</option>
+        <option value="500to1000">R$500–1000</option>
+        <option value="above1000">Acima de R$1000</option>
+      </select>
+
+  </div>
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por nome"
+        (input)="onSearch($event.target.value)"
+      />
+    </div>
   </div>
 
   <div class="table-wrap">
@@ -24,7 +71,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let invoice of invoices">
+        <tr *ngFor="let invoice of getFilteredInvoices()">
           <td class="text-secondary">#{{ invoice.id }}</td>
           <td>
             <div class="contract-ref">

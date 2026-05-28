@@ -24,6 +24,72 @@
   margin: 0;
 }
 
+.search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  i {
+    position: absolute;
+    left: 10px;
+    color: #9ca3af;
+    font-size: 16px;
+  }
+}
+
+.search-input {
+  padding: 8px 12px 8px 34px;
+  font-size: 13px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #1a1a1a;
+  width: 280px;
+  transition: all 0.15s;
+
+  &::placeholder { color: #9ca3af; }
+
+  &:focus {
+    outline: none;
+    border-color: #185FA5;
+    box-shadow: 0 0 0 3px rgba(24,95,165,0.12);
+  }
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.filter-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 99px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &.active, &:hover {
+    background: #f3f4f6;
+    color: #1a1a1a;
+    border-color: #d1d5db;
+  }
+
+  &.filter-tab-danger.active {
+    background: #FCEBEB;
+    color: #A32D2D;
+    border-color: #F7C1C1;
+  }
+}
+
 // ============================
 // TABELA
 // ============================
@@ -267,4 +333,39 @@ tbody td {
   display: flex;
   gap: 8px;
   justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+  }
+
+  // header vira coluna
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  // search ocupa largura toda
+  .search-input {
+    width: 100%;
+  }
+
+  // botão novo usuário ocupa largura toda
+  .btn-primary {
+    width: 93%;
+    justify-content: center;
+  }
+
+  // tabela: esconde e-mail no mobile
+  thead th:nth-child(2),
+  tbody td:nth-child(2) {
+    display: none;
+  }
+
+  // tabela não estoura a tela
+  .table-wrap {
+    overflow-x: auto;
+  }
 }

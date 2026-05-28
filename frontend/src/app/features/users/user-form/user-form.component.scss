@@ -207,7 +207,7 @@ select {
 // ============================
 // RESPONSIVO
 // ============================
-@media (max-width: 640px) {
+@media (max-width: 630px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
@@ -217,4 +217,5 @@ select {
     align-items: flex-start;
     gap: 12px;
   }
+  
 }

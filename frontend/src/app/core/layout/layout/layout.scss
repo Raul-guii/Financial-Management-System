@@ -1,43 +1,24 @@
 .layout {
   display: flex;
-  height: 100vh;
-  overflow: hidden; // evita scroll duplo
-}
-
-.sidebar {
-  width: 220px;
-  background: #1e293b;
-  color: white;
-  padding: 1rem;
-  flex-shrink: 0; // impede a sidebar de encolher
-}
-
-.sidebar a {
-  display: block;
-  color: white;
-  margin: 10px 0;
-  text-decoration: none;
+  min-height: 100vh;
 }
 
 .main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0; // evita overflow horizontal
-}
-
-.header {
-  height: 60px;
-  background: #f1f5f9;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 1rem;
-  flex-shrink: 0; // header não encolhe
+  min-width: 0;
+  min-height: 100vh;
 }
 
 .content {
   flex: 1;
-  overflow-y: auto; 
-  padding: 1rem;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 72px 16px 24px;
+  }
 }
