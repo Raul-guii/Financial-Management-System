@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ContractRepository extends JpaRepository<Contract, Long> {
 
+    boolean existsByClientId(Long clientId);
     Page<Contract> findByClientNameContainingIgnoreCase(String name, Pageable pageable);
 }

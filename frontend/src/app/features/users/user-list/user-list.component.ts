@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { Role } from '../../../models/users/role.enum';
 import { UserResponse } from '../../../models/users/user-response.model';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-user-list',
@@ -15,6 +16,14 @@ import { UserResponse } from '../../../models/users/user-response.model';
 export class UserListComponent implements OnInit {
   users: UserResponse[] = [];
   userToDelete: UserResponse | null = null;
+  currentPage = 0;
+  pageSize = 20;
+  totalElements = 0;
+  totalPages = 0;
+  searchTerm = '';
+  roleFilter: Role | '' = '';
+  Role = Role
+  private searchSubject = new Subject<string>();
 
   constructor(
     private userService: UserService,
@@ -23,16 +32,36 @@ export class UserListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(term => {
+      this.searchTerm = term;
+      this.currentPage = 0;
+      this.loadUsers();
+    });
+  }
+
+  onSearch(term: string): void {
+    this.searchSubject.next(term);
   }
 
   loadUsers(): void {
-    this.userService.getAll().subscribe({
+    this.userService.getAll(this.currentPage, this.pageSize, this.searchTerm).subscribe({
       next: (data) => {
-        this.users = data;
+        this.users = data.content;
+        this.totalElements = data.totalElements;
+        this.totalPages = data.totalPages;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Erro ao carregar usuários:', err)
+      error: (err) => console.error('Erro:', err)
     });
+  }
+
+  goToPage(page: number): void {
+    if (page < 0 || page >= this.totalPages) return;
+    this.currentPage = page;
+    this.loadUsers();
   }
 
   getInitials(name: string): string {
@@ -51,6 +80,19 @@ export class UserListComponent implements OnInit {
       [Role.FINANCIAL_ANALYST]: 'av-teal'
     };
     return map[role] ?? 'av-teal';
+  }
+
+  countByRole(role: Role): number {
+    return this.users.filter(u => u.role === role).length;
+  }
+
+  getRoles(): Role[] {
+    return Object.values(Role);
+  }
+
+  getFilteredUsers(): UserResponse[] {
+    if (!this.roleFilter) return this.users;
+    return this.users.filter(u => u.role === this.roleFilter);
   }
 
   getRoleBadgeClass(role: Role): string {

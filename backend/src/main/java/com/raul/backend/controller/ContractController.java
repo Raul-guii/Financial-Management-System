@@ -49,7 +49,7 @@ public class ContractController {
         return ResponseEntity.ok(contractService.findById(id));
     }
 
-    @DeleteMapping("/{id}")
+    @PatchMapping("/{id}/cancel")
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_MANAGER')")
     public ResponseEntity<Void> cancel(@PathVariable Long id) {
         contractService.cancel(id);

@@ -19,6 +19,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByStatusIn(List<InvoiceStatus> statuses);
     Page<Invoice> findByDeletedAtIsNull(Pageable pageable);
     Page<Invoice> findByContractId(Long contractId, Pageable pageable);
+    Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
 
     @Query("""
     SELECT COALESCE(SUM(i.amount), 0)

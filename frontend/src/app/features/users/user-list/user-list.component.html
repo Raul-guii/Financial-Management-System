@@ -8,6 +8,31 @@
       <i class="ti ti-plus"></i>
       Novo usuário
     </a>
+    <div class="filter-tabs">
+      <button class="filter-tab" [class.active]="roleFilter === ''" (click)="roleFilter = ''">
+        Todos ({{ users.length }})
+      </button>
+      <button class="filter-tab" [class.active]="roleFilter === Role.ADMIN" (click)="roleFilter = Role.ADMIN">
+        Admin ({{ countByRole(Role.ADMIN) }})
+      </button>
+      <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_MANAGER" (click)="roleFilter = Role.FINANCIAL_MANAGER">
+        Gestor ({{ countByRole(Role.FINANCIAL_MANAGER) }})
+      </button>
+      <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_ANALYST" (click)="roleFilter = Role.FINANCIAL_ANALYST">
+        Analista ({{ countByRole(Role.FINANCIAL_ANALYST) }})
+      </button>
+    </div>
+
+
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Buscar por nome ou documento..."
+        (input)="onSearch($event.target.value)"
+      />
+    </div>
   </div>
 
   <div class="table-wrap">
@@ -21,7 +46,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of users">
+        <tr *ngFor="let user of getFilteredUsers()">
           <td>
             <div class="user-cell">
               <div class="avatar" [ngClass]="getAvatarClass(user.role)">

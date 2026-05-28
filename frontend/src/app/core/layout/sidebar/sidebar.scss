@@ -1,3 +1,48 @@
+// ============================
+// HAMBURGUER (só mobile)
+// ============================
+.hamburger {
+  display: none; // escondido no desktop
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1000;
+  background: #0f172a;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  flex-direction: column;
+  gap: 5px;
+
+  span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: #fff;
+    border-radius: 2px;
+    transition: 0.2s;
+  }
+}
+
+// ============================
+// OVERLAY
+// ============================
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 998;
+
+  &.active {
+    display: block;
+  }
+}
+
+// ============================
+// SIDEBAR
+// ============================
 .sidebar {
   width: 220px;
   height: 100vh;
@@ -6,6 +51,8 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
+  position: sticky; // desktop: flui normalmente no layout
+  top: 0;
 }
 
 .logo {
@@ -26,13 +73,36 @@ a {
   padding: 10px;
   border-radius: 6px;
   transition: 0.2s;
-}
 
-a:hover {
-  background: #1e293b;
+  &:hover {
+    background: #1e293b;
+  }
 }
 
 .active {
   background: #2563eb;
   color: white;
+}
+
+// ============================
+// MOBILE
+// ============================
+@media (max-width: 768px) {
+  .hamburger {
+    display: flex; // aparece no mobile
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    transform: translateX(-100%); // escondido por padrão
+    transition: transform 0.25s ease;
+    height: 100vh;
+
+    &.open {
+      transform: translateX(0); // abre ao clicar
+    }
+  }
 }

@@ -9,6 +9,7 @@ import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,18 +18,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class ContractService {
 
     private final ContractRepository contractRepository;
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
-
-    public ContractService(ContractRepository contractRepository, ClientRepository clientRepository, UserRepository userRepository) {
-        this.contractRepository = contractRepository;
-        this.clientRepository = clientRepository;
-        this.userRepository = userRepository;
-    }
+    private final InvoiceService invoiceService;
 
     // CREATE CONTRACT -----------
     @Transactional
@@ -106,7 +103,6 @@ public class ContractService {
     //CANCEL CONTRACT
     @Transactional
     public void cancel(Long id) {
-
         Contract contract = contractRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Contrato não encontrado"));
 
@@ -114,8 +110,12 @@ public class ContractService {
             throw new RuntimeException("Contrato já está cancelado");
         }
 
-        contract.setStatus(ContractStatus.CANCELLED);
+        // cancela invoices primeiro (lança exceção se houver pagamento)
+        if (contract.getInvoices() != null && !contract.getInvoices().isEmpty()) {
+            invoiceService.cancelByContract(contract.getInvoices());
+        }
 
+        contract.setStatus(ContractStatus.CANCELLED);
         contractRepository.save(contract);
     }
 

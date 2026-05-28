@@ -409,7 +409,30 @@ tbody td {
     gap: 12px;
   }
 
-  table { font-size: 12px; }
+  // search ocupa largura toda
+  .search-wrap { width: 100%; }
+  .search-input { width: 100%; }
 
+  // botão novo cliente ocupa largura toda
+  .btn-primary {
+    width: 93%;
+    justify-content: center;
+  }
+
+  // filtros quebram linha
+  .filter-tabs { flex-wrap: wrap; }
+
+  // tabela não estoura
+  .table-wrap { overflow-x: auto; }
+
+  table { font-size: 12px; }
   thead th, tbody td { padding: 10px 12px; }
+
+  // esconde colunas menos importantes
+  thead th:nth-child(3),
+  tbody td:nth-child(3),
+  thead th:nth-child(4),
+  tbody td:nth-child(4) {
+    display: none; 
+  }
 }

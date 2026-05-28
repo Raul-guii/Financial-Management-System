@@ -8,6 +8,71 @@
       <i class="ti ti-plus"></i>
       Novo contrato
     </a>
+    
+      <div class="filters-row">
+
+        <!-- STATUS -->
+        <select
+          class="filter-select"
+          [(ngModel)]="statusFilter">
+
+          <option value="">Todos os status</option>
+
+          <option value="ACTIVE">
+            Ativo ({{ countByStatus('ACTIVE') }})
+          </option>
+
+          <option value="SUSPENDED">
+            Suspenso ({{ countByStatus('SUSPENDED') }})
+          </option>
+
+          <option value="CLOSED">
+            Encerrado ({{ countByStatus('CLOSED') }})
+          </option>
+
+          <option value="CANCELLED">
+            Cancelado ({{ countByStatus('CANCELLED') }})
+          </option>
+
+        </select>
+
+        <!-- BILLING -->
+        <select
+          class="filter-select"
+          [(ngModel)]="billingFilter">
+
+          <option value="">Todos os períodos</option>
+
+          <option value="MONTHLY">
+            Mensal ({{ countByBilling('MONTHLY') }})
+          </option>
+
+          <option value="QUARTERLY">
+            Trimestral ({{ countByBilling('QUARTERLY') }})
+          </option>
+
+          <option value="SEMIANNUAL">
+            Semestral ({{ countByBilling('SEMIANNUAL') }})
+          </option>
+
+          <option value="ANNUAL">
+            Anual ({{ countByBilling('ANNUAL') }})
+          </option>
+
+        </select>
+
+        <div class="search-wrap">
+        <i class="ti ti-search"></i>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Buscar por nome ou documento..."
+          (input)="onSearch($event.target.value)"
+        />
+        </div>
+
+      </div>
+
   </div>
 
   <div class="table-wrap">
@@ -24,7 +89,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let contract of contracts">
+        <tr *ngFor="let contract of getFilteredContracts()">
           <td class="text-secondary">#{{ contract.id }}</td>
             <td>
             <div class="client-ref">
@@ -33,15 +98,15 @@
                 </div>
                 <span class="client-name">{{ getClientName(contract.clientId) }}</span>
             </div>
-            </td>
+          </td>
 
           <td>
             <span class="badge" [ngClass]="getPeriodBadgeClass(contract.billingPeriod)">
               {{ getPeriodLabel(contract.billingPeriod) }}
             </span>
           </td>
-          <td class="text-secondary">{{ contract.startDate | date:'dd/MM/yyyy' }}</td>
-          <td class="text-secondary">{{ contract.endDate | date:'dd/MM/yyyy' }}</td>
+            <td class="text-secondary">{{ contract.startDate | date:'dd/MM/yyyy' }}</td>
+            <td class="text-secondary">{{ contract.endDate | date:'dd/MM/yyyy' }}</td>
           <td>
             <span class="badge" [ngClass]="getStatusBadgeClass(contract.status)">
               {{ getStatusLabel(contract.status) }}
@@ -80,48 +145,48 @@
   </div>
 
   <!-- PAGINAÇÃO -->
-<div class="pagination" *ngIf="totalPages > 1">
-  <button 
-    class="page-btn" 
-    (click)="goToPage(currentPage - 1)"
-    [disabled]="currentPage === 0">
-    <i class="ti ti-chevron-left"></i>
-  </button>
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button 
+      class="page-btn" 
+      (click)="goToPage(currentPage - 1)"
+      [disabled]="currentPage === 0">
+      <i class="ti ti-chevron-left"></i>
+    </button>
 
-  <div class="page-info">
-    Página {{ currentPage + 1 }} de {{ totalPages }}
-    <span class="total-info">({{ totalElements }} registros)</span>
+    <div class="page-info">
+      Página {{ currentPage + 1 }} de {{ totalPages }}
+      <span class="total-info">({{ totalElements }} registros)</span>
+    </div>
+
+    <button 
+      class="page-btn"
+      (click)="goToPage(currentPage + 1)"
+      [disabled]="currentPage === totalPages - 1">
+      <i class="ti ti-chevron-right"></i>
+    </button>
   </div>
 
-  <button 
-    class="page-btn"
-    (click)="goToPage(currentPage + 1)"
-    [disabled]="currentPage === totalPages - 1">
-    <i class="ti ti-chevron-right"></i>
-  </button>
-</div>
+  </div>
 
-</div>
-
-<!-- MODAL DE CONFIRMAÇÃO -->
-<div class="modal-overlay" *ngIf="contractToDelete" (click)="cancelDelete()">
-  <div class="modal" (click)="$event.stopPropagation()">
-    <div class="modal-icon-wrap">
-      <div class="modal-icon">
-        <i class="ti ti-trash"></i>
+  <!-- MODAL DE CONFIRMAÇÃO -->
+  <div class="modal-overlay" *ngIf="contractToDelete" (click)="cancelDelete()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-icon-wrap">
+        <div class="modal-icon">
+          <i class="ti ti-trash"></i>
+        </div>
+      </div>
+      <h3 class="modal-title">Cancelar contrato?</h3>
+      <p class="modal-text">
+        O contrato <strong>#{{ contractToDelete.id }}</strong> será cancelado permanentemente.
+        Esta ação não pode ser desfeita.
+      </p>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cancelDelete()">Voltar</button>
+        <button class="btn btn-danger" (click)="confirmDelete()">
+          <i class="ti ti-trash"></i>
+          Cancelar contrato
+        </button>
       </div>
     </div>
-    <h3 class="modal-title">Cancelar contrato?</h3>
-    <p class="modal-text">
-      O contrato <strong>#{{ contractToDelete.id }}</strong> será cancelado permanentemente.
-      Esta ação não pode ser desfeita.
-    </p>
-    <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="cancelDelete()">Voltar</button>
-      <button class="btn btn-danger" (click)="confirmDelete()">
-        <i class="ti ti-trash"></i>
-        Cancelar contrato
-      </button>
-    </div>
-  </div>
 </div>

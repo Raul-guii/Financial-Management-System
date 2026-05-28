@@ -8,8 +8,10 @@ import com.raul.backend.entity.Invoice;
 import com.raul.backend.enums.ClientType;
 import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.repository.ClientRepository;
+import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
@@ -20,16 +22,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Service
 public class ClientService {
 
     private final ClientRepository clientRepository;
     private final InvoiceRepository invoiceRepository;
-
-    public ClientService(ClientRepository clientRepository, InvoiceRepository invoiceRepository) {
-        this.clientRepository = clientRepository;
-        this.invoiceRepository = invoiceRepository;
-    }
+    private final ContractRepository contractRepository;
 
     // CREATE CLIENT --------
     @Transactional
@@ -148,6 +147,19 @@ public class ClientService {
         client.setDeletedAt(LocalDateTime.now());
 
         clientRepository.save(client);
+    }
+
+    @Transactional
+    public void hardDelete(Long id) {
+        Client client = clientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+
+        boolean hasContracts = contractRepository.existsByClientId(id);
+        if (hasContracts) {
+            throw new RuntimeException("Não é possível excluir um cliente com contratos vinculados");
+        }
+
+        clientRepository.delete(client);
     }
 
     @Transactional

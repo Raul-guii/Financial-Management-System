@@ -52,9 +52,16 @@ public class ClientController{
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'FINANCIAL_ANALYST', 'FINANCIAL_MANAGER')")
+    @PatchMapping("/{id}/deactivate")
+    public ResponseEntity<Void> deactivate(@PathVariable Long id) {
+        clientService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        clientService.delete(id);
+        clientService.hardDelete(id);
         return ResponseEntity.noContent().build();
     }
 

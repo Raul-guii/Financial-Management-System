@@ -5,6 +5,7 @@ import { environment } from '../../../environments/environment';
 import { UserResponse } from '../../models/users/user-response.model';
 import { UserCreateRequest } from '../../models/users/user-create.model';
 import { UserUpdateRequest } from '../../models/users/user-update.model';
+import { Page } from '../../models/pages/page.model';
 
 
 @Injectable({ providedIn: 'root' })
@@ -13,8 +14,11 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<UserResponse[]> {
-    return this.http.get<UserResponse[]>(this.api);
+  getAll(page: number = 0, size: number = 20, search: string = ''): Observable<Page<UserResponse>> {
+    const params = search
+      ? `?page=${page}&size=${size}&sort=name&search=${encodeURIComponent(search)}`
+      : `?page=${page}&size=${size}&sort=name`;
+    return this.http.get<Page<UserResponse>>(`${this.api}${params}`);
   }
 
   getById(id: number): Observable<UserResponse> {

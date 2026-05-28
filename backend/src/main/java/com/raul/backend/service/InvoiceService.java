@@ -106,9 +106,21 @@ public class InvoiceService {
     }
 
     // GET ALL
-    public Page<InvoiceResponseDTO> findAll(Pageable pageable) {
-        return repository.findAll(pageable)
-                .map(this::toDTO);
+    public Page<InvoiceResponseDTO> findAll(Pageable pageable, String search) {
+        if (search != null && !search.isBlank()) {
+            // tenta buscar por contractId numérico
+            try {
+                Long contractId = Long.parseLong(search);
+                return repository.findByContractId(contractId, pageable).map(this::toDTO);
+            } catch (NumberFormatException ignored) {}
+
+            // tenta buscar por status
+            try {
+                InvoiceStatus status = InvoiceStatus.valueOf(search.toUpperCase());
+                return repository.findByStatus(status, pageable).map(this::toDTO);
+            } catch (IllegalArgumentException ignored) {}
+        }
+        return repository.findAll(pageable).map(this::toDTO);
     }
 
     // GET BY ID
@@ -157,16 +169,23 @@ public class InvoiceService {
         clientRepository.saveAll(defaulters);
     }
 
-    public Page<InvoiceResponseDTO> findAll(Pageable pageable, String search) {
-        if (search != null && !search.isBlank()) {
-            try {
-                Long contractId = Long.parseLong(search);
-                return repository.findByContractId(contractId, pageable).map(this::toDTO);
-            } catch (NumberFormatException e) {
-                return repository.findAll(pageable).map(this::toDTO);
+    @Transactional
+    public void cancelByContract(List<Invoice> invoices) {
+        for (Invoice invoice : invoices) {
+            if (invoice.getStatus() == InvoiceStatus.CANCELLED) continue;
+
+            boolean hasPayments = invoice.getPayment() != null && !invoice.getPayment().isEmpty();
+            if (hasPayments) {
+                throw new RuntimeException(
+                        "Fatura #" + invoice.getId() + " possui pagamentos registrados e não pode ser cancelada. " +
+                                "Cancele os pagamentos antes de cancelar o contrato."
+                );
             }
+
+            invoice.setStatus(InvoiceStatus.CANCELLED);
+            invoice.setDeletedAt(LocalDateTime.now());
+            repository.save(invoice);
         }
-        return repository.findAll(pageable).map(this::toDTO);
     }
 
     // MAPPER

@@ -6,6 +6,9 @@ import com.raul.backend.dto.user.UserUpdateDTO;
 import com.raul.backend.entity.User;
 import com.raul.backend.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -39,10 +42,11 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<UserResponseDTO>> findAll() {
-        return ResponseEntity.ok(userService.findAll());
+    public ResponseEntity<Page<UserResponseDTO>> findAll(
+            @PageableDefault(size = 20, sort = "name") Pageable pageable,
+            @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(userService.findAll(pageable, search));
     }
-
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {
