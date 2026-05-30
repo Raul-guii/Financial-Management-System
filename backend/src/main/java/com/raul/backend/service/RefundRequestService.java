@@ -6,6 +6,7 @@ import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
 import com.raul.backend.entity.RefundRequest;
 import com.raul.backend.entity.User;
+import com.raul.backend.enums.AuditAction;
 import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.enums.RefundStatus;
@@ -13,6 +14,7 @@ import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
 import com.raul.backend.repository.RefundRequestRepository;
 import com.raul.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class RefundRequestService {
 
@@ -31,15 +34,7 @@ public class RefundRequestService {
     private final InvoiceRepository invoiceRepository;
     private final GatewayTransactionService gatewayTransactionService;
     private final InvoiceStatusService invoiceStatusService;
-
-    public RefundRequestService(RefundRequestRepository refundRequestRepository, PaymentRepository paymentRepository, UserRepository userRepository, InvoiceRepository invoiceRepository, GatewayTransactionService gatewayTransactionService, InvoiceStatusService invoiceStatusService) {
-        this.refundRequestRepository = refundRequestRepository;
-        this.paymentRepository = paymentRepository;
-        this.userRepository = userRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.gatewayTransactionService = gatewayTransactionService;
-        this.invoiceStatusService = invoiceStatusService;
-    }
+    private final AuditLogService auditLogService;
 
     @Transactional
     public RefundRequestResponseDTO create(RefundRequestCreateDTO dto) {
@@ -65,6 +60,10 @@ public class RefundRequestService {
         refundRequest.setRequestedBy(user);
 
         refundRequest = refundRequestRepository.save(refundRequest);
+
+        auditLogService.log(refundRequest.getId(), "REFUND", AuditAction.REFUND_REQUESTED,
+                user.getId(), user.getName(),
+                "Reembolso solicitado para pagamento #" + payment.getId());
 
         return toDTO(refundRequest);
     }
@@ -110,6 +109,10 @@ public class RefundRequestService {
 
         refundRequest = refundRequestRepository.save(refundRequest);
 
+        auditLogService.log(refundRequest.getId(), "REFUND", AuditAction.REFUND_APPROVED,
+                null, null,
+                "Reembolso aprovado para pagamento #" + payment.getId());
+
         return toDTO(refundRequest);
     }
 
@@ -125,6 +128,11 @@ public class RefundRequestService {
         refundRequest.setStatus(RefundStatus.REJECTED);
 
         refundRequest = refundRequestRepository.save(refundRequest);
+
+        auditLogService.log(refundRequest.getId(), "REFUND", AuditAction.REFUND_REJECTED,
+                null, null,
+                "Reembolso rejeitado");
+
         return toDTO(refundRequest);
     }
 

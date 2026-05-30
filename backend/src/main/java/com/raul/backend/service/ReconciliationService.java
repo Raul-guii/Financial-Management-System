@@ -9,6 +9,7 @@ import com.raul.backend.repository.GatewayTransactionRepository;
 import com.raul.backend.repository.PaymentRepository;
 import com.raul.backend.repository.ReconciliationRepository;
 import com.raul.backend.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class ReconciliationService {
 
@@ -24,13 +26,6 @@ public class ReconciliationService {
     private final UserRepository userRepository;
     private final ReconciliationRepository reconciliationRepository;
     private final GatewayTransactionRepository gatewayTransactionRepository;
-
-    public ReconciliationService(PaymentRepository paymentRepository, UserRepository userRepository, ReconciliationRepository reconciliationRepository, GatewayTransactionRepository gatewayTransactionRepository) {
-        this.paymentRepository = paymentRepository;
-        this.userRepository = userRepository;
-        this.reconciliationRepository = reconciliationRepository;
-        this.gatewayTransactionRepository = gatewayTransactionRepository;
-    }
 
     public ReconciliationResponseDTO execute(ReconciliationCreateDTO dto) {
 

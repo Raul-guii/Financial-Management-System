@@ -27,6 +27,12 @@ public class AuditLog extends Auditable {
     @Column(nullable = false, length = 254)
     private String action;
 
+    @Column(length = 500)
+    private String description;
+
+    @Column(name = "user_name", length = 150)
+    private String userName;
+
     @NotBlank
     @Column(name = "entity_type", nullable = false, length = 100)
     private String entityType;

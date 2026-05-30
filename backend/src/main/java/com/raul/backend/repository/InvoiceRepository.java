@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     List<Invoice> findByStatus(InvoiceStatus status);
@@ -18,8 +19,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     boolean existsByContractIdAndIssueDateBetweenAndStatusNot(Long contractId, LocalDate start, LocalDate end, InvoiceStatus status);
     List<Invoice> findByStatusIn(List<InvoiceStatus> statuses);
     Page<Invoice> findByDeletedAtIsNull(Pageable pageable);
-    Page<Invoice> findByContractId(Long contractId, Pageable pageable);
-    Page<Invoice> findByStatus(InvoiceStatus status, Pageable pageable);
+    Page<Invoice> findByContractIdAndDeletedAtIsNull(Long contractId, Pageable pageable);
+    Page<Invoice> findByStatusAndDeletedAtIsNull(InvoiceStatus status, Pageable pageable);
 
     @Query("""
     SELECT COALESCE(SUM(i.amount), 0)
@@ -69,8 +70,13 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("""
     SELECT i
     FROM Invoice i
+    JOIN FETCH i.contract c
+    JOIN FETCH c.createdBy
     WHERE i.status = 'PENDING'
     AND i.dueDate BETWEEN :today AND :limit
     """)
     List<Invoice> findUpcomingDueInvoices(LocalDate today, LocalDate limit);
+
+    @Query("SELECT i FROM Invoice i LEFT JOIN FETCH i.payment WHERE i.id = :id")
+    Optional<Invoice> findByIdWithPayments(Long id);
 }

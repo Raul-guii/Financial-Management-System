@@ -4,6 +4,7 @@ import com.raul.backend.dto.contract.ContractCreateDTO;
 import com.raul.backend.dto.contract.ContractResponseDTO;
 import com.raul.backend.dto.contract.ContractUpdateDTO;
 import com.raul.backend.entity.*;
+import com.raul.backend.enums.AuditAction;
 import com.raul.backend.enums.ContractStatus;
 import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.ContractRepository;
@@ -26,6 +27,7 @@ public class ContractService {
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
     private final InvoiceService invoiceService;
+    private final AuditLogService auditLogService;
 
     // CREATE CONTRACT -----------
     @Transactional
@@ -55,7 +57,12 @@ public class ContractService {
 
         contract = contractRepository.save(contract);
 
+        auditLogService.log(contract.getId(), "CONTRACT", AuditAction.CONTRACT_CREATED,
+                loggedUser.getId(), loggedUser.getName(),
+                "Contrato criado para cliente #" + contract.getClient().getId());
+
         return toDTO(contract);
+
     }
 
     // UPDATE CONTRACT ---------------
@@ -82,6 +89,10 @@ public class ContractService {
         contract.setEndDate(dto.getEndDate());
 
         contract = contractRepository.save(contract);
+
+        auditLogService.log(contract.getId(), "CONTRACT", AuditAction.CONTRACT_UPDATED,
+                loggedUser.getId(), loggedUser.getName(),
+                "Contrato atualizado");
 
         return toDTO(contract);
     }
@@ -116,7 +127,12 @@ public class ContractService {
         }
 
         contract.setStatus(ContractStatus.CANCELLED);
+
         contractRepository.save(contract);
+
+        auditLogService.log(contract.getId(), "CONTRACT", AuditAction.CONTRACT_CANCELLED,
+                null, null,
+                "Contrato cancelado");
     }
 
     public Page<ContractResponseDTO> findAll(Pageable pageable, String search) {

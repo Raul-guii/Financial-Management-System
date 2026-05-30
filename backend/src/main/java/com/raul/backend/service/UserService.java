@@ -4,13 +4,16 @@ import com.raul.backend.dto.user.UserCreateDTO;
 import com.raul.backend.dto.user.UserResponseDTO;
 import com.raul.backend.dto.user.UserUpdateDTO;
 import com.raul.backend.entity.User;
+import com.raul.backend.enums.AuditAction;
 import com.raul.backend.enums.Roles;
 import com.raul.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,16 +27,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final AuditLogService auditLogService;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -69,6 +69,13 @@ public class UserService implements UserDetailsService {
         user.setRole(dto.getRole());
 
         user = userRepository.save(user);
+
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(user.getId(), "USER", AuditAction.USER_CREATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Usuário " + user.getName() + " criado");
 
         return new UserResponseDTO(
                 user.getId(),
@@ -116,6 +123,13 @@ public class UserService implements UserDetailsService {
 
         user = userRepository.save(user);
 
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(user.getId(), "USER", AuditAction.USER_UPDATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Usuário " + user.getName() + " atualizado");
+
         return new UserResponseDTO(
                 user.getId(),
                 user.getName(),
@@ -157,6 +171,16 @@ public class UserService implements UserDetailsService {
         );
     }
 
+    private User getLoggedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails userDetails) {
+            return userRepository.findByEmail(userDetails.getUsername())
+                    .orElse(null);
+        }
+        return null;
+    }
+
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
@@ -171,6 +195,14 @@ public class UserService implements UserDetailsService {
         }
 
         user.setDeletedAt(LocalDateTime.now());
+
         userRepository.save(user);
+
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(user.getId(), "USER", AuditAction.USER_UPDATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Usuário " + user.getName() + " desativado");
     }
 }

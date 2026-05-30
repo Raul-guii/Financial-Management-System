@@ -2,15 +2,16 @@ package com.raul.backend.service;
 
 import com.raul.backend.dto.invoice.*;
 import com.raul.backend.entity.*;
+import com.raul.backend.enums.AuditAction;
 import com.raul.backend.enums.InvoiceStatus;
-import com.raul.backend.repository.ClientRepository;
-import com.raul.backend.repository.ContractRepository;
-import com.raul.backend.repository.InvoiceLineRepository;
-import com.raul.backend.repository.InvoiceRepository;
+import com.raul.backend.enums.PaymentStatus;
+import com.raul.backend.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,6 +29,8 @@ public class InvoiceService {
     private final ContractRepository contractRepository;
     private final ClientRepository clientRepository;
     private final InvoiceCalculatorService invoiceCalculatorService;
+    private final AuditLogService auditLogService;
+    private final UserRepository userRepository;
 
     // CREATE
     @Transactional
@@ -81,7 +84,15 @@ public class InvoiceService {
 
         invoice.setAmount(totalInvoice);
         invoice.setOriginalAmount(totalInvoice);
+
         invoice = repository.save(invoice);
+
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(invoice.getId(), "INVOICE", AuditAction.INVOICE_CREATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Fatura gerada para contrato #" + contract.getId());
 
         return toDTO(invoice);
     }
@@ -108,19 +119,17 @@ public class InvoiceService {
     // GET ALL
     public Page<InvoiceResponseDTO> findAll(Pageable pageable, String search) {
         if (search != null && !search.isBlank()) {
-            // tenta buscar por contractId numérico
             try {
                 Long contractId = Long.parseLong(search);
-                return repository.findByContractId(contractId, pageable).map(this::toDTO);
+                return repository.findByContractIdAndDeletedAtIsNull(contractId, pageable).map(this::toDTO);
             } catch (NumberFormatException ignored) {}
 
-            // tenta buscar por status
             try {
                 InvoiceStatus status = InvoiceStatus.valueOf(search.toUpperCase());
-                return repository.findByStatus(status, pageable).map(this::toDTO);
+                return repository.findByStatusAndDeletedAtIsNull(status, pageable).map(this::toDTO);
             } catch (IllegalArgumentException ignored) {}
         }
-        return repository.findAll(pageable).map(this::toDTO);
+        return repository.findByDeletedAtIsNull(pageable).map(this::toDTO);
     }
 
     // GET BY ID
@@ -134,11 +143,15 @@ public class InvoiceService {
     // soft delete — substitui o deleteById direto
     @Transactional
     public void delete(Long id) {
-        Invoice invoice = repository.findById(id)
+        Invoice invoice = repository.findByIdWithPayments(id)
                 .orElseThrow(() -> new RuntimeException("Invoice não encontrada"));
 
-        boolean hasPayments = invoice.getPayment() != null && !invoice.getPayment().isEmpty();
-        if (hasPayments) {
+        boolean hasActivePayments = invoice.getPayment() != null &&
+                invoice.getPayment().stream()
+                        .anyMatch(p -> p.getPaymentStatus() != PaymentStatus.REFUNDED
+                                && p.getPaymentStatus() != PaymentStatus.CANCELLED);
+
+        if (hasActivePayments) {
             throw new RuntimeException(
                     "Não é possível excluir uma fatura com pagamentos registrados. " +
                             "Cancele os pagamentos antes de excluir a fatura."
@@ -147,7 +160,15 @@ public class InvoiceService {
 
         invoice.setStatus(InvoiceStatus.CANCELLED);
         invoice.setDeletedAt(LocalDateTime.now());
+
         repository.save(invoice);
+
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(invoice.getId(), "INVOICE", AuditAction.INVOICE_CANCELLED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Fatura cancelada manualmente");
     }
 
     public void identifyDefaulters() {
@@ -174,8 +195,12 @@ public class InvoiceService {
         for (Invoice invoice : invoices) {
             if (invoice.getStatus() == InvoiceStatus.CANCELLED) continue;
 
-            boolean hasPayments = invoice.getPayment() != null && !invoice.getPayment().isEmpty();
-            if (hasPayments) {
+            boolean hasActivePayments = invoice.getPayment() != null &&
+                    invoice.getPayment().stream()
+                            .anyMatch(p -> p.getPaymentStatus() != PaymentStatus.REFUNDED
+                                    && p.getPaymentStatus() != PaymentStatus.CANCELLED);
+
+            if (hasActivePayments) {
                 throw new RuntimeException(
                         "Fatura #" + invoice.getId() + " possui pagamentos registrados e não pode ser cancelada. " +
                                 "Cancele os pagamentos antes de cancelar o contrato."
@@ -183,9 +208,16 @@ public class InvoiceService {
             }
 
             invoice.setStatus(InvoiceStatus.CANCELLED);
-            invoice.setDeletedAt(LocalDateTime.now());
             repository.save(invoice);
         }
+    }
+
+    private User getLoggedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            return userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+        }
+        return null;
     }
 
     // MAPPER
