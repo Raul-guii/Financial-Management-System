@@ -5,14 +5,19 @@ import com.raul.backend.dto.client.ClientResponseDTO;
 import com.raul.backend.dto.client.ClientUpdateDTO;
 import com.raul.backend.entity.Client;
 import com.raul.backend.entity.Invoice;
+import com.raul.backend.entity.User;
+import com.raul.backend.enums.AuditAction;
 import com.raul.backend.enums.ClientType;
 import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.repository.ClientRepository;
 import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.repository.InvoiceRepository;
+import com.raul.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
@@ -29,6 +34,9 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final InvoiceRepository invoiceRepository;
     private final ContractRepository contractRepository;
+    private final AuditLogService auditLogService;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     // CREATE CLIENT --------
     @Transactional
@@ -58,6 +66,14 @@ public class ClientService {
         client.setAddressCountry(dto.getAddressCountry());
 
         client = clientRepository.save(client);
+
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(client.getId(), "CLIENT", AuditAction.CLIENT_CREATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Cliente " + client.getName() + " cadastrado");
+
 
         return toDTO(client);
     }
@@ -103,6 +119,13 @@ public class ClientService {
 
         client = clientRepository.save(client);
 
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(client.getId(), "CLIENT", AuditAction.CLIENT_UPDATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Cliente " + client.getName() + " atualizado");
+
         return toDTO(client);
     }
 
@@ -147,6 +170,13 @@ public class ClientService {
         client.setDeletedAt(LocalDateTime.now());
 
         clientRepository.save(client);
+
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(client.getId(), "CLIENT", AuditAction.CLIENT_DEACTIVATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Cliente " + client.getName() + " desativado");
     }
 
     @Transactional
@@ -185,27 +215,12 @@ public class ClientService {
         clientRepository.saveAll(defaulters);
     }
 
-    private ClientResponseDTO toDTO(Client client) {
-        return new ClientResponseDTO(
-                client.getId(),
-                client.getName(),
-                client.getType(),
-                client.getDefaulter(),
-                client.getDocument(),
-                client.getEmail(),
-                client.getPhone(),
-                client.getAddressStreet(),
-                client.getAddressNumber(),
-                client.getAddressNeighborhood(),
-                client.getAddressCity(),
-                client.getAddressState(),
-                client.getAddressPostalCode(),
-                client.getAddressCountry(),
-                client.getDeletedAt() == null,
-                client.getCreatedAt(),
-                client.getUpdatedAt(),
-                null
-        );
+    private User getLoggedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            return userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+        }
+        return null;
     }
 
     private void validateDocument(ClientType type, String document) {
@@ -252,5 +267,28 @@ public class ClientService {
         for (int i = 0; i < 13; i++) sum += (cnpj.charAt(i) - '0') * weights2[i];
         int second = sum % 11 < 2 ? 0 : 11 - (sum % 11);
         return second == (cnpj.charAt(13) - '0');
+    }
+
+    private ClientResponseDTO toDTO(Client client) {
+        return new ClientResponseDTO(
+                client.getId(),
+                client.getName(),
+                client.getType(),
+                client.getDefaulter(),
+                client.getDocument(),
+                client.getEmail(),
+                client.getPhone(),
+                client.getAddressStreet(),
+                client.getAddressNumber(),
+                client.getAddressNeighborhood(),
+                client.getAddressCity(),
+                client.getAddressState(),
+                client.getAddressPostalCode(),
+                client.getAddressCountry(),
+                client.getDeletedAt() == null,
+                client.getCreatedAt(),
+                client.getUpdatedAt(),
+                null
+        );
     }
 }

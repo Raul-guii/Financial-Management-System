@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { LayoutComponent } from './core/layout/layout/layout';
 import { roleGuard } from './core/guards/role.guards';
+import { AuditLogListComponent } from './features/audit-log-list/audit-log-list.component';
 
 export const routes: Routes = [
 
@@ -197,6 +198,12 @@ export const routes: Routes = [
           import('./features/reconciliations/reconciliation/reconciliation.component')
             .then(m => m.ReconciliationComponent)
       },
+
+      {
+         path: 'audit-logs',
+         component: AuditLogListComponent,
+         canActivate: [authGuard] 
+      }
     ]
   },
 

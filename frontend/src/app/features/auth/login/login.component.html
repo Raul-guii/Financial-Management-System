@@ -44,8 +44,9 @@
           />
         </div>
 
-        <button type="submit" class="btn-login">
-          Entrar
+        <button type="submit" class="btn-login" [disabled]="loading">
+          <span *ngIf="!loading">Entrar</span>
+          <span *ngIf="loading" class="btn-spinner"></span>
         </button>
 
         <div class="error-message" *ngIf="errorMessage">

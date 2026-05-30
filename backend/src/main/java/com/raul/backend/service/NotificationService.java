@@ -4,6 +4,7 @@ import com.raul.backend.dto.notifications.NotificationResponseDTO;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Notification;
 import com.raul.backend.entity.User;
+import com.raul.backend.enums.AuditAction;
 import com.raul.backend.enums.NotificationType;
 import com.raul.backend.repository.AuditLogRepository;
 import com.raul.backend.repository.InvoiceRepository;
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,15 +25,20 @@ public class NotificationService {
     private final AuditLogService auditLogService;
     private final AuditLogRepository auditLogRepository;
 
+    @Transactional
     public void notifyUpcomingInvoices() {
-
         LocalDate today = LocalDate.now();
         LocalDate limit = today.plusDays(3);
 
-        List<Invoice> invoices =
-                invoiceRepository.findUpcomingDueInvoices(today, limit);
+        System.out.println("=== NOTIFICAÇÃO SCHEDULER ===");
+        System.out.println("Hoje: " + today + " | Limite: " + limit);
+
+        List<Invoice> invoices = invoiceRepository.findUpcomingDueInvoices(today, limit);
+
+        System.out.println("Faturas encontradas: " + invoices.size());
 
         for (Invoice invoice : invoices) {
+            System.out.println("Processando fatura #" + invoice.getId());
 
             try {
 
@@ -43,11 +48,10 @@ public class NotificationService {
                 if (user == null) continue;
 
                 // ANTI-DUPLICAÇÃO (1 por fatura)
-                boolean alreadyNotified =
-                        auditLogRepository.existsByEntityIdAndAction(
-                                invoice.getId(),
-                                NotificationType.INVOICE_DUE_SOON.name()
-                        );
+                boolean alreadyNotified = auditLogRepository.existsByEntityIdAndAction(
+                        invoice.getId(),
+                        AuditAction.INVOICE_DUE_SOON.name()
+                );
 
                 if (alreadyNotified) continue;
 
@@ -68,19 +72,25 @@ public class NotificationService {
                 auditLogService.log(
                         invoice.getId(),
                         "INVOICE",
-                        NotificationType.INVOICE_DUE_SOON,
-                        user.getId()
+                        AuditAction.INVOICE_DUE_SOON, // <- muda aqui
+                        user.getId(),
+                        user.getName(),
+                        "Notificação de vencimento enviada para fatura #" + invoice.getId()
                 );
 
             } catch (Exception e) {
 
                 System.out.println("Erro ao notificar fatura " + invoice.getId());
 
+                e.printStackTrace();
+
                 auditLogService.log(
                         invoice.getId(),
                         "INVOICE",
-                        NotificationType.SYSTEM,
-                        null
+                        AuditAction.SYSTEM_ERROR,
+                        null,
+                        null,
+                        "Erro ao notificar fatura #" + invoice.getId()
                 );
             }
         }

@@ -3,16 +3,23 @@ package com.raul.backend.service;
 import com.raul.backend.dto.payment.*;
 import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
+import com.raul.backend.entity.User;
+import com.raul.backend.enums.AuditAction;
 import com.raul.backend.enums.InvoiceStatus;
 import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
+import com.raul.backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class PaymentService {
 
@@ -21,18 +28,8 @@ public class PaymentService {
     private final InvoiceRepository invoiceRepository;
     private final InvoiceStatusService invoiceStatusService;
     private final InvoiceCalculatorService invoiceCalculatorService;
-
-    public PaymentService(GatewayTransactionService gatewayTransactionService,
-                          PaymentRepository repository,
-                          InvoiceRepository invoiceRepository,
-                          InvoiceStatusService invoiceStatusService,
-                          InvoiceCalculatorService invoiceCalculatorService) {
-        this.gatewayTransactionService = gatewayTransactionService;
-        this.repository = repository;
-        this.invoiceRepository = invoiceRepository;
-        this.invoiceStatusService = invoiceStatusService;
-        this.invoiceCalculatorService = invoiceCalculatorService;
-    }
+    private final AuditLogService auditLogService;
+    private final UserRepository userRepository;
 
     // CREATE
     @Transactional
@@ -66,6 +63,14 @@ public class PaymentService {
         payment.setDateOfExpiration(dto.getDateOfExpiration());
 
         payment = repository.save(payment);
+
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(payment.getId(), "PAYMENT", AuditAction.PAYMENT_CREATED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Pagamento de R$" + payment.getAmount() + " registrado para fatura #" + invoice.getId());
+
 
         try {
             gatewayTransactionService.processPayment(payment);
@@ -147,7 +152,22 @@ public class PaymentService {
 
         repository.delete(payment);
 
+        User loggedUser = getLoggedUser();
+
+        auditLogService.log(id, "PAYMENT", AuditAction.PAYMENT_DELETED,
+                loggedUser != null ? loggedUser.getId() : null,
+                loggedUser != null ? loggedUser.getName() : null,
+                "Pagamento removido da fatura #" + invoice.getId());
+
         invoiceStatusService.recalculateInvoiceStatus(invoice.getId());
+    }
+
+    private User getLoggedUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof UserDetails userDetails) {
+            return userRepository.findByEmail(userDetails.getUsername()).orElse(null);
+        }
+        return null;
     }
 
     // MAPPER

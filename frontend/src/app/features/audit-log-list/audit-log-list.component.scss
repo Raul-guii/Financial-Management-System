@@ -1,0 +1,224 @@
+.page {
+  padding: 24px;
+  background: #F8F9FC;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+// ============================
+// FILTROS
+// ============================
+.filters-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-select {
+  min-width: 180px;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  font-size: 13px;
+  transition: all 0.15s;
+
+  &:focus {
+    outline: none;
+    border-color: #185FA5;
+    box-shadow: 0 0 0 3px rgba(24, 95, 165, 0.12);
+  }
+}
+
+// ============================
+// TABELA
+// ============================
+.table-wrap {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead tr { background: #f9fafb; }
+
+thead th {
+  text-align: left;
+  padding: 11px 16px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #6b7280;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.1s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #f9fafb; }
+}
+
+tbody td {
+  padding: 12px 16px;
+  color: #1a1a1a;
+  vertical-align: middle;
+}
+
+.text-secondary {
+  color: #6b7280 !important;
+  font-size: 13px;
+}
+
+// ============================
+// BADGES
+// ============================
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.badge-entity   { background: #E6F1FB; color: #185FA5; }
+.badge-created  { background: #EAF3DE; color: #3B6D11; }
+.badge-updated  { background: #FAEEDA; color: #854F0B; }
+.badge-danger   { background: #FCEBEB; color: #A32D2D; }
+.badge-approved { background: #EAF3DE; color: #3B6D11; }
+.badge-pending  { background: #FAEEDA; color: #854F0B; }
+
+// ============================
+// EMPTY STATE
+// ============================
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+
+  i {
+    font-size: 36px;
+    color: #d1d5db;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+// ============================
+// PAGINAÇÃO
+// ============================
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  margin-top: 0;
+}
+
+.page-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  color: #6b7280;
+  font-size: 16px;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) {
+    background: #f3f4f6;
+    color: #1a1a1a;
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+.page-info {
+  font-size: 13px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.total-info {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 400;
+  margin-left: 4px;
+}
+
+// ============================
+// RESPONSIVO
+// ============================
+@media (max-width: 768px) {
+  .page { padding: 16px; }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .table-wrap { overflow-x: auto; }
+
+  // esconde ID e Usuário no mobile
+  thead th:nth-child(3),
+  tbody td:nth-child(3),
+  thead th:nth-child(5),
+  tbody td:nth-child(5) {
+    display: none;
+  }
+}

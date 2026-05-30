@@ -221,6 +221,7 @@ export class InvoiceDetailComponent implements OnInit {
       [PaymentStatus.APPROVED]: 'badge-approved',
       [PaymentStatus.REJECTED]: 'badge-rejected',
       [PaymentStatus.REFUNDED]: 'badge-refunded',
+      [PaymentStatus.CANCELLED]: 'badge-cancelled',
       [PaymentStatus.ERROR]:    'badge-error',
     };
     return map[status] ?? '';
@@ -232,6 +233,7 @@ export class InvoiceDetailComponent implements OnInit {
       [PaymentStatus.APPROVED]: 'Aprovado',
       [PaymentStatus.REJECTED]: 'Rejeitado',
       [PaymentStatus.REFUNDED]: 'Reembolsado',
+      [PaymentStatus.CANCELLED]: 'badge-cancelled',
       [PaymentStatus.ERROR]:    'Erro',
     };
     return map[status] ?? status;
