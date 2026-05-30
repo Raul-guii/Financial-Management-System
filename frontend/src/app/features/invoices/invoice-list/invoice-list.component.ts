@@ -49,7 +49,7 @@ export class InvoiceListComponent implements OnInit {
   }
 
   loadInvoices(): void {
-    this.invoiceService.getAll(this.currentPage, this.pageSize).subscribe({
+    this.invoiceService.getAll(this.currentPage, this.pageSize, this.searchTerm).subscribe({
       next: (data) => {
         this.invoices = data.content;
         this.totalElements = data.totalElements;

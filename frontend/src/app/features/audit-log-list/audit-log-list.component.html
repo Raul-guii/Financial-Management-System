@@ -1,0 +1,73 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Auditoria</h1>
+      <p class="page-subtitle">{{ totalElements }} registro{{ totalElements !== 1 ? 's' : '' }} encontrado{{ totalElements !== 1 ? 's' : '' }}</p>
+    </div>
+
+    <div class="filters-row">
+      <select class="filter-select" [(ngModel)]="entityTypeFilter" (change)="onFilterChange()">
+        <option value="">Todas as entidades</option>
+        <option *ngFor="let e of entityTypes" [value]="e">{{ getEntityLabel(e) }}</option>
+      </select>
+
+      <select class="filter-select" [(ngModel)]="actionFilter" (change)="onFilterChange()">
+        <option value="">Todas as ações</option>
+        <option *ngFor="let a of actions" [value]="a">{{ getActionLabel(a) }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Entidade</th>
+          <th>ID</th>
+          <th>Ação</th>
+          <th>Usuário</th>
+          <th>Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let log of logs">
+          <td class="text-secondary">{{ log.created_at | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <span class="badge badge-entity">{{ getEntityLabel(log.entityType) }}</span>
+          </td>
+          <td class="text-secondary">#{{ log.entityId }}</td>
+          <td>
+            <span class="badge" [ngClass]="getActionBadgeClass(log.action)">
+              {{ getActionLabel(log.action) }}
+            </span>
+          </td>
+          <td class="text-secondary">{{ log.userName ?? '—' }}</td>
+          <td class="text-secondary">{{ log.description ?? '—' }}</td>
+        </tr>
+
+        <tr *ngIf="logs.length === 0">
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="ti ti-clipboard-list"></i>
+              <p>Nenhum registro de auditoria encontrado</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination" *ngIf="totalPages > 1">
+    <button class="page-btn" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 0">
+      <i class="ti ti-chevron-left"></i>
+    </button>
+    <div class="page-info">
+      Página {{ currentPage + 1 }} de {{ totalPages }}
+      <span class="total-info">({{ totalElements }} registros)</span>
+    </div>
+    <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1">
+      <i class="ti ti-chevron-right"></i>
+    </button>
+  </div>
+</div>

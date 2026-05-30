@@ -15,6 +15,7 @@ export class LoginComponent {
   email = '';
   password = '';
   errorMessage = '';
+  loading = false;
 
   constructor(
     private authService: AuthService,
@@ -23,6 +24,8 @@ export class LoginComponent {
 
   login() {
     console.log('clicou login');
+    this.loading = true;
+    this.errorMessage = '';
 
     this.authService.login(this.email, this.password).subscribe({
       next: (res) => {

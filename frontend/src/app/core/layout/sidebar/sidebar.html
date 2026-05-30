@@ -1,11 +1,9 @@
-<!-- Botão hamburguer (só aparece no mobile) -->
 <button class="hamburger" (click)="toggle()">
   <span></span>
   <span></span>
   <span></span>
 </button>
 
-<!-- Overlay escuro atrás do sidebar -->
 <div class="overlay" [class.active]="isOpen" (click)="close()"></div>
 
 <aside class="sidebar" [class.open]="isOpen">
@@ -27,5 +25,9 @@
     </a>
 
     <a routerLink="/reconciliation" routerLinkActive="active" (click)="close()">Reconciliação</a>
+
+    <a routerLink="/audit-logs" routerLinkActive="active" *ngIf="isAdmin()" (click)="close()">
+      Auditoria
+    </a>
   </nav>
 </aside>
