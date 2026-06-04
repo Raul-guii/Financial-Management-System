@@ -31,8 +31,7 @@ export class InvoiceFormComponent implements OnInit {
     private contractService: ContractService,
     private clientService: ClientService,
     private route: ActivatedRoute,
-    private router: Router,
-    private cdr: ChangeDetectorRef
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -70,7 +69,6 @@ export class InvoiceFormComponent implements OnInit {
               {}
             );
 
-            this.cdr.detectChanges();
           },
         error: (err) => console.error(err)
       });

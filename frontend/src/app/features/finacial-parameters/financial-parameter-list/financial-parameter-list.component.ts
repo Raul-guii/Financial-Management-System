@@ -18,8 +18,7 @@ export class FinancialParameterListComponent implements OnInit {
   paramToDeactivate: FinancialParameterResponse | null = null;
 
   constructor(
-    private paramService: FinancialParameterService,
-    private cdr: ChangeDetectorRef
+    private paramService: FinancialParameterService
   ) {}
 
   ngOnInit(): void {
@@ -30,7 +29,6 @@ export class FinancialParameterListComponent implements OnInit {
     this.paramService.getAll().subscribe({
       next: (data) => {
         this.parameters = data;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar parâmetros:', err)
     });
@@ -110,7 +108,6 @@ export class FinancialParameterListComponent implements OnInit {
         const p = this.parameters.find(x => x.id === this.paramToDeactivate!.id);
         if (p) p.active = false;
         this.paramToDeactivate = null;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao desativar parâmetro:', err)
     });

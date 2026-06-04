@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -19,23 +20,28 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone,
   ) {}
 
   login() {
-    console.log('clicou login');
     this.loading = true;
     this.errorMessage = '';
 
-    this.authService.login(this.email, this.password).subscribe({
-      next: (res) => {
-        console.log('LOGIN OK', res);
-        this.router.navigate(['/dashboard']);
-      },
+    this.authService.login(this.email, this.password).pipe(
+      finalize(() => {
+        this.ngZone.run(() => { 
+          this.loading = false;
+        });
+      })
+    ).subscribe({
+      next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
-        console.log('ERRO', err);
+        console.log('ERRO CHEGOU NO COMPONENTE', err);
+        this.loading = false;
         this.errorMessage = 'E-mail ou senha inválidos';
-      }
+}
+      
     });
   }
 }

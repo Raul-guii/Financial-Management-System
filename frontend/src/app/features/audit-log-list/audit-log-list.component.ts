@@ -31,8 +31,7 @@ export class AuditLogListComponent implements OnInit {
   ];
 
   constructor(
-    private auditLogService: AuditLogService,
-    private cdr: ChangeDetectorRef
+    private auditLogService: AuditLogService
   ) {}
 
   ngOnInit(): void {
@@ -49,7 +48,6 @@ export class AuditLogListComponent implements OnInit {
         this.logs = data.content;
         this.totalElements = data.totalElements;
         this.totalPages = data.totalPages;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar audit logs:', err)
     });

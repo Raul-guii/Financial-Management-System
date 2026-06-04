@@ -27,7 +27,6 @@ export class ContractItemsComponent implements OnInit {
     private itemService: ContractItemService,
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +47,6 @@ export class ContractItemsComponent implements OnInit {
     this.itemService.getByContractId(this.contractId).subscribe({
       next: (data) => {
         this.items = data;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar itens:', err)
     });
@@ -79,7 +77,6 @@ export class ContractItemsComponent implements OnInit {
           const idx = this.items.findIndex(i => i.id === this.editingItem!.id);
           if (idx !== -1) this.items[idx] = updated;
           this.resetForm();
-          this.cdr.detectChanges();
         },
         error: () => {
           this.loading = false;
@@ -93,7 +90,6 @@ export class ContractItemsComponent implements OnInit {
         next: (created) => {
           this.items = [...this.items, created];
           this.resetForm();
-          this.cdr.detectChanges();
         },
         error: () => {
           this.loading = false;
@@ -139,7 +135,6 @@ export class ContractItemsComponent implements OnInit {
       next: () => {
         this.items = this.items.filter(i => i.id !== this.itemToDelete!.id);
         this.itemToDelete = null;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao remover item:', err)
     });

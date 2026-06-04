@@ -69,7 +69,7 @@
 
   </div>
 
-  <!-- GRÁFICOS -->
+  <!-- GRÁFICOS (pizza + barra) -->
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-header">
@@ -94,15 +94,48 @@
       </div>
       <div class="chart-container">
         <canvas
-          *ngIf="lineChartData"
+          *ngIf="barChartData"
           baseChart
-          [data]="lineChartData"
+          [data]="barChartData"
           [type]="'bar'"
-          [options]="lineChartOptions">
+          [options]="barChartOptions">
         </canvas>
       </div>
     </div>
   </div>
+
+  <!-- GRÁFICO DE LINHA (largura total) -->
+<div class="chart-card chart-card-full">
+  <div class="chart-header">
+    <div>
+      <div class="chart-title">Evolução Mensal</div>
+      <div class="chart-subtitle">Receita, pendências e vencidas por período</div>
+    </div>
+
+    <div class="chart-filters">
+      <div class="preset-buttons">
+        <button [class.active]="activePreset === 3"  (click)="applyPreset(3)">3M</button>
+        <button [class.active]="activePreset === 6"  (click)="applyPreset(6)">6M</button>
+        <button [class.active]="activePreset === 12" (click)="applyPreset(12)">12M</button>
+      </div>
+      <div class="date-range">
+        <input type="date" [(ngModel)]="startDate" (change)="applyCustomRange()" />
+        <span>até</span>
+        <input type="date" [(ngModel)]="endDate" (change)="applyCustomRange()" />
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-container chart-container-full">
+    <canvas
+      *ngIf="lineChartData"
+      baseChart
+      [data]="lineChartData"
+      [type]="'line'"
+      [options]="lineChartOptions">
+    </canvas>
+  </div>
+</div>
 
   <!-- RESUMO -->
   <div class="recent-table">

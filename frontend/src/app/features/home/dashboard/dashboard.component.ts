@@ -1,34 +1,59 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DashboardService } from '../../../core/services/dashboard.service';
-import { DashboardSummary } from '../../../models/dashboard.model';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { Chart, registerables } from 'chart.js';
 import { RouterModule } from '@angular/router';
+import { DashboardSummary } from '../../../models/dashboard/dashboard.model';
+import { MonthlyRevenue } from '../../../models/dashboard/monthly-revenue.model';
+import { FormsModule } from '@angular/forms';
 
-// Registre os componentes do Chart.js
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, BaseChartDirective, RouterModule],
+  imports: [CommonModule, BaseChartDirective, RouterModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-
 export class DashboardComponent implements OnInit {
   summary?: DashboardSummary;
   pieChartData?: ChartConfiguration<'pie'>['data'];
   pieChartOptions?: ChartConfiguration<'pie'>['options'];
-  lineChartData?: ChartConfiguration<'bar'>['data'];
-  lineChartOptions?: ChartConfiguration<'bar'>['options'];
+  barChartData?: ChartConfiguration<'bar'>['data'];
+  barChartOptions?: ChartConfiguration<'bar'>['options'];
+  lineChartData?: ChartConfiguration<'line'>['data'];
+  lineChartOptions?: ChartConfiguration<'line'>['options'];
 
-  constructor(private dashboardService: DashboardService, private cdr: ChangeDetectorRef) {}
+  activePreset: number | null = 6;
+  startDate = '';
+  endDate = '';
+
+  constructor(private dashboardService: DashboardService) {}
 
   ngOnInit() {
     this.loadDashboard();
+    this.loadMonthlyRevenue();
+    this.applyPreset(6);
+  }
+
+  applyPreset(months: number) {
+    this.activePreset = months;
+    const end   = new Date();
+    const start = new Date();
+    start.setMonth(start.getMonth() - (months - 1));
+    start.setDate(1);
+    this.startDate = this.formatDate(start);
+    this.endDate   = this.formatDate(end);
+    this.loadMonthlyRevenue();
+  }
+
+  applyCustomRange() {
+    if (!this.startDate || !this.endDate) return;
+    this.activePreset = null;
+    this.loadMonthlyRevenue();
   }
 
   loadDashboard() {
@@ -36,24 +61,25 @@ export class DashboardComponent implements OnInit {
       next: (data) => {
         this.summary = data;
         this.buildCharts();
-        this.cdr.detectChanges();
-
-        console.log('PIE DATA:', this.pieChartData);
-        console.log('LINE DATA:', this.lineChartData);
       },
       error: (err) => console.error('Erro ao carregar dashboard:', err)
     });
   }
 
+  loadMonthlyRevenue() {
+    this.dashboardService.getMonthlyRevenue(this.startDate, this.endDate).subscribe({
+      next: (data) => this.buildLineChart(data),
+      error: (err) => console.error('Erro ao carregar receita mensal:', err)
+    });
+  }
+
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0]; // yyyy-MM-dd
+  }
+
   buildCharts() {
-    console.log('BUILD CHARTS FOI CHAMADO');
+    if (!this.summary) return;
 
-    if (!this.summary){
-      console.log('SUMMARY ESTÁ UNDEFINED');
-      return;
-    }
-
-    // Gráfico de Pizza
     this.pieChartData = {
       labels: ['Pagas', 'Pendentes', 'Vencidas'],
       datasets: [{
@@ -73,16 +99,12 @@ export class DashboardComponent implements OnInit {
       plugins: {
         legend: {
           position: 'bottom',
-          labels: {
-            padding: 12,
-            font: { size: 11 }
-          }
+          labels: { padding: 12, font: { size: 11 } }
         }
       }
     };
 
-    // Gráfico de Linha
-    this.lineChartData = {
+    this.barChartData = {
       labels: ['Receita Bruta', 'Reembolsos', 'Receita Líquida', 'Em Aberto'],
       datasets: [{
         label: 'Valores (R$)',
@@ -98,25 +120,78 @@ export class DashboardComponent implements OnInit {
       }]
     };
 
-    this.lineChartOptions = {
+    this.barChartOptions = {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      plugins: { legend: { display: false } },
       scales: {
         y: {
           beginAtZero: true,
-          min: 0,
           ticks: {
-            callback: (value) => {
-              return 'R$ ' + (Number(value) / 1000) + 'k';
-            }
+            callback: (value) => 'R$ ' + (Number(value) / 1000) + 'k'
           }
         }
       }
     };
   }
+
+  buildLineChart(data: MonthlyRevenue[]) {
+    this.lineChartData = {
+      labels: data.map(d => d.month),
+      datasets: [
+        {
+          label: 'Receita',
+          data: data.map(d => Number(d.revenue)),
+          borderColor: '#3B6D11',
+          backgroundColor: 'rgba(59, 109, 17, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#3B6D11',
+        },
+        {
+          label: 'Pendente',
+          data: data.map(d => Number(d.pending)),
+          borderColor: '#854F0B',
+          backgroundColor: 'rgba(133, 79, 11, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#854F0B',
+        },
+        {
+          label: 'Vencida',
+          data: data.map(d => Number(d.overdue)),
+          borderColor: '#A32D2D',
+          backgroundColor: 'rgba(163, 45, 45, 0.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: '#A32D2D',
+        }
+      ]
+    };
+
+    this.lineChartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { padding: 12, font: { size: 11 } }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: (value) => 'R$ ' + (Number(value) / 1000) + 'k'
+          }
+        }
+      }
+    };
+  }
+
 
   getRefundPercentage(): string {
     if (!this.summary || this.summary.grossRevenue === 0) return '0.0';

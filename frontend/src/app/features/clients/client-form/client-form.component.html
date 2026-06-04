@@ -13,19 +13,13 @@
   <div class="form-card">
     <form [formGroup]="form" (ngSubmit)="submit()">
 
-      <!-- DADOS PRINCIPAIS -->
       <div class="section-title">Dados principais</div>
       <div class="form-grid">
 
         <div class="form-group full">
           <label for="name">Nome / Razão social</label>
-          <input
-            id="name"
-            type="text"
-            formControlName="name"
-            placeholder="Ex: Empresa Alpha Ltda"
-            [class.invalid]="isInvalid('name')"
-          />
+          <input id="name" type="text" formControlName="name"
+            placeholder="Ex: Empresa Alpha Ltda" [class.invalid]="isInvalid('name')" />
           <span class="field-error" *ngIf="isInvalid('name')">Nome é obrigatório</span>
         </div>
 
@@ -41,49 +35,36 @@
 
         <div class="form-group">
           <label for="document">{{ form.get('type')?.value === 'PERSON' ? 'CPF' : 'CNPJ' }}</label>
-          <input
-            id="document"
-            type="text"
-            formControlName="document"
+          <input id="document" type="text" formControlName="document"
+            [cpfCnpjMask]="form.get('type')?.value"
             [placeholder]="form.get('type')?.value === 'PERSON' ? '000.000.000-00' : '00.000.000/0000-00'"
-            [class.invalid]="isInvalid('document')"
-          />
+            [class.invalid]="isInvalid('document')" />
           <span class="field-error" *ngIf="isInvalid('document')">Documento é obrigatório</span>
         </div>
 
         <div class="form-group">
           <label for="email">E-mail</label>
-          <input
-            id="email"
-            type="email"
-            formControlName="email"
-            placeholder="contato@empresa.com"
-            [class.invalid]="isInvalid('email')"
-          />
+          <input id="email" type="email" formControlName="email"
+            placeholder="contato@empresa.com" [class.invalid]="isInvalid('email')" />
           <span class="field-error" *ngIf="isInvalid('email')">E-mail inválido</span>
         </div>
 
         <div class="form-group">
           <label for="phone">Telefone</label>
-          <input
-            id="phone"
-            type="text"
-            formControlName="phone"
-            placeholder="(11) 99999-9999"
-            [class.invalid]="isInvalid('phone')"
-          />
+          <input id="phone" type="text" formControlName="phone"
+            phoneMask placeholder="(11) 99999-9999" [class.invalid]="isInvalid('phone')" />
           <span class="field-error" *ngIf="isInvalid('phone')">Telefone é obrigatório</span>
         </div>
 
       </div>
 
-      <!-- ENDEREÇO -->
       <div class="section-title">Endereço <span class="optional">(opcional)</span></div>
       <div class="form-grid">
 
         <div class="form-group">
           <label for="addressPostalCode">CEP</label>
-          <input id="addressPostalCode" type="text" formControlName="addressPostalCode" placeholder="00000-000" />
+          <input id="addressPostalCode" type="text" formControlName="addressPostalCode"
+            cepMask placeholder="00000-000" />
         </div>
 
         <div class="form-group">
@@ -118,7 +99,6 @@
 
       </div>
 
-      <!-- ERRO GLOBAL -->
       <div class="global-error" *ngIf="errorMessage">
         <i class="ti ti-alert-circle"></i>
         {{ errorMessage }}

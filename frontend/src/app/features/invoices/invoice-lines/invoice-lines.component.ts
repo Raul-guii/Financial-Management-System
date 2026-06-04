@@ -23,8 +23,7 @@ export class InvoiceLinesComponent implements OnInit {
   constructor(
     private invoiceService: InvoiceService,
     private invoiceLineService: InvoiceLineService,
-    private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +36,6 @@ export class InvoiceLinesComponent implements OnInit {
       next: ({ invoice, lines }) => {
         this.invoice = invoice;
         this.lines = lines;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar fatura:', err)
     });

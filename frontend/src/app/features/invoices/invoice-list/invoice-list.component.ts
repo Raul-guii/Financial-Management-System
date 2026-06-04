@@ -28,8 +28,7 @@ export class InvoiceListComponent implements OnInit {
   private searchSubject = new Subject<string>();
 
   constructor(
-    private invoiceService: InvoiceService,
-    private cdr: ChangeDetectorRef
+    private invoiceService: InvoiceService
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +53,6 @@ export class InvoiceListComponent implements OnInit {
         this.invoices = data.content;
         this.totalElements = data.totalElements;
         this.totalPages = data.totalPages;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar faturas:', err)
     });
@@ -123,7 +121,6 @@ export class InvoiceListComponent implements OnInit {
       next: () => {
         this.invoices = this.invoices.filter(i => i.id !== this.invoiceToDelete!.id);
         this.invoiceToDelete = null;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao remover fatura:', err)
     });

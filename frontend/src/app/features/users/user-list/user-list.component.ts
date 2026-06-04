@@ -26,8 +26,7 @@ export class UserListComponent implements OnInit {
   private searchSubject = new Subject<string>();
 
   constructor(
-    private userService: UserService,
-    private cdr: ChangeDetectorRef
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +51,6 @@ export class UserListComponent implements OnInit {
         this.users = data.content;
         this.totalElements = data.totalElements;
         this.totalPages = data.totalPages;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro:', err)
     });
@@ -127,7 +125,6 @@ export class UserListComponent implements OnInit {
       next: () => {
         this.users = this.users.filter(u => u.id !== this.userToDelete!.id);
         this.userToDelete = null;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao deletar usuário:', err)
     });

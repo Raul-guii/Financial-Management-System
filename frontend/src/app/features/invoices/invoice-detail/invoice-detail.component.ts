@@ -48,8 +48,7 @@ export class InvoiceDetailComponent implements OnInit {
     private paymentService: PaymentService,
     private authService: AuthService,
     private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +66,6 @@ export class InvoiceDetailComponent implements OnInit {
         this.invoice  = invoice;
         this.lines    = lines;
         this.payments = payments;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar detalhe da fatura:', err)
     });
@@ -136,7 +134,6 @@ export class InvoiceDetailComponent implements OnInit {
         this.paymentLoading = false;
         const msg = err?.error?.message || err?.error || '';
         this.paymentError = msg || 'Erro ao gerar pagamento. Tente novamente.';
-        this.cdr.detectChanges();
       }
     });
   }
@@ -152,7 +149,6 @@ export class InvoiceDetailComponent implements OnInit {
       error: () => {
         this.simulating = false;
         this.showToast('Erro ao simular aprovação.', 'toast-error');
-        this.cdr.detectChanges();
       }
     });
   }
@@ -168,7 +164,6 @@ export class InvoiceDetailComponent implements OnInit {
       error: () => {
         this.simulating = false;
         this.showToast('Erro ao simular reembolso.', 'toast-error');
-        this.cdr.detectChanges();
       }
     });
   }
@@ -176,15 +171,16 @@ export class InvoiceDetailComponent implements OnInit {
   copyQrCode(code: string): void {
     navigator.clipboard.writeText(code).then(() => {
       this.copied = true;
-      setTimeout(() => { this.copied = false; this.cdr.detectChanges(); }, 2000);
+      setTimeout(() => { this.copied = false; }, 2000);
     });
   }
 
   showToast(message: string, type: string): void {
     this.toastMessage = message;
     this.toastType = type;
-    this.cdr.detectChanges();
-    setTimeout(() => { this.toastMessage = ''; this.cdr.detectChanges(); }, 3000);
+    setTimeout(() => {
+       this.toastMessage = '';
+    }, 3000);
   }
 
   getTodayStr(): string {

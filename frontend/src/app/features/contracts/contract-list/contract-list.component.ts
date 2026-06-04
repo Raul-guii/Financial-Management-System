@@ -34,7 +34,6 @@ export class ContractListComponent implements OnInit {
   constructor(
     private contractService: ContractService,
     private clientService: ClientService,
-    private cdr: ChangeDetectorRef
   ) {}
 
  ngOnInit(): void {
@@ -75,8 +74,6 @@ export class ContractListComponent implements OnInit {
           },
           {}
         );
-
-        this.cdr.detectChanges();
       },
 
       error: (err) => console.error('Erro ao carregar contratos:', err)
@@ -171,7 +168,6 @@ export class ContractListComponent implements OnInit {
         const c = this.contracts.find(x => x.id === this.contractToDelete!.id);
         if (c) c.status = ContractStatus.CANCELLED;
         this.contractToDelete = null;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao cancelar contrato:', err)
     });

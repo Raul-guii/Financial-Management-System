@@ -26,7 +26,6 @@ export class ClientListComponent implements OnInit {
 
   constructor(
     private clientService: ClientService,
-    private cdr: ChangeDetectorRef
   ) {}
 
 ngOnInit(): void {
@@ -52,7 +51,6 @@ loadClients(): void {
       this.clients = data.content;      
       this.totalElements = data.totalElements;
       this.totalPages = data.totalPages;
-      this.cdr.detectChanges();
     },
     error: (err) => console.error('Erro ao carregar clientes:', err)
   });
@@ -83,7 +81,6 @@ loadClients(): void {
     this.clientService.deactivate(client.id).subscribe({
       next: () => {
         client.active = !client.active;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao alterar status:', err)
     });
@@ -103,7 +100,6 @@ loadClients(): void {
       next: () => {
         this.clients = this.clients.filter(c => c.id !== this.clientToDelete!.id);
         this.clientToDelete = null;
-        this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao deletar cliente:', err)
     });

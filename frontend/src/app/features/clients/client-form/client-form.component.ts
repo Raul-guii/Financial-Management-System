@@ -4,11 +4,22 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { ClientService } from '../../../core/services/client.service';
 import { ClientType } from '../../../models/clients/client-type.enum';
+import { CpfCnpjMaskDirective } from '../../../shared/directives/cpf-cnpj-mask.directive';
+import { PhoneMaskDirective } from '../../../shared/directives/phone-mask.directive';
+import { CepMaskDirective } from '../../../shared/directives/cep-mask.directive';
+import { ClientCreateRequest } from '../../../models/clients/client-create.model';
 
 @Component({
   selector: 'app-client-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    CpfCnpjMaskDirective,
+    PhoneMaskDirective,
+    CepMaskDirective,
+  ],
   templateUrl: './client-form.component.html',
   styleUrls: ['./client-form.component.scss']
 })
@@ -61,6 +72,15 @@ export class ClientFormComponent implements OnInit {
     return !!(ctrl?.invalid && ctrl?.touched);
   }
 
+  private stripMasks(value: ClientCreateRequest): ClientCreateRequest {
+    return {
+      ...value,
+      document:          String(value['document']          ?? '').replace(/\D/g, ''),
+      phone:             String(value['phone']             ?? '').replace(/\D/g, ''),
+      addressPostalCode: String(value['addressPostalCode'] ?? '').replace(/\D/g, ''),
+    };
+  }
+
   submit(): void {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
@@ -68,7 +88,7 @@ export class ClientFormComponent implements OnInit {
     this.loading = true;
     this.errorMessage = '';
 
-    const value = this.form.value;
+    const value = this.stripMasks(this.form.value);
 
     if (this.isEditing && this.clientId) {
       this.clientService.update(this.clientId, value).subscribe({

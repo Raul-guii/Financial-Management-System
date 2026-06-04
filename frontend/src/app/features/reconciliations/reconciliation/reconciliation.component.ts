@@ -22,8 +22,7 @@ export class ReconciliationComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private reconciliationService: ReconciliationService,
-    private cdr: ChangeDetectorRef 
+    private reconciliationService: ReconciliationService
   ) {}
 
   ngOnInit(): void {
@@ -61,13 +60,11 @@ export class ReconciliationComponent implements OnInit {
       next: (data) => {
         this.result  = data;
         this.loading = false;
-        this.cdr.detectChanges(); 
       },
       error: (err) => {
         this.loading = false;
         const msg = err?.error?.message || err?.error || '';
         this.errorMessage = msg || 'Erro ao executar reconciliação.';
-        this.cdr.detectChanges();
       }
     });
   }

@@ -28,8 +28,7 @@ export class ContractFormComponent implements OnInit {
     private contractService: ContractService,
     private clientService: ClientService,
     private route: ActivatedRoute,
-    private router: Router,
-    private cdr: ChangeDetectorRef
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -48,7 +47,6 @@ export class ContractFormComponent implements OnInit {
       this.clientService.getAll(0, 1000).subscribe({
         next: (data) => {
           this.clients = data.content;
-          this.cdr.detectChanges();
         },
         error: (err) => console.error('Erro ao carregar clientes:', err)
       });
