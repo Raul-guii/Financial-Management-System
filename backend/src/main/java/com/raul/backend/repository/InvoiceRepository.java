@@ -77,6 +77,14 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     """)
     List<Invoice> findUpcomingDueInvoices(LocalDate today, LocalDate limit);
 
+    @Query("""
+    SELECT COALESCE(SUM(i.amount), 0)
+    FROM Invoice i
+    WHERE i.status = 'PENDING'
+      AND i.dueDate BETWEEN :start AND :end
+    """)
+    BigDecimal sumPendingByPeriod(LocalDate start, LocalDate end);
+
     @Query("SELECT i FROM Invoice i LEFT JOIN FETCH i.payment WHERE i.id = :id")
     Optional<Invoice> findByIdWithPayments(Long id);
 }

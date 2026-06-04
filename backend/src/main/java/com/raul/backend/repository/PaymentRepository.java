@@ -49,5 +49,11 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     """)
     BigDecimal sumApprovedPayments();
 
-
+    @Query("""
+    SELECT COALESCE(SUM(p.amount), 0)
+    FROM Payment p
+    WHERE p.paymentStatus = 'APPROVED'
+      AND p.paymentDate BETWEEN :start AND :end
+    """)
+    BigDecimal sumApprovedByPeriod(LocalDateTime start, LocalDateTime end);
 }
