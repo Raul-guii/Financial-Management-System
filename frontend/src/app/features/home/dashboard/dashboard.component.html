@@ -119,9 +119,9 @@
         <button [class.active]="activePreset === 12" (click)="applyPreset(12)">12M</button>
       </div>
       <div class="date-range">
-        <input type="date" [(ngModel)]="startDate" (change)="applyCustomRange()" />
+        <input type="date" [value]="startDate" (change)="onStartDateChange($event)" />
         <span>até</span>
-        <input type="date" [(ngModel)]="endDate" (change)="applyCustomRange()" />
+        <input type="date" [value]="endDate" (change)="onEndDateChange($event)" />
       </div>
     </div>
   </div>

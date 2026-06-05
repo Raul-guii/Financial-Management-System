@@ -35,18 +35,20 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.loadDashboard();
-    this.loadMonthlyRevenue();
     this.applyPreset(6);
   }
 
   applyPreset(months: number) {
     this.activePreset = months;
-    const end   = new Date();
-    const start = new Date();
-    start.setMonth(start.getMonth() - (months - 1));
-    start.setDate(1);
+
+    const end = new Date();
+    const start = new Date(end.getFullYear(), end.getMonth() - (months - 1), 1);
+
     this.startDate = this.formatDate(start);
     this.endDate   = this.formatDate(end);
+
+      console.log('start:', this.startDate, 'end:', this.endDate); // 👈
+
     this.loadMonthlyRevenue();
   }
 
@@ -74,7 +76,22 @@ export class DashboardComponent implements OnInit {
   }
 
   private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0]; // yyyy-MM-dd
+    const year  = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day   = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  onStartDateChange(event: Event) {
+    this.startDate = (event.target as HTMLInputElement).value;
+    this.activePreset = null;
+    if (this.startDate && this.endDate) this.loadMonthlyRevenue();
+  }
+
+  onEndDateChange(event: Event) {
+    this.endDate = (event.target as HTMLInputElement).value;
+    this.activePreset = null;
+    if (this.startDate && this.endDate) this.loadMonthlyRevenue();
   }
 
   buildCharts() {

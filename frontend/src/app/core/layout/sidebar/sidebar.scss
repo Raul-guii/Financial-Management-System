@@ -67,6 +67,11 @@ nav {
   gap: 10px;
 }
 
+nav a.active {
+  background: #2563eb;
+  color: white;
+}
+
 a {
   color: #cbd5f5;
   text-decoration: none;
@@ -77,11 +82,6 @@ a {
   &:hover {
     background: #1e293b;
   }
-}
-
-.active {
-  background: #2563eb;
-  color: white;
 }
 
 // ============================
