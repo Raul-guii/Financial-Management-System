@@ -46,10 +46,12 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sgf_db
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sgf_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
       SPRING_DATASOURCE_USERNAME: sgf_user
       SPRING_DATASOURCE_PASSWORD: sgf_pass
       MERCADOPAGO_ACCESS_TOKEN: APP_USR-4705460313754444-050400-7450ef3e543b8423f2f9d7b16988a064-3355415776
+      TZ: America/Sao_Paulo
+      JAVA_TOOL_OPTIONS: -Duser.timezone=America/Sao_Paulo
     networks:
       - sgf_network
 
