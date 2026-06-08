@@ -9,27 +9,20 @@ import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.repository.GatewayTransactionRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 
+@RequiredArgsConstructor
 @Service
 public class WebhookService {
 
     private final GatewayTransactionRepository repository;
     private final PaymentRepository paymentRepository;
-    private final InvoiceRepository invoiceRepository;
     private final MercadoPagoClient mercadoPagoClient;
     private final InvoiceStatusService invoiceStatusService;
-
-    public WebhookService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceRepository invoiceRepository, MercadoPagoClient mercadoPagoClient, InvoiceStatusService invoiceStatusService) {
-        this.repository = repository;
-        this.paymentRepository = paymentRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.mercadoPagoClient = mercadoPagoClient;
-        this.invoiceStatusService = invoiceStatusService;
-    }
 
     @Transactional
     public void process(Map<String, Object> payload) {
@@ -93,9 +86,5 @@ public class WebhookService {
             case PENDING -> PaymentStatus.PENDING;
             default -> PaymentStatus.ERROR;
         };
-    }
-
-    private String extractStatus(Map<String, Object> payload) {
-        return payload.get("status").toString();
     }
 }

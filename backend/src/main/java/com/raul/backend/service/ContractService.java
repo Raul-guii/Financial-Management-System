@@ -28,6 +28,7 @@ public class ContractService {
     private final UserRepository userRepository;
     private final InvoiceService invoiceService;
     private final AuditLogService auditLogService;
+    private final InvoiceGeneratorService invoiceGeneratorService;
 
     // CREATE CONTRACT -----------
     @Transactional
@@ -56,6 +57,11 @@ public class ContractService {
         contract.setClient(client);
 
         contract = contractRepository.save(contract);
+
+        // gera faturas automaticamente após salvar o contrato
+        if (contract.getItems() != null && !contract.getItems().isEmpty()) {
+            invoiceGeneratorService.generateForContract(contract);
+        }
 
         auditLogService.log(contract.getId(), "CONTRACT", AuditAction.CONTRACT_CREATED,
                 loggedUser.getId(), loggedUser.getName(),

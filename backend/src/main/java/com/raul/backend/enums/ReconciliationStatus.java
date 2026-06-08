@@ -5,5 +5,6 @@ public enum ReconciliationStatus {
     MATCHED,
     DIVERGENT,
     MISSING_IN_GATEWAY,
-    MISSING_IN_SYSTEM
+    MISSING_IN_SYSTEM,
+    REFUNDED
 }

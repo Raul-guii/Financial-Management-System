@@ -3,8 +3,12 @@ package com.raul.backend.controller;
 import com.raul.backend.dto.contract.ContractCreateDTO;
 import com.raul.backend.dto.contract.ContractResponseDTO;
 import com.raul.backend.dto.contract.ContractUpdateDTO;
+import com.raul.backend.entity.Contract;
+import com.raul.backend.repository.ContractRepository;
 import com.raul.backend.service.ContractService;
+import com.raul.backend.service.InvoiceGeneratorService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -12,15 +16,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/contracts")
 public class ContractController {
 
     private final ContractService contractService;
-
-    public ContractController(ContractService contractService) {
-        this.contractService = contractService;
-    }
+    private final ContractRepository contractRepository;
+    private final InvoiceGeneratorService invoiceGeneratorService;
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
@@ -54,5 +57,14 @@ public class ContractController {
     public ResponseEntity<Void> cancel(@PathVariable Long id) {
         contractService.cancel(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/generate-invoices")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FINANCIAL_MANAGER')")
+    public ResponseEntity<Void> generateInvoices(@PathVariable Long id) {
+        Contract contract = contractRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Contrato não encontrado"));
+        invoiceGeneratorService.generateForContract(contract);
+        return ResponseEntity.ok().build();
     }
 }
