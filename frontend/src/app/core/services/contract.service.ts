@@ -32,6 +32,10 @@ export class ContractService {
     return this.http.post<ContractResponse>(this.api, data);
   }
 
+  generateInvoices(contractId: number): Observable<void> {
+    return this.http.post<void>(`${this.api}/${contractId}/generate-invoices`, {});
+  }
+
   update(id: number, data: ContractUpdateRequest): Observable<ContractResponse> {
     return this.http.put<ContractResponse>(`${this.api}/${id}`, data);
   }

@@ -45,6 +45,12 @@
         <option value="above1000">Acima de R$1000</option>
       </select>
 
+      <select class="filter-select" [(ngModel)]="contractFilter">
+        <option value="">Todos os contratos</option>
+        <option *ngFor="let id of getUniqueContractIds()" [value]="id">
+          Contrato #{{ id }}
+        </option>
+      </select>
 
     <div class="search-wrap">
       <i class="ti ti-search"></i>

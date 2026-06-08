@@ -121,6 +121,17 @@
                 <i class="ti ti-list"></i>
               </a>
               <button
+                class="icon-btn"
+                [title]="contract.invoiceIds.length > 0 ? 'Faturas já geradas' : 'Gerar faturas'"
+                (click)="generateInvoices(contract.id)"
+                [disabled]="generatingId === contract.id || contract.status === ContractStatus.CANCELLED || contract.invoiceIds.length > 0">
+                <i class="ti" [ngClass]="{
+                  'ti-loader': generatingId === contract.id,
+                  'ti-check': contract.invoiceIds.length > 0,
+                  'ti-file-invoice': generatingId !== contract.id && contract.invoiceIds.length === 0
+                }"></i>
+              </button>
+              <button
                 class="icon-btn icon-btn-danger"
                 (click)="openDeleteConfirm(contract)"
                 title="Cancelar contrato"
@@ -190,3 +201,7 @@
       </div>
     </div>
 </div>
+  <div class="toast" *ngIf="toastMessage" [ngClass]="toastType">
+    <i class="ti" [ngClass]="toastType === 'toast-success' ? 'ti-check' : 'ti-alert-circle'"></i>
+    {{ toastMessage }}
+  </div>

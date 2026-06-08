@@ -141,8 +141,6 @@ export class ContractItemsComponent implements OnInit {
   }
 
   finish(): void {
-    this.router.navigate(['/invoices/new'], {
-      queryParams: { contractId: this.contractId }
-    });
+    this.router.navigate(['/contracts']);
   }
 }

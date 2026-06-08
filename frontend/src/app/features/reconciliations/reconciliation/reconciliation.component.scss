@@ -195,6 +195,10 @@
   &.filter-btn-warn {
     &.active { background: #FAEEDA; color: #854F0B; border-color: #F6D9A8; }
   }
+
+  &.filter-btn-refund {
+    &.active { background: #EDE9FE; color: #6D28D9; border-color: #C4B5FD; }
+  }
 }
 
 table {
@@ -266,6 +270,8 @@ tbody td {
   &.badge-matched  { background: #EAF3DE; color: #3B6D11; }
   &.badge-divergent { background: #FCEBEB; color: #A32D2D; }
   &.badge-pending  { background: #FAEEDA; color: #854F0B; }
+  &.badge-refunded { background: #EDE9FE; color: #6D28D9; }
+  &.badge-warn     { background: #FAEEDA; color: #854F0B; }
   &.badge-unknown  { background: #F1EFE8; color: #5F5E5A; }
 }
 
