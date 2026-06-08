@@ -106,21 +106,30 @@ export class ReconciliationComponent implements OnInit {
     return item.systemAmount - item.gatewayAmount;
   }
 
-  getStatusBadgeClass(status: string): string {
-    const map: Record<string, string> = {
-      MATCHED:   'badge-matched',
-      DIVERGENT: 'badge-divergent',
-      PENDING:   'badge-pending',
-    };
-    return map[status] ?? 'badge-unknown';
+  getRefundedCount(): number {
+    return this.result?.items.filter(i => i.status === 'REFUNDED').length ?? 0;
   }
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      MATCHED:   'Confirmado',
-      DIVERGENT: 'Divergente',
-      PENDING:   'Pendente',
+      MATCHED:            'Confirmado',
+      DIVERGENT:          'Divergente',
+      PENDING:            'Pendente',
+      MISSING_IN_GATEWAY: 'Sem gateway',
+      REFUNDED:           'Reembolsado',
     };
     return map[status] ?? status;
   }
+
+  getStatusBadgeClass(status: string): string {
+    const map: Record<string, string> = {
+      MATCHED:            'badge-matched',
+      DIVERGENT:          'badge-divergent',
+      PENDING:            'badge-pending',
+      MISSING_IN_GATEWAY: 'badge-warn',
+      REFUNDED:           'badge-refunded',
+    };
+    return map[status] ?? 'badge-unknown';
+  }
+  
 }

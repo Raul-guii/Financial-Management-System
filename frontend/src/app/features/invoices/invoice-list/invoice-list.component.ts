@@ -25,6 +25,7 @@ export class InvoiceListComponent implements OnInit {
   searchTerm = '';
   statusFilter: string = '';
   amountFilter: string = '';  
+  contractFilter: string = '';
   private searchSubject = new Subject<string>();
 
   constructor(
@@ -66,10 +67,15 @@ export class InvoiceListComponent implements OnInit {
 
   getFilteredInvoices(): InvoiceResponse[] {
     return this.invoices.filter(inv => {
-      const matchStatus = !this.statusFilter || inv.status === this.statusFilter;
-      const matchAmount = this.matchesAmountFilter(inv.amount);
-      return matchStatus && matchAmount;
+      const matchStatus   = !this.statusFilter   || inv.status === this.statusFilter;
+      const matchAmount   = this.matchesAmountFilter(inv.amount);
+      const matchContract = !this.contractFilter || String(inv.contractId) === this.contractFilter;
+      return matchStatus && matchAmount && matchContract;
     });
+  }
+
+  getUniqueContractIds(): number[] {
+    return [...new Set(this.invoices.map(i => i.contractId))].sort((a, b) => a - b);
   }
 
   matchesAmountFilter(amount: number): boolean {

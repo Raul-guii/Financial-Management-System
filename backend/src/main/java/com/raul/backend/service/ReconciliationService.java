@@ -4,6 +4,7 @@ import com.raul.backend.dto.reconciliation.ReconciliationCreateDTO;
 import com.raul.backend.dto.reconciliation.ReconciliationResponseDTO;
 import com.raul.backend.dto.reconciliationitem.ReconciliationItemResponseDTO;
 import com.raul.backend.entity.*;
+import com.raul.backend.enums.PaymentStatus;
 import com.raul.backend.enums.ReconciliationStatus;
 import com.raul.backend.repository.GatewayTransactionRepository;
 import com.raul.backend.repository.PaymentRepository;
@@ -39,6 +40,7 @@ public class ReconciliationService {
         System.out.println("PAYMENTS ENCONTRADOS: " + payments.size());
         for (Payment p : payments) {
             System.out.println("PAYMENT: " + p.getId() + " - " + p.getPaymentDate());
+            System.out.println("PAYMENT: " + p.getId() + " status=" + p.getPaymentStatus() + " date=" + p.getPaymentDate());
         }
 
         List<GatewayTransaction> gatewayTransactions = gatewayTransactionRepository
@@ -73,7 +75,9 @@ public class ReconciliationService {
 
             ReconciliationStatus status;
 
-            if (gateway == null) {
+            if (payment.getPaymentStatus() == PaymentStatus.REFUNDED) {
+                status = ReconciliationStatus.REFUNDED;
+            } else if (gateway == null) {
                 status = ReconciliationStatus.MISSING_IN_GATEWAY;
             } else if (systemAmount.compareTo(gatewayAmount) != 0) {
                 status = ReconciliationStatus.DIVERGENT;
@@ -93,6 +97,23 @@ public class ReconciliationService {
             items.add(item);
         }
 
+        List<Payment> refunds = payments.stream()
+                .filter(p -> p.getPaymentStatus() == com.raul.backend.enums.PaymentStatus.REFUNDED)
+                .toList();
+
+        BigDecimal totalIn  = payments.stream()
+                .filter(p -> p.getPaymentStatus() == com.raul.backend.enums.PaymentStatus.APPROVED)
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalOut = refunds.stream()
+                .map(Payment::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        reconciliation.setTotalIn(totalIn);
+        reconciliation.setTotalOut(totalOut);
+        reconciliation.setNetBalance(totalIn.subtract(totalOut));
+
         reconciliation.setItems(items);
 
         Reconciliation saved = reconciliationRepository.save(reconciliation);
@@ -107,6 +128,9 @@ public class ReconciliationService {
                 reconciliation.getPeriodEnd(),
                 reconciliation.getExecutedAt(),
                 reconciliation.getExecutedBy() != null ? reconciliation.getExecutedBy().getId() : null,
+                reconciliation.getTotalIn(),
+                reconciliation.getTotalOut(),
+                reconciliation.getNetBalance(),
                 reconciliation.getItems()
                         .stream()
                         .map(item -> new ReconciliationItemResponseDTO(

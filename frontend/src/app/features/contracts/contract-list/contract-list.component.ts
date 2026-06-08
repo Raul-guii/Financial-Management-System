@@ -29,6 +29,9 @@ export class ContractListComponent implements OnInit {
   searchTerm = '';
   statusFilter: string = '';
   billingFilter: string = '';
+  generatingId: number | null = null;
+  toastMessage = '';
+  toastType = 'toast-success';
   private searchSubject = new Subject<string>();
 
   constructor(
@@ -113,6 +116,27 @@ export class ContractListComponent implements OnInit {
       CLOSED: 'Encerrado', CANCELLED: 'Cancelado'
     };
     return map[status] ?? status;
+  }
+
+  generateInvoices(contractId: number): void {
+    this.generatingId = contractId;
+    this.contractService.generateInvoices(contractId).subscribe({
+      next: () => {
+        this.generatingId = null;
+        this.showToast('Faturas geradas com sucesso!', 'toast-success');
+      },
+      error: (err) => {
+        this.generatingId = null;
+        const msg = err?.error?.message || err?.error || '';
+        this.showToast(msg || 'Erro ao gerar faturas.', 'toast-error');
+      }
+    });
+  }
+
+  showToast(message: string, type: string): void {
+    this.toastMessage = message;
+    this.toastType = type;
+    setTimeout(() => this.toastMessage = '', 3000);
   }
 
   getBillingLabel(period: string): string {

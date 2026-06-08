@@ -11,8 +11,10 @@ import com.raul.backend.repository.GatewayTransactionRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class GatewayTransactionService {
 
@@ -20,13 +22,6 @@ public class GatewayTransactionService {
     private final PaymentRepository paymentRepository;
     private final InvoiceStatusService invoiceStatusService;
     private final MercadoPagoClient mercadoPagoClient;
-
-    public GatewayTransactionService(GatewayTransactionRepository repository, PaymentRepository paymentRepository, InvoiceStatusService invoiceStatusService, MercadoPagoClient mercadoPagoClient) {
-        this.repository = repository;
-        this.paymentRepository = paymentRepository;
-        this.invoiceStatusService = invoiceStatusService;
-        this.mercadoPagoClient = mercadoPagoClient;
-    }
 
     @Transactional
     public GatewayTransaction processPayment(Payment payment) {

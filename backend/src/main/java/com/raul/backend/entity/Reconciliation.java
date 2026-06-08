@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,6 +33,15 @@ public class Reconciliation {
 
     @Column(name = "executed_at", nullable = false)
     private LocalDateTime executedAt;
+
+    @Column(name = "total_in", nullable = false)
+    private BigDecimal totalIn;
+
+    @Column(name = "total_out", nullable = false)
+    private BigDecimal totalOut;
+
+    @Column(name = "net_balance", nullable = false)
+    private BigDecimal netBalance;
 
     @ManyToOne
     @JoinColumn(name = "executed_by")
