@@ -1,7 +1,7 @@
 package com.raul.backend.service;
 
 import com.raul.backend.dto.gatewaytransaction.GatewayResponse;
-import com.raul.backend.dto.payment.PaymentCreateDTO;
+import org.springframework.web.client.HttpClientErrorException;
 import com.raul.backend.entity.Payment;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -22,6 +22,11 @@ public class MercadoPagoClient {
     private final RestTemplate restTemplate = new RestTemplate();
 
     public GatewayResponse createPayment(Payment payment) {
+
+
+        System.out.println("TOKEN CARREGADO? " + (accessToken != null));
+        System.out.println("TOKEN VAZIO? " + accessToken.isBlank());
+        System.out.println("TOKEN LENGTH: " + accessToken.length());
 
         String url = "https://api.mercadopago.com/v1/orders";
 
@@ -93,6 +98,10 @@ public class MercadoPagoClient {
 
             return gatewayResponse;
 
+        } catch (HttpClientErrorException e) {
+            System.out.println("STATUS: " + e.getStatusCode());
+            System.out.println("BODY: " + e.getResponseBodyAsString());
+            throw e;
         } catch (Exception e) {
             System.out.println("ERRO MERCADO PAGO: " + e.getMessage());
             throw new RuntimeException("Erro ao chamar Mercado Pago", e);
