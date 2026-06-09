@@ -5,10 +5,10 @@ services:
     container_name: sgf_mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: sgf_db
-      MYSQL_USER: sgf_user
-      MYSQL_PASSWORD: sgf_pass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_HOST: "%"
     ports:
       - "3306:3306"
@@ -17,7 +17,7 @@ services:
     networks:
       - sgf_network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "sgf_user", "-psgf_pass"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u${MYSQL_USER}", "-p${MYSQL_PASSWORD}"]      
       interval: 5s
       timeout: 5s
       retries: 10
@@ -30,7 +30,7 @@ services:
       - "8081:80"
     environment:
       PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     depends_on:
       - mysql
     networks:
@@ -46,12 +46,13 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/sgf_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
-      SPRING_DATASOURCE_USERNAME: sgf_user
-      SPRING_DATASOURCE_PASSWORD: sgf_pass
-      MERCADOPAGO_ACCESS_TOKEN: APP_USR-4705460313754444-050400-7450ef3e543b8423f2f9d7b16988a064-3355415776
-      TZ: America/Sao_Paulo
-      JAVA_TOOL_OPTIONS: -Duser.timezone=America/Sao_Paulo
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      MERCADOPAGO_ACCESS_TOKEN: ${MERCADOPAGO_ACCESS_TOKEN}
+      JWT_SECRET: ${JWT_SECRET}
+      TZ: ${TZ}
+      JAVA_TOOL_OPTIONS: -Duser.timezone=${TZ}
     networks:
       - sgf_network
 
