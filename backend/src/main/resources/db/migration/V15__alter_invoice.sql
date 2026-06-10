@@ -1,2 +1,0 @@
-
-ALTER TABLE invoice_lines ADD COLUMN total DECIMAL(19,2) NOT NULL;

@@ -1,1 +1,0 @@
-ALTER TABLE refund_requests MODIFY approved_by BIGINT NULL;

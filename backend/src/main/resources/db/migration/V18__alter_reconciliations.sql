@@ -1,4 +1,0 @@
-ALTER TABLE reconciliations
-    ADD COLUMN total_in     DECIMAL(19,2) NOT NULL DEFAULT 0,
-    ADD COLUMN total_out    DECIMAL(19,2) NOT NULL DEFAULT 0,
-    ADD COLUMN net_balance  DECIMAL(19,2) NOT NULL DEFAULT 0;
