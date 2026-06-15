@@ -113,11 +113,11 @@
               </button>
               <button
                 class="btn btn-warning"
-                (click)="simulateRefund(payment.id)"
-                *ngIf="canApproveRefund"
+                (click)="openRefundModal(payment.id)"
+                *ngIf="canRequestRefund"
                 [disabled]="payment.paymentStatus !== PaymentStatus.APPROVED || simulating">
                 <i class="ti ti-arrow-back-up"></i>
-                Simular reembolso
+                Solicitar reembolso
               </button>
             </div>
           </div>
@@ -210,6 +210,45 @@
         <button type="submit" class="btn btn-primary" [disabled]="paymentLoading">
           <i class="ti" [ngClass]="paymentLoading ? 'ti-loader' : 'ti-qrcode'"></i>
           {{ paymentLoading ? 'Gerando...' : 'Gerar QR Code PIX' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL DE REEMBOLSO -->
+<div class="modal-overlay" *ngIf="showRefundModal" (click)="closeRefundModal()">
+  <div class="modal modal-payment" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title">Solicitar reembolso</h3>
+      <button class="icon-btn" (click)="closeRefundModal()">
+        <i class="ti ti-x"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="refundForm" (ngSubmit)="submitRefund()">
+      <div class="form-group">
+        <label>Motivo do reembolso</label>
+        <textarea
+          formControlName="reason"
+          rows="4"
+          placeholder="Descreva o motivo do reembolso (mínimo 10 caracteres)"
+          [class.invalid]="isRefundInvalid('reason')"
+          style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; resize: vertical;">
+        </textarea>
+        <span class="field-error" *ngIf="isRefundInvalid('reason')">Motivo é obrigatório (mínimo 10 caracteres)</span>
+      </div>
+
+      <div class="global-error" *ngIf="refundError">
+        <i class="ti ti-alert-circle"></i>
+        {{ refundError }}
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeRefundModal()">Cancelar</button>
+        <button type="submit" class="btn btn-warning" [disabled]="refundLoading">
+          <i class="ti" [ngClass]="refundLoading ? 'ti-loader' : 'ti-arrow-back-up'"></i>
+          {{ refundLoading ? 'Enviando...' : 'Solicitar reembolso' }}
         </button>
       </div>
     </form>

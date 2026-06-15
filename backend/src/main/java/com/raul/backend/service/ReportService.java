@@ -16,7 +16,6 @@ public class ReportService {
 
     private final ReconciliationRepository reconciliationRepository;
 
-
     public String generateReconciliationCsv() {
 
         Reconciliation reconciliation = reconciliationRepository

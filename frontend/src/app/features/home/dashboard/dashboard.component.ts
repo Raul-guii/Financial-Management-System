@@ -11,6 +11,9 @@ import { FormsModule } from '@angular/forms';
 
 Chart.register(...registerables);
 
+const STORAGE_KEY_START = 'dashboard_startDate';
+const STORAGE_KEY_END   = 'dashboard_endDate';
+
 @Component({
   selector: 'app-dashboard',
   standalone: true,
@@ -27,35 +30,48 @@ export class DashboardComponent implements OnInit {
   lineChartData?: ChartConfiguration<'line'>['data'];
   lineChartOptions?: ChartConfiguration<'line'>['options'];
 
-  activePreset: number | null = 6;
   startDate = '';
-  endDate = '';
+  endDate   = '';
 
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit() {
+    this.restoreOrDefaultDates();
     this.loadDashboard();
-    this.applyPreset(6);
-  }
-
-  applyPreset(months: number) {
-    this.activePreset = months;
-
-    const end = new Date();
-    const start = new Date(end.getFullYear(), end.getMonth() - (months - 1), 1);
-
-    this.startDate = this.formatDate(start);
-    this.endDate   = this.formatDate(end);
-
-      console.log('start:', this.startDate, 'end:', this.endDate); // 👈
-
     this.loadMonthlyRevenue();
   }
 
-  applyCustomRange() {
-    if (!this.startDate || !this.endDate) return;
-    this.activePreset = null;
-    this.loadMonthlyRevenue();
+  private restoreOrDefaultDates() {
+    const savedStart = sessionStorage.getItem(STORAGE_KEY_START);
+    const savedEnd   = sessionStorage.getItem(STORAGE_KEY_END);
+
+    if (savedStart && savedEnd) {
+      this.startDate = savedStart;
+      this.endDate   = savedEnd;
+    } else {
+      const end   = new Date();
+      const start = new Date(end.getFullYear(), end.getMonth() - 5, 1);
+      this.startDate = this.formatDate(start);
+      this.endDate   = this.formatDate(end);
+      this.saveDates();
+    }
+  }
+
+  private saveDates() {
+    sessionStorage.setItem(STORAGE_KEY_START, this.startDate);
+    sessionStorage.setItem(STORAGE_KEY_END,   this.endDate);
+  }
+
+  onStartDateChange(event: Event) {
+    this.startDate = (event.target as HTMLInputElement).value;
+    this.saveDates();
+    if (this.startDate && this.endDate) this.loadMonthlyRevenue();
+  }
+
+  onEndDateChange(event: Event) {
+    this.endDate = (event.target as HTMLInputElement).value;
+    this.saveDates();
+    if (this.startDate && this.endDate) this.loadMonthlyRevenue();
   }
 
   loadDashboard() {
@@ -69,6 +85,7 @@ export class DashboardComponent implements OnInit {
   }
 
   loadMonthlyRevenue() {
+    if (!this.startDate || !this.endDate) return;
     this.dashboardService.getMonthlyRevenue(this.startDate, this.endDate).subscribe({
       next: (data) => this.buildLineChart(data),
       error: (err) => console.error('Erro ao carregar receita mensal:', err)
@@ -80,18 +97,6 @@ export class DashboardComponent implements OnInit {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day   = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  }
-
-  onStartDateChange(event: Event) {
-    this.startDate = (event.target as HTMLInputElement).value;
-    this.activePreset = null;
-    if (this.startDate && this.endDate) this.loadMonthlyRevenue();
-  }
-
-  onEndDateChange(event: Event) {
-    this.endDate = (event.target as HTMLInputElement).value;
-    this.activePreset = null;
-    if (this.startDate && this.endDate) this.loadMonthlyRevenue();
   }
 
   buildCharts() {
@@ -208,7 +213,6 @@ export class DashboardComponent implements OnInit {
       }
     };
   }
-
 
   getRefundPercentage(): string {
     if (!this.summary || this.summary.grossRevenue === 0) return '0.0';

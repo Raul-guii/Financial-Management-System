@@ -14,18 +14,13 @@ import java.time.LocalDateTime;
 
 import static com.raul.backend.enums.InvoiceStatus.*;
 
+@RequiredArgsConstructor
 @Service
 public class FinancialSummaryService {
 
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
-
-    public FinancialSummaryService(PaymentRepository paymentRepository, InvoiceRepository invoiceRepository, ClientRepository clientRepository) {
-        this.paymentRepository = paymentRepository;
-        this.invoiceRepository = invoiceRepository;
-        this.clientRepository = clientRepository;
-    }
 
     public FinancialSummaryDTO getFullReport(LocalDate start, LocalDate end) {
 

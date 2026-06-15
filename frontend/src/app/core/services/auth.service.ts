@@ -58,6 +58,8 @@ export class AuthService {
   }
 
   logout() {
+    sessionStorage.removeItem('dashboard_startDate');
+    sessionStorage.removeItem('dashboard_endDate');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }

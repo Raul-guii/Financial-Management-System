@@ -22,6 +22,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     Page<Invoice> findByContractIdAndDeletedAtIsNull(Long contractId, Pageable pageable);
     Page<Invoice> findByStatusAndDeletedAtIsNull(InvoiceStatus status, Pageable pageable);
 
+    // calculo do faturamento por periodo
     @Query("""
     SELECT COALESCE(SUM(i.amount), 0)
     FROM Invoice i
@@ -35,7 +36,6 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     WHERE i.status = 'PENDING'
     """)
     BigDecimal sumPendingInvoices();
-
     @Query("""
     SELECT COUNT(i)
     FROM Invoice i

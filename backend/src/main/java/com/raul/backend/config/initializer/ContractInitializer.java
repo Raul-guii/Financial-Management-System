@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,42 +33,33 @@ public class ContractInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-
         System.out.println("Criando contratos...");
-
         if (contractRepository.count() > 0) return;
 
         User user = userRepository.findByEmail("admin@sgf.com")
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
-        List<Client> clients = clientRepository.findAll();
+        List<Client> clients = clientRepository.findAll()
+                .stream().limit(100).toList();
+
+        BillingPeriod[] periods = BillingPeriod.values();
 
         for (int i = 0; i < clients.size(); i++) {
-
             Client client = clients.get(i);
 
             Contract contract = new Contract();
-
             contract.setClient(client);
             contract.setCreatedBy(user);
-
             contract.setStatus(ContractStatus.ACTIVE);
-
-            contract.setBillingPeriod(
-                    BillingPeriod.values()[
-                            i % BillingPeriod.values().length
-                            ]
-            );
-
-            contract.setStartDate(LocalDate.now().minusMonths(i % 12));
-            contract.setEndDate(LocalDate.now().plusMonths(12));
+            contract.setBillingPeriod(periods[i % periods.length]);
+            contract.setStartDate(LocalDate.now().withDayOfMonth(1).minusMonths(2));
+            contract.setEndDate(LocalDate.now().withDayOfMonth(1).plusMonths(10));
 
             contract = contractRepository.save(contract);
-
             createItems(contract, i);
         }
 
-        System.out.println("1000 contratos criados.");
+        System.out.println("100 contratos criados.");
     }
 
     private void createItems(Contract contract, int i) {

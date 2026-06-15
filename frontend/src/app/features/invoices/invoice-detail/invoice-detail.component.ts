@@ -13,6 +13,7 @@ import { PaymentStatus } from '../../../models/payments/payment-status.model.enu
 import { PaymentMethod } from '../../../models/payments/payment-method.model.enum';
 import { InvoiceLineResponse } from '../../../models/invoice-line/invoice-line-response.model';
 import { AuthService } from '../../../core/services/auth.service';
+import { RefundRequestService } from '../../../core/services/refund-request.service';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -33,11 +34,15 @@ export class InvoiceDetailComponent implements OnInit {
   toastMessage = '';
   toastType = 'toast-success';
 
-  // modal de pagamento
   showPaymentModal = false;
   paymentForm!: FormGroup;
   paymentLoading = false;
   paymentError = '';
+
+  showRefundModal = false;
+  refundForm!: FormGroup;
+  refundLoading = false;
+  refundError = '';
 
   InvoiceStatus = InvoiceStatus;
   PaymentStatus = PaymentStatus;
@@ -47,6 +52,7 @@ export class InvoiceDetailComponent implements OnInit {
     private invoiceLineService: InvoiceLineService,
     private paymentService: PaymentService,
     private authService: AuthService,
+    private refundRequestService: RefundRequestService,
     private route: ActivatedRoute,
     private fb: FormBuilder
   ) {}
@@ -247,5 +253,49 @@ export class InvoiceDetailComponent implements OnInit {
       this.invoice.status !== InvoiceStatus.CANCELLED &&
       this.invoice.status !== InvoiceStatus.PAID
     );
+  }
+
+  openRefundModal(paymentId: number): void {
+    this.refundError = '';
+    this.refundForm = this.fb.group({
+      paymentId: [paymentId],
+      reason: ['', [Validators.required, Validators.minLength(10)]]
+    });
+    this.showRefundModal = true;
+  }
+
+  closeRefundModal(): void {
+    this.showRefundModal = false;
+    this.refundError = '';
+  }
+
+  isRefundInvalid(field: string): boolean {
+    const ctrl = this.refundForm?.get(field);
+    return !!(ctrl?.invalid && ctrl?.touched);
+  }
+
+  submitRefund(): void {
+    this.refundForm.markAllAsTouched();
+    if (this.refundForm.invalid) return;
+
+    this.refundLoading = true;
+    this.refundError = '';
+
+    this.refundRequestService.create(this.refundForm.value).subscribe({
+      next: () => {
+        this.refundLoading = false;
+        this.showRefundModal = false;
+        this.showToast('Solicitação de reembolso enviada!', 'toast-success');
+      },
+      error: (err) => {
+        this.refundLoading = false;
+        this.refundError = err?.error?.message || 'Erro ao solicitar reembolso.';
+      }
+    });
+  }
+
+  get canRequestRefund(): boolean {
+    return !!(this.invoice &&
+      this.invoice.status !== InvoiceStatus.CANCELLED);
   }
 }

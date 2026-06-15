@@ -9,25 +9,19 @@ import com.raul.backend.repository.ContractItemRepository;
 import com.raul.backend.repository.InvoiceLineRepository;
 import com.raul.backend.repository.InvoiceRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class InvoiceLineService {
 
     private final InvoiceLineRepository repository;
     private final InvoiceRepository invoiceRepository;
     private final ContractItemRepository contractItemRepository;
-
-    public InvoiceLineService(InvoiceLineRepository repository,
-                              InvoiceRepository invoiceRepository,
-                              ContractItemRepository contractItemRepository) {
-        this.repository = repository;
-        this.invoiceRepository = invoiceRepository;
-        this.contractItemRepository = contractItemRepository;
-    }
 
     // GET BY ID
     public InvoiceLineResponseDTO findById(Long id) {

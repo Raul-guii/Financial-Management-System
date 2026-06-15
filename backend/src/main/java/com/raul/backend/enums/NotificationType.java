@@ -8,5 +8,6 @@ public enum NotificationType {
     INVOICE_DUE_SOON,
     PAYMENT_RECEIVED,
     PAYMENT_OVERDUE,
+    REFUND_REQUESTED,
     SYSTEM
 }

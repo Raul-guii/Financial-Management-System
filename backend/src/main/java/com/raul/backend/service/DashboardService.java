@@ -21,23 +21,30 @@ public class DashboardService {
     private final PaymentRepository paymentRepository;
     private final InvoiceRepository invoiceRepository;
     private final ClientRepository clientRepository;
+    private final InvoiceCalculatorService invoiceCalculatorService;
 
     public DashboardSummaryDTO getSummary() {
 
-        BigDecimal grossRevenue = paymentRepository.sumApprovedPayments();
+        BigDecimal grossRevenue = paymentRepository.sumAllSuccessfulPayments();
         BigDecimal refunded = paymentRepository.sumRefundedPayments();
         BigDecimal netRevenue = grossRevenue.subtract(refunded);
 
-        BigDecimal totalPending = invoiceRepository.sumPendingInvoices();
+        BigDecimal totalPending = invoiceRepository.findByStatus(InvoiceStatus.PENDING)
+                .stream()
+                .map(invoiceCalculatorService::getRemainingAmountCapped)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalPartiallyPaid = invoiceRepository.findByStatus(InvoiceStatus.PARTIALLY_PAID)
+                .stream()
+                .map(invoiceCalculatorService::getRemainingAmountCapped)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        totalPending = totalPending.add(totalPartiallyPaid);
 
         Long paidInvoices = invoiceRepository.countByStatus(InvoiceStatus.PAID);
         Long pendingInvoices = invoiceRepository.countByStatus(InvoiceStatus.PENDING);
         Long overdueInvoices = invoiceRepository.countByStatus(InvoiceStatus.OVERDUE);
-
         Long clientDefaulters = clientRepository.countDefaulters();
-
-        System.out.println(invoiceRepository.findByStatus(InvoiceStatus.PENDING).size());
-        System.out.println(invoiceRepository.findByStatus(InvoiceStatus.OVERDUE).size());
 
         return new DashboardSummaryDTO(
                 grossRevenue,
@@ -48,7 +55,6 @@ public class DashboardService {
                 pendingInvoices,
                 overdueInvoices,
                 clientDefaulters
-
         );
     }
 

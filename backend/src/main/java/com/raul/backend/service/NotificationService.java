@@ -97,6 +97,17 @@ public class NotificationService {
     }
 
     @Transactional
+    public void createNotification(User user, String title, String message, NotificationType type) {
+        Notification notification = new Notification();
+        notification.setTitle(title);
+        notification.setMessage(message);
+        notification.setType(type);
+        notification.setIsRead(false);
+        notification.setUser(user);
+        notificationRepository.save(notification);
+    }
+
+    @Transactional
     public void markAllAsRead(Long userId) {
         List<Notification> notifications = notificationRepository
                 .findByUserIdOrderByCreatedAtDesc(userId);

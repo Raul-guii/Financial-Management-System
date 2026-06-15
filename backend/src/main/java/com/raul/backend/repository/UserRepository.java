@@ -5,9 +5,9 @@ import com.raul.backend.enums.Roles;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -20,4 +20,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // busca por nome OU email
     Page<User> findByDeletedAtIsNullAndNameContainingIgnoreCaseOrDeletedAtIsNullAndEmailContainingIgnoreCase(
             String name, String email, Pageable pageable);
+
+    Page<User> findByDeletedAtIsNullAndRole(Roles role, Pageable pageable);
+    Page<User> findByDeletedAtIsNullAndNameContainingIgnoreCaseAndRole(String name, Roles role, Pageable pageable);
+    List<User> findByRoleInAndDeletedAtIsNull(List<Roles> roles);
+
 }

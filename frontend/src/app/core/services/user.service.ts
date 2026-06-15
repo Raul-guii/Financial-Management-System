@@ -13,11 +13,11 @@ export class UserService {
   private api = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient) {}
-
-  getAll(page: number = 0, size: number = 20, search: string = ''): Observable<Page<UserResponse>> {
-    const params = search
-      ? `?page=${page}&size=${size}&sort=name&search=${encodeURIComponent(search)}`
-      : `?page=${page}&size=${size}&sort=name`;
+  
+  getAll(page = 0, size = 20, search = '', role = ''): Observable<Page<UserResponse>> {
+    let params = `?page=${page}&size=${size}&sort=name`;
+    if (search) params += `&search=${encodeURIComponent(search)}`;
+    if (role) params += `&role=${role}`;
     return this.http.get<Page<UserResponse>>(`${this.api}${params}`);
   }
 

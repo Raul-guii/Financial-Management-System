@@ -6,10 +6,7 @@ import com.raul.backend.entity.Invoice;
 import com.raul.backend.entity.Payment;
 import com.raul.backend.entity.RefundRequest;
 import com.raul.backend.entity.User;
-import com.raul.backend.enums.AuditAction;
-import com.raul.backend.enums.InvoiceStatus;
-import com.raul.backend.enums.PaymentStatus;
-import com.raul.backend.enums.RefundStatus;
+import com.raul.backend.enums.*;
 import com.raul.backend.repository.InvoiceRepository;
 import com.raul.backend.repository.PaymentRepository;
 import com.raul.backend.repository.RefundRequestRepository;
@@ -31,10 +28,10 @@ public class RefundRequestService {
     private final RefundRequestRepository refundRequestRepository;
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
-    private final InvoiceRepository invoiceRepository;
     private final GatewayTransactionService gatewayTransactionService;
     private final InvoiceStatusService invoiceStatusService;
     private final AuditLogService auditLogService;
+    private final NotificationService notificationService;
 
     @Transactional
     public RefundRequestResponseDTO create(RefundRequestCreateDTO dto) {
@@ -64,6 +61,19 @@ public class RefundRequestService {
         auditLogService.log(refundRequest.getId(), "REFUND", AuditAction.REFUND_REQUESTED,
                 user.getId(), user.getName(),
                 "Reembolso solicitado para pagamento #" + payment.getId());
+
+        List<User> managers = userRepository.findByRoleInAndDeletedAtIsNull(
+                List.of(Roles.ADMIN, Roles.FINANCIAL_MANAGER)
+        );
+
+        for (User manager : managers) {
+            notificationService.createNotification(
+                    manager,
+                    "Nova solicitação de reembolso",
+                    "O usuário " + user.getName() + " solicitou reembolso do pagamento #" + payment.getId(),
+                    NotificationType.REFUND_REQUESTED
+            );
+        }
 
         return toDTO(refundRequest);
     }

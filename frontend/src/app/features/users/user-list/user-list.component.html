@@ -9,27 +9,26 @@
       Novo usuário
     </a>
     <div class="filter-tabs">
-      <button class="filter-tab" [class.active]="roleFilter === ''" (click)="roleFilter = ''">
-        Todos ({{ users.length }})
+      <button class="filter-tab" [class.active]="roleFilter === ''" (click)="setRoleFilter('')">
+        Todos ({{ totalElements }})
       </button>
-      <button class="filter-tab" [class.active]="roleFilter === Role.ADMIN" (click)="roleFilter = Role.ADMIN">
-        Admin ({{ countByRole(Role.ADMIN) }})
+      <button class="filter-tab" [class.active]="roleFilter === Role.ADMIN" (click)="setRoleFilter(Role.ADMIN)">
+        Admin ({{ totalAdmins }})
       </button>
-      <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_MANAGER" (click)="roleFilter = Role.FINANCIAL_MANAGER">
-        Gestor ({{ countByRole(Role.FINANCIAL_MANAGER) }})
+      <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_MANAGER" (click)="setRoleFilter(Role.FINANCIAL_MANAGER)">
+        Gestor ({{ totalManagers }})
       </button>
-      <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_ANALYST" (click)="roleFilter = Role.FINANCIAL_ANALYST">
-        Analista ({{ countByRole(Role.FINANCIAL_ANALYST) }})
+      <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_ANALYST" (click)="setRoleFilter(Role.FINANCIAL_ANALYST)">
+        Analista ({{ totalAnalysts }})
       </button>
     </div>
-
 
     <div class="search-wrap">
       <i class="ti ti-search"></i>
       <input
         type="text"
         class="search-input"
-        placeholder="Buscar por nome ou documento..."
+        placeholder="Buscar por nome..."
         (input)="onSearch($event.target.value)"
       />
     </div>
@@ -46,7 +45,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of getFilteredUsers()">
+        <tr *ngFor="let user of users">
           <td>
             <div class="user-cell">
               <div class="avatar" [ngClass]="getAvatarClass(user.role)">
@@ -106,5 +105,29 @@
         Remover
       </button>
     </div>
+
   </div>
+
 </div>
+
+   <div class="pagination" *ngIf="totalPages > 1">
+  <button
+    class="page-btn"
+    (click)="goToPage(currentPage - 1)"
+    [disabled]="currentPage === 0">
+    <i class="ti ti-chevron-left"></i>
+  </button>
+
+  <div class="page-info">
+    Página {{ currentPage + 1 }} de {{ totalPages }}
+    <span class="total-info">({{ totalElements }} registros)</span>
+  </div>
+
+  <button
+    class="page-btn"
+    (click)="goToPage(currentPage + 1)"
+    [disabled]="currentPage === totalPages - 1">
+    <i class="ti ti-chevron-right"></i>
+  </button>
+</div>
+ 

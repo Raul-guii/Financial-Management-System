@@ -163,6 +163,16 @@ export const routes: Routes = [
             .then(m => m.InvoiceDetailComponent)
       },
 
+      // REFUNDS - ADMIN e GESTOR
+      {
+        path: 'refunds',
+        data: { title: 'Reembolsos — SGF' },
+        canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER'])],
+        loadComponent: () =>
+          import('./features/refund-list/refund-list.component')
+            .then(m => m.RefundListComponent)
+      },
+
       // FINANCIAL PARAMETERS - só ADMIN e GESTOR
       {
         path: 'financial-parameters',

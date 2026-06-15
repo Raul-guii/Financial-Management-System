@@ -29,7 +29,6 @@ public class WebhookService {
 
         String externalId = extractExternalId(payload);
         if (externalId == null) {
-            System.out.println("WEBHOOK: externalId não encontrado no payload");
             return;
         }
 

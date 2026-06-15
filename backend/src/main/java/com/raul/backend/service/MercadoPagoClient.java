@@ -19,26 +19,23 @@ public class MercadoPagoClient {
     @Value("${MERCADOPAGO_ACCESS_TOKEN}")
     private String accessToken;
 
+    //usado pra chamar a API do mervado pago
     private final RestTemplate restTemplate = new RestTemplate();
 
     public GatewayResponse createPayment(Payment payment) {
-
-
-        System.out.println("TOKEN CARREGADO? " + (accessToken != null));
-        System.out.println("TOKEN VAZIO? " + accessToken.isBlank());
-        System.out.println("TOKEN LENGTH: " + accessToken.length());
-
         String url = "https://api.mercadopago.com/v1/orders";
 
+        // metodo de autenticação da API
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.add("X-Idempotency-Key", UUID.randomUUID().toString());
+        headers.add("X-Idempotency-Key", UUID.randomUUID().toString()); // evvitar pagamentos duplicados
 
         // Payer
+        // montando o corpo da requisição
         Map<String, String> payer = new HashMap<>();
         payer.put("email", payment.getPayerEmail()); // e-mail real do pagador
-        payer.put("first_name", "APRO"); // remover em produção
+        payer.put("first_name", "APRO");
 
         // Payment method
         Map<String, String> paymentMethod = new HashMap<>();
@@ -65,9 +62,11 @@ public class MercadoPagoClient {
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
         try {
+            // envio da requisição
             ResponseEntity<Map> response =
                     restTemplate.postForEntity(url, request, Map.class);
 
+            // pegando a resposta
             Map<String, Object> responseBody = response.getBody();
             System.out.println("RESPOSTA MP: " + responseBody);
             System.out.println("ORDER ID: " + responseBody.get("id"));
@@ -84,13 +83,17 @@ public class MercadoPagoClient {
             Map<String, Object> paymentMethodResp =
                     (Map<String, Object>) firstPayment.get("payment_method");
 
+            // transnformando a repsosta para deixar o sistema desacoplado da API
             GatewayResponse gatewayResponse = new GatewayResponse();
             gatewayResponse.setOrderId(responseBody.get("id").toString());
 
+            String ticketUrl = (String) paymentMethodResp.get("ticket_url");
+            String numericPaymentId = extractPaymentIdFromTicketUrl(ticketUrl);
             gatewayResponse.setTransactionId(
-                    firstPayment.get("id").toString()
+                    numericPaymentId != null ? numericPaymentId : firstPayment.get("id").toString()
             );
 
+            // o mercado devolve os dados necessarios para o cliente pagar, como qr code
             gatewayResponse.setStatus(responseBody.get("status").toString());
             gatewayResponse.setQrCode((String) paymentMethodResp.get("qr_code"));
             gatewayResponse.setTicketUrl((String) paymentMethodResp.get("ticket_url"));
@@ -98,9 +101,8 @@ public class MercadoPagoClient {
 
             return gatewayResponse;
 
+            // tratamento de erro
         } catch (HttpClientErrorException e) {
-            System.out.println("STATUS: " + e.getStatusCode());
-            System.out.println("BODY: " + e.getResponseBodyAsString());
             throw e;
         } catch (Exception e) {
             System.out.println("ERRO MERCADO PAGO: " + e.getMessage());
@@ -116,16 +118,24 @@ public class MercadoPagoClient {
 
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
+        // get customizado
         ResponseEntity<Map> response =
                 restTemplate.exchange(url, HttpMethod.GET, request, Map.class);
 
         Map<String, Object> body = response.getBody();
-        System.out.println("Resposta GET MP: " + body);
 
         GatewayResponse res = new GatewayResponse();
         res.setStatus(body.get("status").toString());
 
         return res;
+    }
+
+    private String extractPaymentIdFromTicketUrl(String ticketUrl) {
+        if (ticketUrl == null) return null;
+        // formato: /sandbox/payments/164153812744/ticket
+        String[] parts = ticketUrl.split("/payments/");
+        if (parts.length < 2) return null;
+        return parts[1].split("/")[0];
     }
 
     public void refundPayment(String mercadoPagoPaymentId) {

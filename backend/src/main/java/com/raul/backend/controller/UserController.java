@@ -44,9 +44,11 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<UserResponseDTO>> findAll(
             @PageableDefault(size = 20, sort = "name") Pageable pageable,
-            @RequestParam(required = false) String search) {
-        return ResponseEntity.ok(userService.findAll(pageable, search));
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String role) {
+        return ResponseEntity.ok(userService.findAll(pageable, search, role));
     }
+    
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserResponseDTO> findById(@PathVariable Long id) {

@@ -20,6 +20,10 @@
     <a routerLink="/contracts" routerLinkActive="active" (click)="close()">Contratos</a>
     <a routerLink="/invoices" routerLinkActive="active" (click)="close()">Faturas</a>
 
+    <a routerLink="/refunds" routerLinkActive="active" *ngIf="isAdminOrGestor()" (click)="close()">
+    Reembolsos
+    </a>
+
     <a routerLink="/financial-parameters" routerLinkActive="active" *ngIf="isAdminOrGestor()" (click)="close()">
       Parâmetros
     </a>

@@ -23,7 +23,6 @@ public class AuditLog extends Auditable {
     @Column(name = "entity_id", nullable = false)
     private Long entityId;
 
-    @NotBlank
     @Column(nullable = false, length = 254)
     private String action;
 
@@ -33,7 +32,6 @@ public class AuditLog extends Auditable {
     @Column(name = "user_name", length = 150)
     private String userName;
 
-    @NotBlank
     @Column(name = "entity_type", nullable = false, length = 100)
     private String entityType;
 

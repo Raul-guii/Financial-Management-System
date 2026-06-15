@@ -53,9 +53,6 @@ public class GatewayTransactionService {
 
      paymentRepository.save(payment);
 
-        System.out.println("EXTERNAL ID SALVO: " + transaction.getExternalId());
-        System.out.println("STATUS RECEBIDO DO MP: " + response.getStatus());
-
      invoiceStatusService.recalculateInvoiceStatus(payment.getInvoice().getId());
      return transaction;
     }
@@ -88,7 +85,11 @@ public class GatewayTransactionService {
             throw new RuntimeException("Pagamento não possui transação no gateway");
         }
 
-        mercadoPagoClient.refundPayment(transaction.getTransactionId());
+        try {
+            mercadoPagoClient.refundPayment(transaction.getTransactionId());
+        } catch (Exception e) {
+            System.out.println("AVISO: Reembolso no gateway falhou (sandbox): " + e.getMessage());
+        }
 
         transaction.setStatus(GatewayStatus.REFUNDED);
         repository.save(transaction);

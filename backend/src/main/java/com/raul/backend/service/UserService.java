@@ -138,23 +138,25 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public Page<UserResponseDTO> findAll(Pageable pageable, String search) {
+    public Page<UserResponseDTO> findAll(Pageable pageable, String search, String role) {
         Page<User> users;
 
-        if (search != null && !search.isBlank()) {
-            users = userRepository
-                    .findByDeletedAtIsNullAndNameContainingIgnoreCaseOrDeletedAtIsNullAndEmailContainingIgnoreCase(
-                            search, search, pageable);
+        Roles roleEnum = null;
+        if (role != null && !role.isBlank()) {
+            try { roleEnum = Roles.valueOf(role); } catch (IllegalArgumentException ignored) {}
+        }
+
+        if (search != null && !search.isBlank() && roleEnum != null) {
+            users = userRepository.findByDeletedAtIsNullAndNameContainingIgnoreCaseAndRole(search, roleEnum, pageable);
+        } else if (search != null && !search.isBlank()) {
+            users = userRepository.findByDeletedAtIsNullAndNameContainingIgnoreCaseOrDeletedAtIsNullAndEmailContainingIgnoreCase(search, search, pageable);
+        } else if (roleEnum != null) {
+            users = userRepository.findByDeletedAtIsNullAndRole(roleEnum, pageable);
         } else {
             users = userRepository.findByDeletedAtIsNull(pageable);
         }
 
-        return users.map(user -> new UserResponseDTO(
-                user.getId(),
-                user.getName(),
-                user.getEmail(),
-                user.getRole()
-        ));
+        return users.map(user -> new UserResponseDTO(user.getId(), user.getName(), user.getEmail(), user.getRole()));
     }
 
 

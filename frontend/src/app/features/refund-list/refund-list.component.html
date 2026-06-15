@@ -1,0 +1,68 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Solicitações de Reembolso</h1>
+      <p class="page-subtitle">{{ refunds.length }} solicitação{{ refunds.length !== 1 ? 'ões' : '' }}</p>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Pagamento</th>
+          <th>Motivo</th>
+          <th>Solicitado em</th>
+          <th>Status</th>
+          <th *ngIf="canApprove"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let refund of refunds">
+          <td class="text-secondary">#{{ refund.id }}</td>
+          <td>PAG #{{ refund.paymentId }}</td>
+          <td>{{ refund.reason }}</td>
+          <td class="text-secondary">{{ refund.requestedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            <span class="badge" [ngClass]="getStatusClass(refund.refundStatus)">
+              {{ getStatusLabel(refund.refundStatus) }}
+            </span>
+          </td>
+          <td *ngIf="canApprove">
+            <div class="actions" *ngIf="refund.refundStatus === 'PENDING'">
+              <button
+                class="btn btn-success btn-sm"
+                (click)="approve(refund.id)"
+                [disabled]="actionLoadingId === refund.id">
+                <i class="ti ti-check"></i>
+                Aprovar
+              </button>
+              <button
+                class="btn btn-danger btn-sm"
+                (click)="reject(refund.id)"
+                [disabled]="actionLoadingId === refund.id">
+                <i class="ti ti-x"></i>
+                Rejeitar
+              </button>
+            </div>
+          </td>
+        </tr>
+
+        <tr *ngIf="refunds.length === 0">
+          <td colspan="6">
+            <div class="empty-state">
+              <i class="ti ti-arrow-back-up"></i>
+              <p>Nenhuma solicitação de reembolso</p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="toast" *ngIf="toastMessage" [ngClass]="toastType">
+    <i class="ti" [ngClass]="toastType === 'toast-success' ? 'ti-check' : 'ti-alert-circle'"></i>
+    {{ toastMessage }}
+  </div>
+</div>

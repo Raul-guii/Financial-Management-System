@@ -21,20 +21,32 @@ public class UserInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        if (userRepository.count() > 0) return;
 
-        if (userRepository.existsByEmail("admin@sgf.com")) {
-            return;
+        save("Administrador", "admin@sgf.com", Roles.ADMIN);
+
+        for (int i = 1; i <= 33; i++) {
+            save("Admin " + i, "admin" + i + "@sgf.com", Roles.ADMIN);
         }
 
-        User admin = new User();
+        for (int i = 1; i <= 33; i++) {
+            save("Gestor " + i, "gestor" + i + "@sgf.com", Roles.FINANCIAL_MANAGER);
+        }
 
-        admin.setName("Administrador");
-        admin.setEmail("admin@sgf.com");
-        admin.setPassword(passwordEncoder.encode("12345678"));
-        admin.setRole(Roles.ADMIN);
+        for (int i = 1; i <= 33; i++) {
+            save("Analista " + i, "analista" + i + "@sgf.com", Roles.FINANCIAL_ANALYST);
+        }
 
-        userRepository.save(admin);
+        System.out.println("100 usuários criados.");
+    }
 
-        System.out.println("Admin criado.");
+    private void save(String name, String email, Roles role) {
+        User user = new User();
+        user.setName(name);
+        user.setEmail(email);
+        user.setPassword(passwordEncoder.encode("12345678"));
+        user.setRole(role);
+        userRepository.save(user);
     }
 }
+

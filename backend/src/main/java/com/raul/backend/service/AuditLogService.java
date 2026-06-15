@@ -18,6 +18,7 @@ public class AuditLogService {
     private final AuditLogRepository auditLogRepository;
 
     public void log(Long entityId, String entityType, AuditAction action, Long userId, String userName, String description) {
+        System.out.println("SALVANDO AUDIT LOG: " + entityType + " " + action.name());
         AuditLog log = new AuditLog();
         log.setEntityId(entityId);
         log.setEntityType(entityType);
@@ -25,7 +26,8 @@ public class AuditLogService {
         log.setUserId(userId);
         log.setUserName(userName);
         log.setDescription(description);
-        auditLogRepository.save(log);
+        AuditLog saved = auditLogRepository.save(log);
+        System.out.println("AUDIT LOG SALVO ID: " + saved.getId());
     }
 
     public Page<AuditLogResponseDTO> findAll(Pageable pageable, String entityType, String action) {

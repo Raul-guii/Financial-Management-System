@@ -23,6 +23,9 @@ export class UserListComponent implements OnInit {
   searchTerm = '';
   roleFilter: Role | '' = '';
   Role = Role
+  totalAdmins = 0;
+  totalManagers = 0;
+  totalAnalysts = 0;
   private searchSubject = new Subject<string>();
 
   constructor(
@@ -31,6 +34,7 @@ export class UserListComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadCounts();
     this.searchSubject.pipe(
       debounceTime(400),
       distinctUntilChanged()
@@ -45,8 +49,14 @@ export class UserListComponent implements OnInit {
     this.searchSubject.next(term);
   }
 
+  setRoleFilter(role: Role | ''): void {
+    this.roleFilter = role;
+    this.currentPage = 0;
+    this.loadUsers();
+  }
+
   loadUsers(): void {
-    this.userService.getAll(this.currentPage, this.pageSize, this.searchTerm).subscribe({
+    this.userService.getAll(this.currentPage, this.pageSize, this.searchTerm, this.roleFilter).subscribe({
       next: (data) => {
         this.users = data.content;
         this.totalElements = data.totalElements;
@@ -54,6 +64,12 @@ export class UserListComponent implements OnInit {
       },
       error: (err) => console.error('Erro:', err)
     });
+  }
+
+  loadCounts(): void {
+    this.userService.getAll(0, 1, '', Role.ADMIN).subscribe(d => this.totalAdmins = d.totalElements);
+    this.userService.getAll(0, 1, '', Role.FINANCIAL_MANAGER).subscribe(d => this.totalManagers = d.totalElements);
+    this.userService.getAll(0, 1, '', Role.FINANCIAL_ANALYST).subscribe(d => this.totalAnalysts = d.totalElements);
   }
 
   goToPage(page: number): void {
