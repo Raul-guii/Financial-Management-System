@@ -10,10 +10,5 @@ import java.util.Optional;
 public interface RefundRequestRepository extends JpaRepository<RefundRequest, Long> {
 
     List<RefundRequest> findAllByOrderByRequestedAtDesc();
-
-    List<RefundRequest> findByStatus(RefundStatus status);
-
-    Optional<RefundRequest> findByPaymentId(Long paymentId);
-
     Optional<RefundRequest> findByPaymentIdAndStatus(Long paymentId, RefundStatus status);
 }

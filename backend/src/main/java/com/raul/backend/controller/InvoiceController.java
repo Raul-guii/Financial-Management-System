@@ -25,21 +25,6 @@ public class InvoiceController {
 
     private final InvoiceService service;
 
-    @PostMapping
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
-    public ResponseEntity<InvoiceResponseDTO> create(@RequestBody @Valid InvoiceCreateDTO dto) {
-        return ResponseEntity.ok(service.create(dto));
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
-    public ResponseEntity<InvoiceResponseDTO> update(
-            @PathVariable Long id,
-            @RequestBody @Valid InvoiceUpdateDTO dto
-    ) {
-        return ResponseEntity.ok(service.update(id, dto));
-    }
-
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN','FINANCIAL_ANALYST','FINANCIAL_MANAGER')")
     public ResponseEntity<Page<InvoiceResponseDTO>> findAll(

@@ -25,11 +25,9 @@ public class GatewayTransactionService {
 
     @Transactional
     public GatewayTransaction processPayment(Payment payment) {
-
-     // chamar gateway
+        
      GatewayResponse response = mercadoPagoClient.createPayment(payment);
 
-     // criar transaction
      GatewayTransaction transaction = new GatewayTransaction();
 
      transaction.setPayment(payment);
@@ -47,7 +45,7 @@ public class GatewayTransactionService {
 
      transaction = repository.save(transaction);
 
-     // atualizar payment
+
      payment.setGatewayTransaction(transaction);
      payment.setPaymentStatus(mapToPaymentStatus(transaction.getStatus()));
 
@@ -82,13 +80,13 @@ public class GatewayTransactionService {
         GatewayTransaction transaction = payment.getGatewayTransaction();
 
         if (transaction == null) {
-            throw new RuntimeException("Pagamento não possui transação no gateway");
+            throw new RuntimeException("The payment has no transaction on the gateway");
         }
 
         try {
             mercadoPagoClient.refundPayment(transaction.getTransactionId());
         } catch (Exception e) {
-            System.out.println("AVISO: Reembolso no gateway falhou (sandbox): " + e.getMessage());
+            System.out.println("WARNING: Refund on the gateway failed(sandbox): " + e.getMessage());
         }
 
         transaction.setStatus(GatewayStatus.REFUNDED);
