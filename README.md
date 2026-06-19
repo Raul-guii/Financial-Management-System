@@ -74,6 +74,18 @@ SGF automates the complete financial cycle of service companies: contract manage
 - Docker and Docker Compose installed
 - A Mercado Pago sandbox account ([create here](https://www.mercadopago.com.br/developers))
 
+### Getting a Mercado Pago Access Token (required)
+
+This project requires a Mercado Pago **test** access token to process PIX payments.
+
+1. Create a free account at [mercadopago.com.br](https://www.mercadopago.com.br)
+2. Go to [Developer Panel → Your integrations](https://www.mercadopago.com.br/developers/panel)
+3. Create a new application (any name works, select "Online Payments")
+4. Go to **Test credentials** and copy the **Access Token** (starts with `TEST-`)
+5. Paste it into your `.env` as `MERCADOPAGO_ACCESS_TOKEN`
+
+This takes about 2 minutes and requires no business verification — it's a sandbox-only credential
+
 ### Setup
 
 **1. Clone the repository**
@@ -162,7 +174,43 @@ flowchart LR
 
 ---
 
+## Payment Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Angular Frontend
+    participant B as Spring Boot Backend
+    participant MP as Mercado Pago
+
+    U->>F: Register payment for invoice
+    F->>B: POST /payments
+    B->>MP: Create PIX order
+    MP-->>B: QR code + ticket URL
+    B-->>F: Payment created (PENDING)
+    F-->>U: Display QR code
+
+    Note over MP: User pays via PIX
+
+    MP->>B: Webhook (payment status update)
+    B->>MP: GET order status
+    MP-->>B: Confirmed status
+    B->>B: Update payment + invoice status
+```
+
+The payment process is split into two flows:
+
+- **Synchronous** — when a payment is created, the backend immediately calls Mercado Pago's Orders API and returns a QR code to the user.
+- **Asynchronous** — since PIX confirmation happens after the user pays, Mercado Pago notifies the backend via webhook once the payment status changes. The backend then re-fetches the order, updates the internal transaction, and recalculates the invoice status (`PENDING` → `PARTIALLY_PAID` → `PAID`).
+
 ## License
 
 This project was developed as a university capstone (TCC). Feel free to use it as reference.
+
+## Contact
+
+**Raul** — [LinkedIn](https://www.linkedin.com/in/raul-guilherme-bezerra-da-silva-/) · [GitHub](https://github.com/Raul-guii) · [Email](raulawp460@gmail.com)
+
+Feel free to reach out if you have questions about this project or want to discuss freelance opportunities.
+
 
