@@ -137,27 +137,28 @@ All endpoints are documented automatically via SpringDoc OpenAPI — no external
 
 ## Architecture
 
-┌─────────────┐     HTTP/REST      ┌──────────────────┐
+```mermaid
+flowchart LR
+    subgraph Client
+        A[Angular 17]
+    end
 
-│   Angular   │ ────────────────▶  │   Spring Boot    │
+    subgraph Server
+        B[Spring Boot 4]
+        C[(MySQL 8)]
+        F[Flyway Migrations]
+    end
 
-│  Frontend   │ ◀────────────────  │     Backend      │
+    subgraph External
+        D[Mercado Pago API]
+    end
 
-└─────────────┘        JWT         └────────┬─────────┘
-
-│
-
-     ┌────────────┼────────────┐
-
-     │            │            │
-
-┌────▼────┐  ┌────▼──────┐  ┌──▼────────────┐
-
-│  MySQL  │  │  Flyway   │  │ Mercado Pago  │
-
-│   DB    │  │Migrations │  │     API       │
-
-└─────────┘  └───────────┘  └───────────────┘
+    A -->|HTTP/REST + JWT| B
+    B --> C
+    F --> C
+    B -->|Payments| D
+    D -.->|Webhook| B
+```
 
 ---
 
