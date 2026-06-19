@@ -56,13 +56,13 @@ export class ClientFormComponent implements OnInit {
       addressCity:         [''],
       addressState:        [''],
       addressPostalCode:   [''],
-      addressCountry:      ['Brasil'],
+      addressCountry:      ['Brazil'],
     });
 
     if (this.isEditing && this.clientId) {
       this.clientService.getById(this.clientId).subscribe({
         next: (client) => this.form.patchValue(client),
-        error: () => this.errorMessage = 'Erro ao carregar cliente'
+        error: () => this.errorMessage = 'Error loading client'
       });
     }
   }
@@ -95,7 +95,7 @@ export class ClientFormComponent implements OnInit {
         next: () => this.router.navigate(['/clients']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao atualizar cliente. Verifique os dados e tente novamente.';
+          this.errorMessage = 'Error updating client. Check the data and try again.';
         }
       });
     } else {
@@ -103,7 +103,7 @@ export class ClientFormComponent implements OnInit {
         next: () => this.router.navigate(['/clients']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao cadastrar cliente. O documento ou e-mail pode já estar em uso.';
+          this.errorMessage = 'Error registering client. The document or e-mail may already be in use.';
         }
       });
     }

@@ -386,7 +386,7 @@ tbody td {
 
   .table-wrap { overflow-x: auto; }
 
-  // esconde Emissão e Vencimento no mobile
+  // Hides Issue Date and Due Date on mobile.
   thead th:nth-child(3),
   tbody td:nth-child(3),
   thead th:nth-child(4),

@@ -52,7 +52,7 @@ loadClients(): void {
       this.totalElements = data.totalElements;
       this.totalPages = data.totalPages;
     },
-    error: (err) => console.error('Erro ao carregar clientes:', err)
+    error: (err) => console.error('Error loading clients:', err)
   });
 }
 
@@ -74,7 +74,7 @@ loadClients(): void {
   }
 
   getTypeLabel(type: ClientType): string {
-    return type === ClientType.COMPANY ? 'Empresa' : 'Pessoa Física';
+    return type === ClientType.COMPANY ? 'Company' : 'Individual';
   }
 
   toggleActive(client: ClientResponse): void {
@@ -82,7 +82,7 @@ loadClients(): void {
       next: () => {
         client.active = !client.active;
       },
-      error: (err) => console.error('Erro ao alterar status:', err)
+      error: (err) => console.error('Error changing status:', err)
     });
   }
 
@@ -101,7 +101,7 @@ loadClients(): void {
         this.clients = this.clients.filter(c => c.id !== this.clientToDelete!.id);
         this.clientToDelete = null;
       },
-      error: (err) => console.error('Erro ao deletar cliente:', err)
+      error: (err) => console.error('Error deleting client:', err)
     });
   }
 

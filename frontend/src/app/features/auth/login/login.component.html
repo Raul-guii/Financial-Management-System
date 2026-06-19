@@ -1,22 +1,22 @@
 <div class="login-container">
-  <!-- Painel esquerdo - azul com logo -->
+  <!-- Left panel - blue with logo -->
   <div class="left-panel">
     <div class="logo-placeholder">
-      <!-- Coloque sua logo aqui -->
-      <img src="android-chrome-192x192.png" alt="Logo do sistema">
+      <!-- Place your logo here -->
+      <img src="android-chrome-192x192.png" alt="System logo">
     </div>
     <div class="brand-text">
-      <h1>Sistema de Gestão Financeira</h1>
-      <p>Controle completo de contratos, faturas e pagamentos recorrentes</p>
+      <h1>Financial Management System</h1>
+      <p>Complete control for contracts, invoices, and recurring payments</p>
     </div>
   </div>
 
-  <!-- Painel direito - formulário branco -->
+  <!-- Right panel - white form -->
   <div class="right-panel">
     <div class="login-form">
       <div class="form-header">
-        <h2>Bem-vindo</h2>
-        <p>Entre com suas credenciais para acessar o sistema</p>
+        <h2>Welcome</h2>
+        <p>Enter your credentials to access the system</p>
       </div>
 
       <form (ngSubmit)="login()">
@@ -27,13 +27,13 @@
             id="email"
             [(ngModel)]="email" 
             name="email" 
-            placeholder="seu@email.com"
+            placeholder="your@email.com"
             required
           />
         </div>
 
         <div class="form-group">
-          <label for="password">Senha</label>
+          <label for="password">Password</label>
           <input 
             type="password" 
             id="password"
@@ -45,7 +45,7 @@
         </div>
 
         <button type="submit" class="btn-login" [disabled]="loading">
-          <span *ngIf="!loading">Entrar</span>
+          <span *ngIf="!loading">Sign in</span>
           <span *ngIf="loading" class="btn-spinner"></span>
         </button>
 

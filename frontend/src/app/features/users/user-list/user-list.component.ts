@@ -62,7 +62,7 @@ export class UserListComponent implements OnInit {
         this.totalElements = data.totalElements;
         this.totalPages = data.totalPages;
       },
-      error: (err) => console.error('Erro:', err)
+      error: (err) => console.error('Error:', err)
     });
   }
 
@@ -112,8 +112,8 @@ export class UserListComponent implements OnInit {
   getRoleBadgeClass(role: Role): string {
     const map: Record<Role, string> = {
       [Role.ADMIN]: 'badge-admin',
-      [Role.FINANCIAL_MANAGER]: 'badge-gestor',
-      [Role.FINANCIAL_ANALYST]: 'badge-analista'
+      [Role.FINANCIAL_MANAGER]: 'badge-manager',
+      [Role.FINANCIAL_ANALYST]: 'badge-analyst'
     };
     return map[role] ?? '';
   }
@@ -121,8 +121,8 @@ export class UserListComponent implements OnInit {
   getRoleLabel(role: Role): string {
     const map: Record<Role, string> = {
       [Role.ADMIN]: 'Admin',
-      [Role.FINANCIAL_MANAGER]: 'Gestor',
-      [Role.FINANCIAL_ANALYST]: 'Analista'
+      [Role.FINANCIAL_MANAGER]: 'Manager',
+      [Role.FINANCIAL_ANALYST]: 'Analyst'
     };
     return map[role] ?? role;
   }
@@ -142,7 +142,7 @@ export class UserListComponent implements OnInit {
         this.users = this.users.filter(u => u.id !== this.userToDelete!.id);
         this.userToDelete = null;
       },
-      error: (err) => console.error('Erro ao deletar usuário:', err)
+      error: (err) => console.error('Error deleting user:', err)
     });
   }
 }

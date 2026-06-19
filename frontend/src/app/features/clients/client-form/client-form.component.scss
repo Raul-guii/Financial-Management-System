@@ -25,7 +25,7 @@
 }
 
 // ============================
-// CARD DO FORMULÁRIO
+// FORM CARD
 // ============================
 .form-card {
   background: #fff;
@@ -57,7 +57,7 @@
 }
 
 // ============================
-// GRID E CAMPOS
+// GRID AND FIELDS
 // ============================
 .form-grid {
   display: grid;
@@ -109,7 +109,7 @@ input, select {
 }
 
 // ============================
-// ERRO GLOBAL
+// GLOBAL ERROR
 // ============================
 .global-error {
   display: flex;
@@ -127,7 +127,7 @@ input, select {
 }
 
 // ============================
-// RODAPÉ
+// FOOTER
 // ============================
 .form-footer {
   display: flex;
@@ -139,7 +139,7 @@ input, select {
 }
 
 // ============================
-// BOTÕES
+// BUTTONS
 // ============================
 .btn {
   display: inline-flex;
@@ -174,7 +174,7 @@ input, select {
 }
 
 // ============================
-// RESPONSIVO
+// RESPONSIVE
 // ============================
 @media (max-width: 640px) {
   .form-grid { grid-template-columns: 1fr; }

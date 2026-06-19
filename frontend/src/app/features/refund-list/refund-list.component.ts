@@ -43,10 +43,10 @@ export class RefundListComponent implements OnInit {
     this.actionLoadingId = id;
     this.refundService.approve(id).pipe(finalize(() => this.actionLoadingId = null)).subscribe({
       next: () => {
-        this.showToast('Reembolso aprovado!', 'toast-success');
+        this.showToast('Refund approved!', 'toast-success');
         this.load();
       },
-      error: (err) => this.showToast(err?.error?.message || 'Erro ao aprovar.', 'toast-error')
+      error: (err) => this.showToast(err?.error?.message || 'Error approving.', 'toast-error')
     });
   }
 
@@ -54,10 +54,10 @@ export class RefundListComponent implements OnInit {
     this.actionLoadingId = id;
     this.refundService.reject(id).pipe(finalize(() => this.actionLoadingId = null)).subscribe({
       next: () => {
-        this.showToast('Reembolso rejeitado.', 'toast-success');
+        this.showToast('Refund rejected.', 'toast-success');
         this.load();
       },
-      error: (err) => this.showToast(err?.error?.message || 'Erro ao rejeitar.', 'toast-error')
+      error: (err) => this.showToast(err?.error?.message || 'Error rejecting.', 'toast-error')
     });
   }
 
@@ -69,7 +69,7 @@ export class RefundListComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      PENDING: 'Pendente', APPROVED: 'Aprovado', REJECTED: 'Rejeitado'
+      PENDING: 'Pending', APPROVED: 'Approved', REJECTED: 'Rejected'
     };
     return map[status] ?? status;
   }

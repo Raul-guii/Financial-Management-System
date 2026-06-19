@@ -25,7 +25,7 @@ export const routes: Routes = [
         pathMatch: 'full'
       },
 
-      // DASHBOARD - todos
+      // DASHBOARD - all
       {
         path: 'dashboard',
         data: { title: 'Dashboard - SGF' },
@@ -35,10 +35,10 @@ export const routes: Routes = [
             .then(m => m.DashboardComponent)
       },
 
-      // USERS - só ADMIN
+      // USERS - ADMIN only
       {
         path: 'users',
-        data: { title: 'Usuários — SGF' },
+        data: { title: 'Users - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN'])],
         loadComponent: () =>
           import('./features/users/user-list/user-list.component')
@@ -46,7 +46,7 @@ export const routes: Routes = [
       },
       {
         path: 'users/new',
-        data: { title: 'Novo Usuário — SGF' },
+        data: { title: 'New User - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN'])],
         loadComponent: () =>
           import('./features/users/user-form/user-form.component')
@@ -54,17 +54,17 @@ export const routes: Routes = [
       },
       {
         path: 'users/:id/edit',
-        data: { title: 'Atualizar Dados de Usuário — SGF' },
+        data: { title: 'Update User Data - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN'])],
         loadComponent: () =>
           import('./features/users/user-form/user-form.component')
             .then(m => m.UserFormComponent)
       },
 
-      // CLIENTS - todos
+      // CLIENTS - all
       {
         path: 'clients',
-        data: { title: 'Clientes — SGF' },
+        data: { title: 'Clients - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/clients/client-list/client-list.component')
@@ -72,7 +72,7 @@ export const routes: Routes = [
       },
       {
         path: 'clients/new',
-        data: { title: 'Novo Cliente — SGF' },
+        data: { title: 'New Client - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/clients/client-form/client-form.component')
@@ -80,17 +80,17 @@ export const routes: Routes = [
       },
       {
         path: 'clients/:id/edit',
-        data: { title: 'Atualizar Dados de Cliente — SGF' },
+        data: { title: 'Update Client Data - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/clients/client-form/client-form.component')
             .then(m => m.ClientFormComponent)
       },
 
-      // CONTRACTS - todos
+      // CONTRACTS - all
       {
         path: 'contracts',
-        data: { title: 'Contratos — SGF' },
+        data: { title: 'Contracts - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/contracts/contract-list/contract-list.component')
@@ -98,7 +98,7 @@ export const routes: Routes = [
       },
       {
         path: 'contracts/new',
-        data: { title: 'Novo Contrato — SGF' },
+        data: { title: 'New Contract - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/contracts/contract-form/contract-form.component')
@@ -106,7 +106,7 @@ export const routes: Routes = [
       },
       {
         path: 'contracts/:id/items',
-        data: { title: 'Itens de Contrato — SGF' },
+        data: { title: 'Contract Items - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/contract-items/contract-item/contract-item.component')
@@ -114,41 +114,26 @@ export const routes: Routes = [
       },
       {
         path: 'contracts/:id/edit',
-        data: { title: 'Atualizar Dados de Cliente — SGF' },
+        data: { title: 'Update Contract Data - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/contracts/contract-form/contract-form.component')
             .then(m => m.ContractFormComponent)
       },
 
-      // INVOICES - todos
+      // INVOICES - all
       {
         path: 'invoices',
-        data: { title: 'Faturas — SGF' },
+        data: { title: 'Invoices - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/invoices/invoice-list/invoice-list.component')
             .then(m => m.InvoiceListComponent)
       },
-      {
-        path: 'invoices/new',
-        data: { title: 'Nova Fatura — SGF' },
-        canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
-        loadComponent: () =>
-          import('./features/invoices/invoice-form/invoice-form.component')
-            .then(m => m.InvoiceFormComponent)
-      },
-      {
-        path: 'invoices/:id/edit',
-        data: { title: 'Atualizar Dados de Fatura — SGF' },
-        canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
-        loadComponent: () =>
-          import('./features/invoices/invoice-form/invoice-form.component')
-            .then(m => m.InvoiceFormComponent)
-      },
+
       {
         path: 'invoices/:id/lines',
-        data: { title: 'Linhas de Fatura — SGF' },
+        data: { title: 'Invoice Lines - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/invoices/invoice-lines/invoice-lines.component')
@@ -156,27 +141,27 @@ export const routes: Routes = [
       },
       {
         path: 'invoices/:id/detail',
-        data: { title: 'Detalhes de Fatura — SGF' },
+        data: { title: 'Invoice Details - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/invoices/invoice-detail/invoice-detail.component')
             .then(m => m.InvoiceDetailComponent)
       },
 
-      // REFUNDS - ADMIN e GESTOR
+      // REFUNDS - ADMIN and MANAGER
       {
         path: 'refunds',
-        data: { title: 'Reembolsos — SGF' },
+        data: { title: 'Refunds - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER'])],
         loadComponent: () =>
           import('./features/refund-list/refund-list.component')
             .then(m => m.RefundListComponent)
       },
 
-      // FINANCIAL PARAMETERS - só ADMIN e GESTOR
+      // FINANCIAL PARAMETERS - ADMIN and MANAGER only
       {
         path: 'financial-parameters',
-        data: { title: 'Parâmetros — SGF' },
+        data: { title: 'Parameters - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER'])],
         loadComponent: () =>
           import('./features/finacial-parameters/financial-parameter-list/financial-parameter-list.component')
@@ -184,7 +169,7 @@ export const routes: Routes = [
       },
       {
         path: 'financial-parameters/new',
-        data: { title: 'Novo Parâmetro — SGF' },
+        data: { title: 'New Parameter - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER'])],
         loadComponent: () =>
           import('./features/finacial-parameters/financial-parameter-form/financial-parameter-form.component')
@@ -192,17 +177,17 @@ export const routes: Routes = [
       },
       {
         path: 'financial-parameters/:id/edit',
-        data: { title: 'Atualizar Parâmetro — SGF' },
+        data: { title: 'Update Parameter - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER'])],
         loadComponent: () =>
           import('./features/finacial-parameters/financial-parameter-form/financial-parameter-form.component')
             .then(m => m.FinancialParameterFormComponent)
       },
 
-      // RECONCILIATION - todos
+      // RECONCILIATION - all
       {
         path: 'reconciliation',
-        data: { title: 'Reconciliação — SGF' },
+        data: { title: 'Reconciliation - SGF' },
         canActivate: [authGuard, roleGuard(['ADMIN', 'FINANCIAL_MANAGER', 'FINANCIAL_ANALYST'])],
         loadComponent: () =>
           import('./features/reconciliations/reconciliation/reconciliation.component')
@@ -211,6 +196,7 @@ export const routes: Routes = [
 
       {
          path: 'audit-logs',
+         data: { title: 'Audit Logs - SGF' },
          component: AuditLogListComponent,
          canActivate: [authGuard] 
       }

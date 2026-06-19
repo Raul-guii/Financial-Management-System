@@ -1,25 +1,25 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Usuários</h1>
-      <p class="page-subtitle">{{ users.length }} usuário{{ users.length !== 1 ? 's' : '' }} cadastrado{{ users.length !== 1 ? 's' : '' }}</p>
+      <h1 class="page-title">Users</h1>
+      <p class="page-subtitle">{{ users.length }} registered user{{ users.length !== 1 ? 's' : '' }}</p>
     </div>
     <a routerLink="/users/new" class="btn btn-primary">
       <i class="ti ti-plus"></i>
-      Novo usuário
+      New user
     </a>
     <div class="filter-tabs">
       <button class="filter-tab" [class.active]="roleFilter === ''" (click)="setRoleFilter('')">
-        Todos ({{ totalElements }})
+        All ({{ totalElements }})
       </button>
       <button class="filter-tab" [class.active]="roleFilter === Role.ADMIN" (click)="setRoleFilter(Role.ADMIN)">
         Admin ({{ totalAdmins }})
       </button>
       <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_MANAGER" (click)="setRoleFilter(Role.FINANCIAL_MANAGER)">
-        Gestor ({{ totalManagers }})
+        Manager ({{ totalManagers }})
       </button>
       <button class="filter-tab" [class.active]="roleFilter === Role.FINANCIAL_ANALYST" (click)="setRoleFilter(Role.FINANCIAL_ANALYST)">
-        Analista ({{ totalAnalysts }})
+        Analyst ({{ totalAnalysts }})
       </button>
     </div>
 
@@ -28,7 +28,7 @@
       <input
         type="text"
         class="search-input"
-        placeholder="Buscar por nome..."
+        placeholder="Search by name..."
         (input)="onSearch($event.target.value)"
       />
     </div>
@@ -38,7 +38,7 @@
     <table>
       <thead>
         <tr>
-          <th>Usuário</th>
+          <th>User</th>
           <th>E-mail</th>
           <th>Role</th>
           <th></th>
@@ -62,10 +62,10 @@
           </td>
           <td>
             <div class="actions">
-              <a [routerLink]="['/users', user.id, 'edit']" class="icon-btn" title="Editar">
+              <a [routerLink]="['/users', user.id, 'edit']" class="icon-btn" title="Edit">
                 <i class="ti ti-edit"></i>
               </a>
-              <button class="icon-btn icon-btn-danger" (click)="openDeleteConfirm(user)" title="Remover">
+              <button class="icon-btn icon-btn-danger" (click)="openDeleteConfirm(user)" title="Remove">
                 <i class="ti ti-trash"></i>
               </button>
             </div>
@@ -76,8 +76,8 @@
           <td colspan="4">
             <div class="empty-state">
               <i class="ti ti-users"></i>
-              <p>Nenhum usuário cadastrado</p>
-              <a routerLink="/users/new" class="btn btn-primary">Criar primeiro usuário</a>
+              <p>No users registered</p>
+              <a routerLink="/users/new" class="btn btn-primary">Create first user</a>
             </div>
           </td>
         </tr>
@@ -86,7 +86,7 @@
   </div>
 </div>
 
-<!-- MODAL DE CONFIRMAÇÃO DE DELETE -->
+<!-- DELETE CONFIRMATION MODAL -->
 <div class="modal-overlay" *ngIf="userToDelete" (click)="cancelDelete()">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-icon-wrap">
@@ -94,15 +94,15 @@
         <i class="ti ti-trash"></i>
       </div>
     </div>
-    <h3 class="modal-title">Remover usuário?</h3>
+    <h3 class="modal-title">Remove user?</h3>
     <p class="modal-text">
-      O usuário <strong>{{ userToDelete.name }}</strong> será removido permanentemente. Esta ação não pode ser desfeita.
+      The user <strong>{{ userToDelete.name }}</strong> will be permanently removed. This action cannot be undone.
     </p>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
       <button class="btn btn-danger" (click)="confirmDelete()">
         <i class="ti ti-trash"></i>
-        Remover
+        Remove
       </button>
     </div>
 
@@ -119,8 +119,8 @@
   </button>
 
   <div class="page-info">
-    Página {{ currentPage + 1 }} de {{ totalPages }}
-    <span class="total-info">({{ totalElements }} registros)</span>
+    Page {{ currentPage + 1 }} of {{ totalPages }}
+    <span class="total-info">({{ totalElements }} records)</span>
   </div>
 
   <button

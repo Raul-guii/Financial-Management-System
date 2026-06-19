@@ -39,7 +39,7 @@ export class InvoiceFormComponent implements OnInit {
     this.isEditing = !!paramId;
     this.invoiceId = paramId ? Number(paramId) : undefined;
 
-    // pega contractId vindo do queryParam (fluxo contrato → itens → fatura)
+    // Gets contractId from the queryParam (contract -> items -> invoice flow).
     const qContractId = this.route.snapshot.queryParamMap.get('contractId');
     this.contractIdFromRoute = qContractId ? Number(qContractId) : undefined;
 
@@ -53,7 +53,7 @@ export class InvoiceFormComponent implements OnInit {
     });
 
     if (!this.isEditing && !this.contractIdFromRoute) {
-      // carrega contratos e clientes para o select
+      // Loads contracts and clients for the select.
       forkJoin({
         contracts: this.contractService.getAll(),
         clients:   this.clientService.getAll()
@@ -82,13 +82,13 @@ export class InvoiceFormComponent implements OnInit {
             dueDate:   invoice.dueDate ?? ''
           });
         },
-        error: () => this.errorMessage = 'Erro ao carregar fatura'
+        error: () => this.errorMessage = 'Error loading invoice'
       });
     }
   }
 
   getClientName(clientId: number): string {
-    return this.clientMap[clientId] ?? `Cliente #${clientId}`;
+    return this.clientMap[clientId] ?? `Client #${clientId}`;
   }
 
   getTodayStr(): string {
@@ -119,7 +119,7 @@ export class InvoiceFormComponent implements OnInit {
         next: () => this.router.navigate(['/invoices']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao atualizar fatura.';
+          this.errorMessage = 'Error updating invoice.';
         }
       });
 
@@ -134,7 +134,7 @@ export class InvoiceFormComponent implements OnInit {
         next: (invoice) => this.router.navigate(['/invoices', invoice.id, 'lines']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao gerar fatura.';
+          this.errorMessage = 'Error generating invoice.';
         }
       });
     }

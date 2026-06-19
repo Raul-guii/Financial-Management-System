@@ -21,12 +21,12 @@ export class HeaderComponent implements OnInit {
 
   private routeTitles: Record<string, string> = {
     '/dashboard':           'Dashboard',
-    '/users':               'Usuários',
-    '/clients':             'Clientes',
-    '/contracts':           'Contratos',
-    '/invoices':            'Faturas',
-    '/financial-parameters':'Parâmetros Financeiros',
-    '/reconciliation':      'Reconciliação',
+    '/users':               'Users',
+    '/clients':             'Clients',
+    '/contracts':           'Contracts',
+    '/invoices':            'Invoices',
+    '/financial-parameters':'Financial Parameters',
+    '/reconciliation':      'Reconciliation',
   };
 
   currentTitle = 'Dashboard';
@@ -41,7 +41,7 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.loadNotifications();
 
-    // atualiza título conforme a rota
+    // Updates the title based on the current route.
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd)
     ).subscribe((e: any) => {
@@ -58,7 +58,7 @@ export class HeaderComponent implements OnInit {
         this.unreadCount = data.filter(n => !n.isRead).length;
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Erro ao carregar notificações:', err)
+      error: (err) => console.error('Error loading notifications:', err)
     });
   }
 
@@ -75,7 +75,7 @@ toggleNotifications(): void {
           this.unreadCount = 0;
           this.cdr.detectChanges();
         },
-        error: (err) => console.error('Erro ao marcar notificações:', err)
+        error: (err) => console.error('Error marking notifications:', err)
       });
     }
   }
@@ -85,7 +85,7 @@ toggleNotifications(): void {
     this.showNotifications = false;
   }
 
-  // fecha dropdown ao clicar fora
+  // Closes the dropdown when clicking outside.
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
@@ -100,15 +100,15 @@ toggleNotifications(): void {
   }
 
   getUserName(): string {
-    return this.authService.getUser()?.name ?? 'Usuário';
+    return this.authService.getUser()?.name ?? 'User';
   }
 
   getUserRole(): string {
     const role = this.authService.getUser()?.role ?? '';
     const map: Record<string, string> = {
-      ADMIN:               'Administrador',
-      FINANCIAL_MANAGER:   'Gestor',
-      FINANCIAL_ANALYST:   'Analista'
+      ADMIN:               'Administrator',
+      FINANCIAL_MANAGER:   'Manager',
+      FINANCIAL_ANALYST:   'Analyst'
     };
     return map[role] ?? role;
   }
@@ -118,11 +118,23 @@ toggleNotifications(): void {
   }
 
   getNotifIcon(type: NotificationType): string {
-    return type === NotificationType.INVOICE_DUE_SOON ? 'ti-clock' : 'ti-info-circle';
+    const map: Record<string, string> = {
+      [NotificationType.INVOICE_DUE_SOON]: 'ti-clock',
+      [NotificationType.REFUND_REQUESTED]: 'ti-rotate',
+      [NotificationType.PAYMENT_RECEIVED]: 'ti-circle-check',
+      [NotificationType.PAYMENT_OVERDUE]:  'ti-alert-circle',
+    };
+    return map[type] ?? 'ti-info-circle';
   }
 
   getNotifIconClass(type: NotificationType): string {
-    return type === NotificationType.INVOICE_DUE_SOON ? 'icon-due' : 'icon-system';
+    const map: Record<string, string> = {
+      [NotificationType.INVOICE_DUE_SOON]: 'icon-due',
+      [NotificationType.REFUND_REQUESTED]: 'icon-refund',
+      [NotificationType.PAYMENT_RECEIVED]: 'icon-success',
+      [NotificationType.PAYMENT_OVERDUE]:  'icon-warning',
+    };
+    return map[type] ?? 'icon-system';
   }
 
   logout(): void {
@@ -134,10 +146,16 @@ toggleNotifications(): void {
     this.showNotifications = false;
 
     const match = notification.message.match(/#(\d+)/);
-    if (match) {
-      const invoiceId = match[1];
-      this.router.navigate(['/invoices', invoiceId, 'detail']);
+    if (!match) return;
+
+    const id = match[1];
+
+    if (notification.type === NotificationType.REFUND_REQUESTED) {
+      this.router.navigate(['/refunds']);
+    } else {
+      this.router.navigate(['/invoices', id, 'detail']);
     }
   }
+  
 
 }

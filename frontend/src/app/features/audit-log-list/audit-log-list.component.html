@@ -1,18 +1,18 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Auditoria</h1>
-      <p class="page-subtitle">{{ totalElements }} registro{{ totalElements !== 1 ? 's' : '' }} encontrado{{ totalElements !== 1 ? 's' : '' }}</p>
+      <h1 class="page-title">Audit</h1>
+      <p class="page-subtitle">{{ totalElements }} record{{ totalElements !== 1 ? 's' : '' }} found</p>
     </div>
 
     <div class="filters-row">
       <select class="filter-select" [(ngModel)]="entityTypeFilter" (change)="onFilterChange()">
-        <option value="">Todas as entidades</option>
+        <option value="">All entities</option>
         <option *ngFor="let e of entityTypes" [value]="e">{{ getEntityLabel(e) }}</option>
       </select>
 
       <select class="filter-select" [(ngModel)]="actionFilter" (change)="onFilterChange()">
-        <option value="">Todas as ações</option>
+        <option value="">All actions</option>
         <option *ngFor="let a of actions" [value]="a">{{ getActionLabel(a) }}</option>
       </select>
     </div>
@@ -22,12 +22,12 @@
     <table>
       <thead>
         <tr>
-          <th>Data</th>
-          <th>Entidade</th>
+          <th>Date</th>
+          <th>Description</th>
           <th>ID</th>
-          <th>Ação</th>
-          <th>Usuário</th>
-          <th>Descrição</th>
+          <th>Action</th>
+          <th>Entity</th>
+          <th>User</th>
         </tr>
       </thead>
       <tbody>
@@ -50,7 +50,7 @@
           <td colspan="6">
             <div class="empty-state">
               <i class="ti ti-clipboard-list"></i>
-              <p>Nenhum registro de auditoria encontrado</p>
+              <p>No audit records found</p>
             </div>
           </td>
         </tr>
@@ -63,8 +63,8 @@
       <i class="ti ti-chevron-left"></i>
     </button>
     <div class="page-info">
-      Página {{ currentPage + 1 }} de {{ totalPages }}
-      <span class="total-info">({{ totalElements }} registros)</span>
+      Page {{ currentPage + 1 }} of {{ totalPages }}
+      <span class="total-info">({{ totalElements }} records)</span>
     </div>
     <button class="page-btn" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages - 1">
       <i class="ti ti-chevron-right"></i>

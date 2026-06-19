@@ -1,134 +1,134 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Reconciliação Financeira</h1>
-      <p class="page-subtitle">Compare registros internos com o gateway de pagamento</p>
+      <h1 class="page-title">Financial Reconciliation</h1>
+      <p class="page-subtitle">Compare internal records with the payment gateway</p>
     </div>
     <button
       class="btn btn-secondary"
       (click)="exportCsv()"
       [disabled]="!result || exporting">
       <i class="ti" [ngClass]="exporting ? 'ti-loader' : 'ti-download'"></i>
-      {{ exporting ? 'Exportando...' : 'Exportar CSV' }}
+      {{ exporting ? 'Exporting...' : 'Export CSV' }}
     </button>
   </div>
 
-  <!-- FILTROS -->
+  <!-- FILTERS -->
   <div class="filter-card">
-    <div class="filter-title">Período de reconciliação</div>
+    <div class="filter-title">Reconciliation period</div>
     <form [formGroup]="form" (ngSubmit)="execute()">
       <div class="filter-grid">
         <div class="form-group">
-          <label for="periodStart">Data início</label>
+          <label for="periodStart">Start date</label>
           <input
             id="periodStart"
             type="date"
             formControlName="periodStart"
             [class.invalid]="isInvalid('periodStart')"
           />
-          <span class="field-error" *ngIf="isInvalid('periodStart')">Data início é obrigatória</span>
+          <span class="field-error" *ngIf="isInvalid('periodStart')">Start date is required</span>
         </div>
 
         <div class="form-group">
-          <label for="periodEnd">Data fim</label>
+          <label for="periodEnd">End date</label>
           <input
             id="periodEnd"
             type="date"
             formControlName="periodEnd"
             [class.invalid]="isInvalid('periodEnd')"
           />
-          <span class="field-error" *ngIf="isInvalid('periodEnd')">Data fim é obrigatória</span>
+          <span class="field-error" *ngIf="isInvalid('periodEnd')">End date is required</span>
         </div>
 
         <div class="filter-action">
           <button type="submit" class="btn btn-primary" [disabled]="loading">
             <i class="ti" [ngClass]="loading ? 'ti-loader' : 'ti-search'"></i>
-            {{ loading ? 'Executando...' : 'Executar reconciliação' }}
+            {{ loading ? 'Running...' : 'Run reconciliation' }}
           </button>
         </div>
       </div>
     </form>
   </div>
 
-  <!-- ERRO -->
+  <!-- ERROR -->
   <div class="global-error" *ngIf="errorMessage">
     <i class="ti ti-alert-circle"></i>
     {{ errorMessage }}
   </div>
 
-  <!-- RESULTADOS -->
+  <!-- RESULTS -->
   <div *ngIf="result">
 
-<!-- CARDS DE RESUMO -->
+<!-- SUMMARY CARDS -->
 <div class="summary-grid">
   <div class="summary-card">
-    <div class="summary-label">Período</div>
+    <div class="summary-label">Period</div>
     <div class="summary-value">
       {{ result.periodStart | date:'dd/MM/yyyy' }} → {{ result.periodEnd | date:'dd/MM/yyyy' }}
     </div>
   </div>
   <div class="summary-card">
-    <div class="summary-label">Executado em</div>
+    <div class="summary-label">Executed at</div>
     <div class="summary-value">{{ result.executedAt | date:'dd/MM/yyyy HH:mm' }}</div>
   </div>
   <div class="summary-card">
-    <div class="summary-label">Total de itens</div>
+    <div class="summary-label">Total items</div>
     <div class="summary-value highlight">{{ result.items.length }}</div>
   </div>
   <div class="summary-card">
-    <div class="summary-label">Confirmados</div>
+    <div class="summary-label">Matched</div>
     <div class="summary-value success">{{ getMatchedCount() }}</div>
   </div>
   <div class="summary-card">
-    <div class="summary-label">Divergências</div>
+    <div class="summary-label">Divergences</div>
     <div class="summary-value" [ngClass]="getDivergenceCount() > 0 ? 'warn' : 'success'">
       {{ getDivergenceCount() }}
     </div>
   </div>
   <div class="summary-card">
-    <div class="summary-label">Total recebido</div>
+    <div class="summary-label">Total received</div>
     <div class="summary-value success">{{ result.totalIn | currency:'BRL' }}</div>
   </div>
   <div class="summary-card">
-    <div class="summary-label">Total reembolsado</div>
+    <div class="summary-label">Total refunded</div>
     <div class="summary-value warn">{{ result.totalOut | currency:'BRL' }}</div>
   </div>
   <div class="summary-card">
-    <div class="summary-label">Saldo líquido</div>
+    <div class="summary-label">Net balance</div>
     <div class="summary-value" [ngClass]="result.netBalance >= 0 ? 'success' : 'warn'">
       {{ result.netBalance | currency:'BRL' }}
     </div>
   </div>
 </div>
 
-<!-- TABELA DE ITENS -->
+<!-- ITEMS TABLE -->
 <div class="table-wrap">
   <div class="table-header">
-    <div class="table-title">Itens reconciliados</div>
+    <div class="table-title">Reconciled items</div>
     <div class="table-filters">
       <button
         class="filter-btn"
         [class.active]="statusFilter === ''"
         (click)="statusFilter = ''">
-        Todos ({{ result.items.length }})
+        All ({{ result.items.length }})
       </button>
       <button
         class="filter-btn filter-btn-success"
         [class.active]="statusFilter === 'MATCHED'"
         (click)="statusFilter = 'MATCHED'">
-        Confirmados ({{ getMatchedCount() }})
+        Matched ({{ getMatchedCount() }})
       </button>
       <button
         class="filter-btn filter-btn-warn"
         [class.active]="statusFilter === 'DIVERGENT'"
         (click)="statusFilter = 'DIVERGENT'">
-        Divergentes ({{ getDivergenceCount() }})
+        Divergent ({{ getDivergenceCount() }})
       </button>
       <button
         class="filter-btn filter-btn-refund"
         [class.active]="statusFilter === 'REFUNDED'"
         (click)="statusFilter = 'REFUNDED'">
-        Reembolsos ({{ getRefundedCount() }})
+        Refunds ({{ getRefundedCount() }})
       </button>
     </div>
   </div>
@@ -137,11 +137,11 @@
     <thead>
       <tr>
         <th>#</th>
-        <th>Pagamento</th>
-        <th>Transação Gateway</th>
-        <th>Valor sistema</th>
-        <th>Valor gateway</th>
-        <th>Diferença</th>
+        <th>Payment</th>
+        <th>Gateway Transaction</th>
+        <th>System amount</th>
+        <th>Gateway amount</th>
+        <th>Difference</th>
         <th>Status</th>
       </tr>
     </thead>
@@ -176,7 +176,7 @@
         <td colspan="7">
           <div class="empty-state">
             <i class="ti ti-checks"></i>
-            <p>Nenhum item encontrado para o filtro selecionado</p>
+            <p>No items found for the selected filter</p>
           </div>
         </td>
       </tr>
@@ -185,9 +185,9 @@
 </div>
 </div>
 
-  <!-- ESTADO INICIAL -->
+  <!-- INITIAL STATE -->
   <div class="initial-state" *ngIf="!result && !loading">
     <i class="ti ti-git-compare"></i>
-    <p>Selecione um período e execute a reconciliação para ver os resultados</p>
+    <p>Select a period and run reconciliation to see the results</p>
   </div>
 </div>

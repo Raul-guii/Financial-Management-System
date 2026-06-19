@@ -25,7 +25,7 @@
 }
 
 // ============================
-// TABELA
+// TABLE
 // ============================
 .table-wrap {
   background: #fff;
@@ -73,7 +73,7 @@ tbody td {
 }
 
 // ============================
-// AVATAR + CÉLULA DE CLIENTE
+// AVATAR + CLIENT CELL
 // ============================
 .client-cell {
   display: flex;
@@ -133,7 +133,7 @@ tbody td {
 }
 
 // ============================
-// AÇÕES
+// ACTIONS
 // ============================
 .actions {
   display: flex;
@@ -190,7 +190,7 @@ tbody td {
 }
 
 // ============================
-// BOTÕES
+// BUTTONS
 // ============================
 .btn {
   display: inline-flex;
@@ -398,7 +398,7 @@ tbody td {
 }
 
 // ============================
-// RESPONSIVO
+// RESPONSIVE
 // ============================
 @media (max-width: 768px) {
   .page { padding: 16px; }
@@ -409,26 +409,26 @@ tbody td {
     gap: 12px;
   }
 
-  // search ocupa largura toda
+  // Search takes the full width.
   .search-wrap { width: 100%; }
   .search-input { width: 100%; }
 
-  // botão novo cliente ocupa largura toda
+  // New client button takes the full width.
   .btn-primary {
     width: 93%;
     justify-content: center;
   }
 
-  // filtros quebram linha
+  // Filters wrap to a new line.
   .filter-tabs { flex-wrap: wrap; }
 
-  // tabela não estoura
+  // Keeps the table from overflowing.
   .table-wrap { overflow-x: auto; }
 
   table { font-size: 12px; }
   thead th, tbody td { padding: 10px 12px; }
 
-  // esconde colunas menos importantes
+  // Hides less important columns.
   thead th:nth-child(3),
   tbody td:nth-child(3),
   thead th:nth-child(4),

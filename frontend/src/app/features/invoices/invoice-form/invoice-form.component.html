@@ -1,30 +1,30 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">{{ isEditing ? 'Editar fatura' : 'Nova fatura' }}</h1>
-      <p class="page-subtitle">{{ isEditing ? 'Atualize os dados da fatura' : 'Preencha os dados para gerar a fatura' }}</p>
+      <h1 class="page-title">{{ isEditing ? 'Edit invoice' : 'New invoice' }}</h1>
+      <p class="page-subtitle">{{ isEditing ? 'Update the invoice data' : 'Fill in the data to generate the invoice' }}</p>
     </div>
     <a routerLink="/invoices" class="btn btn-secondary">
       <i class="ti ti-arrow-left"></i>
-      Voltar
+      Back
     </a>
   </div>
 
-  <!-- STEP INDICATOR (só na criação) -->
+  <!-- STEP INDICATOR (creation only) -->
   <div class="step-bar" *ngIf="!isEditing">
     <div class="step done">
       <div class="step-num"><i class="ti ti-check"></i></div>
-      <span>Contrato</span>
+      <span>Contract</span>
     </div>
     <div class="step-line"></div>
     <div class="step done">
       <div class="step-num"><i class="ti ti-check"></i></div>
-      <span>Itens</span>
+      <span>Items</span>
     </div>
     <div class="step-line"></div>
     <div class="step active">
       <div class="step-num">3</div>
-      <span>Fatura</span>
+      <span>Invoice</span>
     </div>
   </div>
 
@@ -33,38 +33,38 @@
       <div class="form-grid">
 
         <div class="form-group full" *ngIf="!isEditing && !contractIdFromRoute">
-          <label for="contractId">Contrato</label>
+          <label for="contractId">Contract</label>
           <select id="contractId" formControlName="contractId" [class.invalid]="isInvalid('contractId')">
-            <option value="">Selecione um contrato</option>
+            <option value="">Select a contract</option>
             <option *ngFor="let c of contracts" [value]="c.id">
               #{{ c.id }} — {{ getClientName(c.clientId) }}
             </option>
           </select>
-          <span class="field-error" *ngIf="isInvalid('contractId')">Contrato é obrigatório</span>
+          <span class="field-error" *ngIf="isInvalid('contractId')">Contract is required</span>
         </div>
 
-        <!-- Contrato pré-selecionado (vindo do fluxo) -->
+        <!-- Preselected contract (from the flow) -->
         <div class="form-group full" *ngIf="contractIdFromRoute">
-          <label>Contrato</label>
+          <label>Contract</label>
           <div class="readonly-field">
             <i class="ti ti-file-text"></i>
-            Contrato #{{ contractIdFromRoute }}
+            Contract #{{ contractIdFromRoute }}
           </div>
         </div>
 
         <div class="form-group">
-          <label for="issueDate">Data de emissão</label>
+          <label for="issueDate">Issue date</label>
           <input
             id="issueDate"
             type="date"
             formControlName="issueDate"
             [class.invalid]="isInvalid('issueDate')"
           />
-          <span class="field-error" *ngIf="isInvalid('issueDate')">Data de emissão é obrigatória</span>
+          <span class="field-error" *ngIf="isInvalid('issueDate')">Issue date is required</span>
         </div>
 
         <div class="form-group">
-          <label for="dueDate">Data de vencimento</label>
+          <label for="dueDate">Due date</label>
           <input
             id="dueDate"
             type="date"
@@ -80,10 +80,10 @@
       </div>
 
       <div class="form-footer">
-        <a routerLink="/invoices" class="btn btn-secondary">Cancelar</a>
+        <a routerLink="/invoices" class="btn btn-secondary">Cancel</a>
         <button type="submit" class="btn btn-primary" [disabled]="loading">
           <i class="ti" [ngClass]="loading ? 'ti-loader' : (isEditing ? 'ti-check' : 'ti-plus')"></i>
-          {{ loading ? 'Salvando...' : (isEditing ? 'Salvar alterações' : 'Gerar fatura') }}
+          {{ loading ? 'Saving...' : (isEditing ? 'Save changes' : 'Generate invoice') }}
         </button>
       </div>
 

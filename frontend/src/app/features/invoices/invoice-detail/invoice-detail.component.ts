@@ -73,7 +73,7 @@ export class InvoiceDetailComponent implements OnInit {
         this.lines    = lines;
         this.payments = payments;
       },
-      error: (err) => console.error('Erro ao carregar detalhe da fatura:', err)
+      error: (err) => console.error('Error loading invoice detail:', err)
     });
   }
 
@@ -120,7 +120,7 @@ export class InvoiceDetailComponent implements OnInit {
       paymentDate:    paymentDateTime, 
       paymentMethod:  PaymentMethod.PIX,
       invoiceId:      this.invoiceId,
-      payerFirstName: 'Pagador',
+      payerFirstName: 'Payer',
       payerLastName:  'SGF',
       payerDocument:  '00000000000'
     };
@@ -133,13 +133,13 @@ export class InvoiceDetailComponent implements OnInit {
       next: () => {
         this.paymentLoading = false;
         this.showPaymentModal = false;
-        this.showToast('Pagamento gerado! QR Code PIX disponível.', 'toast-success');
+        this.showToast('Payment generated! PIX QR Code available.', 'toast-success');
         setTimeout(() => this.loadData(), 500);
       },
       error: (err) => {
         this.paymentLoading = false;
         const msg = err?.error?.message || err?.error || '';
-        this.paymentError = msg || 'Erro ao gerar pagamento. Tente novamente.';
+        this.paymentError = msg || 'Error generating payment. Try again.';
       }
     });
   }
@@ -149,12 +149,12 @@ export class InvoiceDetailComponent implements OnInit {
     this.paymentService.simulateApproval(paymentId).subscribe({
       next: () => {
         this.simulating = false;
-        this.showToast('Pagamento aprovado com sucesso!', 'toast-success');
+        this.showToast('Payment approved successfully!', 'toast-success');
         setTimeout(() => this.loadData(), 1000);
       },
       error: () => {
         this.simulating = false;
-        this.showToast('Erro ao simular aprovação.', 'toast-error');
+        this.showToast('Error simulating approval.', 'toast-error');
       }
     });
   }
@@ -164,12 +164,12 @@ export class InvoiceDetailComponent implements OnInit {
     this.paymentService.simulateRefund(paymentId).subscribe({
       next: () => {
         this.simulating = false;
-        this.showToast('Reembolso simulado com sucesso!', 'toast-success');
+        this.showToast('Refund simulated successfully!', 'toast-success');
         setTimeout(() => this.loadData(), 1000);
       },
       error: () => {
         this.simulating = false;
-        this.showToast('Erro ao simular reembolso.', 'toast-error');
+        this.showToast('Error simulating refund.', 'toast-error');
       }
     });
   }
@@ -207,12 +207,12 @@ export class InvoiceDetailComponent implements OnInit {
 
   getStatusLabel(status: InvoiceStatus): string {
     const map: Record<InvoiceStatus, string> = {
-      [InvoiceStatus.PENDING]:        'Pendente',
-      [InvoiceStatus.PAID]:           'Paga',
-      [InvoiceStatus.OVERDUE]:        'Vencida',
-      [InvoiceStatus.CANCELLED]:      'Cancelada',
-      [InvoiceStatus.REFUNDED]:       'Reembolsada',
-      [InvoiceStatus.PARTIALLY_PAID]: 'Parcialmente paga',
+      [InvoiceStatus.PENDING]:        'Pending',
+      [InvoiceStatus.PAID]:           'Paid',
+      [InvoiceStatus.OVERDUE]:        'Overdue',
+      [InvoiceStatus.CANCELLED]:      'Cancelled',
+      [InvoiceStatus.REFUNDED]:       'Refunded',
+      [InvoiceStatus.PARTIALLY_PAID]: 'Partially paid',
     };
     return map[status] ?? status;
   }
@@ -231,12 +231,12 @@ export class InvoiceDetailComponent implements OnInit {
 
   getPaymentStatusLabel(status: PaymentStatus): string {
     const map: Record<PaymentStatus, string> = {
-      [PaymentStatus.PENDING]:  'Pendente',
-      [PaymentStatus.APPROVED]: 'Aprovado',
-      [PaymentStatus.REJECTED]: 'Rejeitado',
-      [PaymentStatus.REFUNDED]: 'Reembolsado',
+      [PaymentStatus.PENDING]:  'Pending',
+      [PaymentStatus.APPROVED]: 'Approved',
+      [PaymentStatus.REJECTED]: 'Rejected',
+      [PaymentStatus.REFUNDED]: 'Refunded',
       [PaymentStatus.CANCELLED]: 'badge-cancelled',
-      [PaymentStatus.ERROR]:    'Erro',
+      [PaymentStatus.ERROR]:    'Error',
     };
     return map[status] ?? status;
   }
@@ -285,11 +285,11 @@ export class InvoiceDetailComponent implements OnInit {
       next: () => {
         this.refundLoading = false;
         this.showRefundModal = false;
-        this.showToast('Solicitação de reembolso enviada!', 'toast-success');
+        this.showToast('Refund request sent!', 'toast-success');
       },
       error: (err) => {
         this.refundLoading = false;
-        this.refundError = err?.error?.message || 'Erro ao solicitar reembolso.';
+        this.refundError = err?.error?.message || 'Error requesting refund.';
       }
     });
   }

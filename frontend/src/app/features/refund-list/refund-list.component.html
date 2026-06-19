@@ -1,8 +1,8 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Solicitações de Reembolso</h1>
-      <p class="page-subtitle">{{ refunds.length }} solicitação{{ refunds.length !== 1 ? 'ões' : '' }}</p>
+      <h1 class="page-title">Refund Requests</h1>
+      <p class="page-subtitle">{{ refunds.length }} request{{ refunds.length !== 1 ? 's' : '' }}</p>
     </div>
   </div>
 
@@ -11,9 +11,9 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Pagamento</th>
-          <th>Motivo</th>
-          <th>Solicitado em</th>
+          <th>Payment</th>
+          <th>Reason</th>
+          <th>Requested at</th>
           <th>Status</th>
           <th *ngIf="canApprove"></th>
         </tr>
@@ -36,14 +36,14 @@
                 (click)="approve(refund.id)"
                 [disabled]="actionLoadingId === refund.id">
                 <i class="ti ti-check"></i>
-                Aprovar
+                Approve
               </button>
               <button
                 class="btn btn-danger btn-sm"
                 (click)="reject(refund.id)"
                 [disabled]="actionLoadingId === refund.id">
                 <i class="ti ti-x"></i>
-                Rejeitar
+                Reject
               </button>
             </div>
           </td>
@@ -53,7 +53,7 @@
           <td colspan="6">
             <div class="empty-state">
               <i class="ti ti-arrow-back-up"></i>
-              <p>Nenhuma solicitação de reembolso</p>
+              <p>No refund requests</p>
             </div>
           </td>
         </tr>

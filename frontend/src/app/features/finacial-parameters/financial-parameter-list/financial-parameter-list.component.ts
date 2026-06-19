@@ -30,7 +30,7 @@ export class FinancialParameterListComponent implements OnInit {
       next: (data) => {
         this.parameters = data;
       },
-      error: (err) => console.error('Erro ao carregar parâmetros:', err)
+      error: (err) => console.error('Error loading parameters:', err)
     });
   }
 
@@ -43,9 +43,9 @@ export class FinancialParameterListComponent implements OnInit {
       case FinancialParameterCategory.MONETARY:
         return `R$ ${param.value.toFixed(2)}`;
       case FinancialParameterCategory.DAYS:
-        return `${param.value} dias`;
+        return `${param.value} days`;
       case FinancialParameterCategory.FLAG:
-        return param.value === 1 ? 'Sim' : 'Não';
+        return param.value === 1 ? 'Yes' : 'No';
       default:
         return String(param.value);
     }
@@ -64,9 +64,9 @@ export class FinancialParameterListComponent implements OnInit {
   getTypeLabel(type: FinancialParameterType): string {
     const map: Record<FinancialParameterType, string> = {
       [FinancialParameterType.DECIMAL]: 'Decimal',
-      [FinancialParameterType.INTEGER]: 'Inteiro',
-      [FinancialParameterType.STRING]:  'Texto',
-      [FinancialParameterType.BOOLEAN]: 'Booleano',
+      [FinancialParameterType.INTEGER]: 'Integer',
+      [FinancialParameterType.STRING]:  'Text',
+      [FinancialParameterType.BOOLEAN]: 'Boolean',
     };
     return map[type] ?? type;
   }
@@ -85,9 +85,9 @@ export class FinancialParameterListComponent implements OnInit {
   getCategoryLabel(category?: FinancialParameterCategory): string {
     if (!category) return '';
     const map: Record<FinancialParameterCategory, string> = {
-      [FinancialParameterCategory.MONETARY]:   'Monetário',
-      [FinancialParameterCategory.PERCENTAGE]: 'Percentual',
-      [FinancialParameterCategory.DAYS]:       'Dias',
+      [FinancialParameterCategory.MONETARY]:   'Monetary',
+      [FinancialParameterCategory.PERCENTAGE]: 'Percentage',
+      [FinancialParameterCategory.DAYS]:       'Days',
       [FinancialParameterCategory.FLAG]:       'Flag',
     };
     return map[category] ?? category;
@@ -109,7 +109,7 @@ export class FinancialParameterListComponent implements OnInit {
         if (p) p.active = false;
         this.paramToDeactivate = null;
       },
-      error: (err) => console.error('Erro ao desativar parâmetro:', err)
+      error: (err) => console.error('Error deactivating parameter:', err)
     });
   }
 }

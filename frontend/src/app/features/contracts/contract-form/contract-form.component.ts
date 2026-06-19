@@ -48,7 +48,7 @@ export class ContractFormComponent implements OnInit {
         next: (data) => {
           this.clients = data.content;
         },
-        error: (err) => console.error('Erro ao carregar clientes:', err)
+        error: (err) => console.error('Error loading clients:', err)
       });
     }
 
@@ -62,7 +62,7 @@ export class ContractFormComponent implements OnInit {
             endDate:       contract.endDate,
           });
         },
-        error: () => this.errorMessage = 'Erro ao carregar contrato'
+        error: () => this.errorMessage = 'Error loading contract'
       });
     }
   }
@@ -93,7 +93,7 @@ export class ContractFormComponent implements OnInit {
         next: () => this.router.navigate(['/contracts']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao atualizar contrato.';
+          this.errorMessage = 'Error updating contract.';
         }
       });
 
@@ -110,7 +110,7 @@ export class ContractFormComponent implements OnInit {
         next: (contract) => this.router.navigate(['/contracts', contract.id, 'items']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao criar contrato.';
+          this.errorMessage = 'Error creating contract.';
         }
       });
     }

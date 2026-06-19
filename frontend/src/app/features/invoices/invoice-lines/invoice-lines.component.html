@@ -1,16 +1,16 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Linhas da fatura</h1>
-      <p class="page-subtitle">Fatura #{{ invoiceId }} — {{ lines.length }} item{{ lines.length !== 1 ? 's' : '' }}</p>
+      <h1 class="page-title">Invoice lines</h1>
+      <p class="page-subtitle">Invoice #{{ invoiceId }} - {{ lines.length }} item{{ lines.length !== 1 ? 's' : '' }}</p>
     </div>
     <a routerLink="/invoices" class="btn btn-secondary">
       <i class="ti ti-arrow-left"></i>
-      Voltar para faturas
+      Back to invoices
     </a>
   </div>
 
-  <!-- RESUMO DA FATURA -->
+  <!-- INVOICE SUMMARY -->
   <div class="summary-card" *ngIf="invoice">
     <div class="summary-item">
       <span class="summary-label">Status</span>
@@ -19,11 +19,11 @@
       </span>
     </div>
     <div class="summary-item">
-      <span class="summary-label">Emissão</span>
+      <span class="summary-label">Issue</span>
       <span class="summary-value">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</span>
     </div>
     <div class="summary-item">
-      <span class="summary-label">Vencimento</span>
+      <span class="summary-label">Due</span>
       <span class="summary-value">{{ invoice.dueDate ? (invoice.dueDate | date:'dd/MM/yyyy') : '—' }}</span>
     </div>
     <div class="summary-item">
@@ -31,20 +31,20 @@
       <span class="summary-value highlight">{{ invoice.amount | currency:'BRL' }}</span>
     </div>
     <div class="summary-item" *ngIf="invoice.remainingAmount > 0">
-      <span class="summary-label">Restante</span>
+      <span class="summary-label">Remaining</span>
       <span class="summary-value warn">{{ invoice.remainingAmount | currency:'BRL' }}</span>
     </div>
   </div>
 
-  <!-- TABELA DE LINHAS -->
+  <!-- LINES TABLE -->
   <div class="table-wrap">
     <table>
       <thead>
         <tr>
           <th>#</th>
-          <th>Descrição</th>
+          <th>Description</th>
           <th>Qtd</th>
-          <th>Preço unit.</th>
+          <th>Unit price</th>
           <th>Total</th>
         </tr>
       </thead>
@@ -61,7 +61,7 @@
           <td colspan="5">
             <div class="empty-state">
               <i class="ti ti-receipt-off"></i>
-              <p>Nenhuma linha encontrada para esta fatura</p>
+              <p>No lines found for this invoice</p>
             </div>
           </td>
         </tr>
@@ -78,7 +78,7 @@
   <div class="page-actions">
     <a [routerLink]="['/invoices', invoiceId, 'edit']" class="btn btn-secondary">
       <i class="ti ti-edit"></i>
-      Editar fatura
+      Edit invoice
     </a>
   </div>
 </div>

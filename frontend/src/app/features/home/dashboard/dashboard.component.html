@@ -1,16 +1,16 @@
 <div class="dashboard">
   <div class="dashboard-header">
-    <h1 class="dashboard-title">Dashboard Financeiro</h1>
-    <p class="dashboard-subtitle">Visão geral das suas receitas e faturas</p>
+    <h1 class="dashboard-title">Financial Dashboard</h1>
+    <p class="dashboard-subtitle">Overview of your revenue and invoices</p>
   </div>
 
-  <!-- CARDS DE MÉTRICAS -->
+  <!-- METRIC CARDS -->
   <div class="metrics-grid">
 
-    <!-- Receita Bruta -->
+    <!-- Gross Revenue -->
     <a routerLink="/invoices" class="metric-card metric-card-clickable">
       <div class="metric-header">
-        <span class="metric-label">Receita Bruta</span>
+        <span class="metric-label">Gross Revenue</span>
         <div class="metric-icon icon-green">
           <i class="ti ti-currency-dollar"></i>
         </div>
@@ -18,14 +18,14 @@
       <div class="metric-value">{{ summary?.grossRevenue | currency:'BRL' }}</div>
       <div class="metric-trend trend-up">
         <i class="ti ti-trending-up"></i>
-        <span>{{ summary?.paidInvoices }} faturas pagas — ver faturas</span>
+        <span>{{ summary?.paidInvoices }} paid invoices - view invoices</span>
       </div>
     </a>
 
-    <!-- Reembolsos -->
+    <!-- Refunds -->
     <a routerLink="/reconciliation" class="metric-card metric-card-clickable">
       <div class="metric-header">
-        <span class="metric-label">Reembolsos</span>
+        <span class="metric-label">Refunds</span>
         <div class="metric-icon icon-red">
           <i class="ti ti-arrow-back-up"></i>
         </div>
@@ -33,14 +33,14 @@
       <div class="metric-value">{{ summary?.refunded | currency:'BRL' }}</div>
       <div class="metric-trend trend-down">
         <i class="ti ti-trending-down"></i>
-        <span>{{ getRefundPercentage() }}% do total — ver reconciliação</span>
+        <span>{{ getRefundPercentage() }}% of total - view reconciliation</span>
       </div>
     </a>
 
-    <!-- Receita Líquida -->
+    <!-- Net Revenue -->
     <div class="metric-card">
       <div class="metric-header">
-        <span class="metric-label">Receita Líquida</span>
+        <span class="metric-label">Net Revenue</span>
         <div class="metric-icon icon-blue">
           <i class="ti ti-chart-line"></i>
         </div>
@@ -48,14 +48,14 @@
       <div class="metric-value">{{ summary?.netRevenue | currency:'BRL' }}</div>
       <div class="metric-trend trend-up">
         <i class="ti ti-trending-up"></i>
-        <span>Receita após reembolsos</span>
+        <span>Revenue after refunds</span>
       </div>
     </div>
 
-    <!-- Em Aberto -->
+    <!-- Outstanding -->
     <a routerLink="/invoices" class="metric-card metric-card-clickable">
       <div class="metric-header">
-        <span class="metric-label">Em Aberto</span>
+        <span class="metric-label">Outstanding</span>
         <div class="metric-icon icon-yellow">
           <i class="ti ti-clock"></i>
         </div>
@@ -63,18 +63,18 @@
       <div class="metric-value">{{ summary?.totalPending | currency:'BRL' }}</div>
       <div class="metric-trend trend-neutral">
         <i class="ti ti-arrow-right"></i>
-        <span>{{ summary?.pendingInvoices }} faturas pendentes — ver todas</span>
+        <span>{{ summary?.pendingInvoices }} pending invoices - view all</span>
       </div>
     </a>
 
   </div>
 
-  <!-- GRÁFICOS (pizza + barra) -->
+  <!-- CHARTS (pie + bar) -->
   <div class="charts-grid">
     <div class="chart-card">
       <div class="chart-header">
-        <div class="chart-title">Status das Faturas</div>
-        <div class="chart-subtitle">Distribuição por status atual</div>
+        <div class="chart-title">Invoice Status</div>
+        <div class="chart-subtitle">Distribution by current status</div>
       </div>
       <div class="chart-container">
         <canvas
@@ -89,8 +89,8 @@
 
     <div class="chart-card">
       <div class="chart-header">
-        <div class="chart-title">Visão Financeira</div>
-        <div class="chart-subtitle">Comparativo de receitas e pendências</div>
+        <div class="chart-title">Financial Overview</div>
+        <div class="chart-subtitle">Revenue and outstanding comparison</div>
       </div>
       <div class="chart-container">
         <canvas
@@ -104,18 +104,18 @@
     </div>
   </div>
 
-  <!-- GRÁFICO DE LINHA (largura total) -->
+  <!-- LINE CHART (full width) -->
 <div class="chart-card chart-card-full">
   <div class="chart-header">
     <div>
-      <div class="chart-title">Evolução Mensal</div>
-      <div class="chart-subtitle">Receita, pendências e vencidas por período</div>
+      <div class="chart-title">Monthly Evolution</div>
+      <div class="chart-subtitle">Revenue, pending, and overdue by period</div>
     </div>
 
     <div class="chart-filters">
       <div class="date-range">
         <input type="date" [value]="startDate" (change)="onStartDateChange($event)" />
-        <span>até</span>
+        <span>to</span>
         <input type="date" [value]="endDate" (change)="onEndDateChange($event)" />
       </div>
     </div>
@@ -132,26 +132,26 @@
   </div>
 </div>
 
-  <!-- RESUMO -->
+  <!-- SUMMARY -->
   <div class="recent-table">
     <div class="table-header">
-      <div class="table-title">Resumo do Sistema</div>
+      <div class="table-title">System Summary</div>
     </div>
     <div class="summary-content">
       <a routerLink="/invoices" class="summary-item summary-item-clickable">
-        <span class="summary-label">Faturas pagas</span>
+        <span class="summary-label">Paid invoices</span>
         <span class="summary-value">{{ summary?.paidInvoices }}</span>
       </a>
       <a routerLink="/invoices" class="summary-item summary-item-clickable">
-        <span class="summary-label">Faturas pendentes</span>
+        <span class="summary-label">Pending invoices</span>
         <span class="summary-value">{{ summary?.pendingInvoices }}</span>
       </a>
       <a routerLink="/invoices" class="summary-item summary-item-clickable">
-        <span class="summary-label">Faturas vencidas</span>
+        <span class="summary-label">Overdue invoices</span>
         <span class="summary-value" style="color: #A32D2D">{{ summary?.overdueInvoices }}</span>
       </a>
       <a routerLink="/clients" class="summary-item summary-item-clickable">
-        <span class="summary-label">Inadimplentes</span>
+        <span class="summary-label">Defaulters</span>
         <span class="summary-value" style="color: #A32D2D">{{ summary?.defaulterClients ?? '—' }}</span>
       </a>
     </div>

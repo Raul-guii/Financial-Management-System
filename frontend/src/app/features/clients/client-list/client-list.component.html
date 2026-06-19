@@ -1,26 +1,26 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Clientes</h1>
-      <p class="page-subtitle">{{ clients.length }} cliente{{ clients.length !== 1 ? 's' : '' }} cadastrado{{ clients.length !== 1 ? 's' : '' }}</p>
+      <h1 class="page-title">Clients</h1>
+      <p class="page-subtitle">{{ clients.length }} registered client{{ clients.length !== 1 ? 's' : '' }}</p>
     </div>
     <a routerLink="/clients/new" class="btn btn-primary">
       <i class="ti ti-plus"></i>
-      Novo cliente
+      New client
     </a>
     <div class="filter-tabs">
       <button
         class="filter-tab" 
         [class.active]="filterMode === 'all'"
         (click)="setFilter('all')">
-        Todos ({{ clients.length }})
+        All ({{ clients.length }})
       </button>
       <button 
         class="filter-tab filter-tab-danger" 
         [class.active]="filterMode === 'defaulters'"
         (click)="setFilter('defaulters')">
         <i class="ti ti-alert-triangle"></i>
-        Inadimplentes ({{ getDefaultersCount() }})
+        Defaulters ({{ getDefaultersCount() }})
       </button>
 
     <div class="search-wrap">
@@ -28,7 +28,7 @@
       <input
         type="text"
         class="search-input"
-        placeholder="Buscar por nome ou documento..."
+        placeholder="Search by name or document..."
         (input)="onSearch($event.target.value)"
       />
     </div>
@@ -39,10 +39,10 @@
     <table>
       <thead>
         <tr>
-          <th>Cliente</th>
-          <th>Tipo</th>
-          <th>Documento</th>
-          <th>Contato</th>
+          <th>Client</th>
+          <th>Type</th>
+          <th>Document</th>
+          <th>Contact</th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -70,25 +70,25 @@
           <td>
             <div class="status-cell">
               <span class="badge" [ngClass]="client.active ? 'badge-active' : 'badge-inactive'">
-                {{ client.active ? 'Ativo' : 'Inativo' }}
+                {{ client.active ? 'Active' : 'Inactive' }}
               </span>
               <span class="badge badge-defaulter" *ngIf="client.defaulter">
-                Inadimplente
+                Defaulter
               </span>
             </div>
           </td>
           <td>
             <div class="actions">
-              <a [routerLink]="['/clients', client.id, 'edit']" class="icon-btn" title="Editar">
+              <a [routerLink]="['/clients', client.id, 'edit']" class="icon-btn" title="Edit">
                 <i class="ti ti-edit"></i>
               </a>
               <button
                 class="icon-btn"
-                [title]="client.active ? 'Desativar' : 'Ativar'"
+                [title]="client.active ? 'Deactivate' : 'Activate'"
                 (click)="toggleActive(client)">
                 <i class="ti" [ngClass]="client.active ? 'ti-eye-off' : 'ti-eye'"></i>
               </button>
-              <button class="icon-btn icon-btn-danger" (click)="openDeleteConfirm(client)" title="Remover">
+              <button class="icon-btn icon-btn-danger" (click)="openDeleteConfirm(client)" title="Remove">
                 <i class="ti ti-trash"></i>
               </button>
             </div>
@@ -99,8 +99,8 @@
           <td colspan="6">
             <div class="empty-state">
               <i class="ti ti-building"></i>
-              <p>Nenhum cliente cadastrado</p>
-              <a routerLink="/clients/new" class="btn btn-primary">Criar primeiro cliente</a>
+              <p>No clients registered</p>
+              <a routerLink="/clients/new" class="btn btn-primary">Create first client</a>
             </div>
           </td>
         </tr>
@@ -109,7 +109,7 @@
   </div>
 </div>
 
-<!-- PAGINAÇÃO -->
+<!-- PAGINATION -->
 <div class="pagination" *ngIf="totalPages > 1">
   <button 
     class="page-btn" 
@@ -119,8 +119,8 @@
   </button>
 
   <div class="page-info">
-    Página {{ currentPage + 1 }} de {{ totalPages }}
-    <span class="total-info">({{ totalElements }} registros)</span>
+    Page {{ currentPage + 1 }} of {{ totalPages }}
+    <span class="total-info">({{ totalElements }} records)</span>
   </div>
 
   <button 
@@ -131,7 +131,7 @@
   </button>
 </div>
 
-<!-- MODAL DE CONFIRMAÇÃO DE DELETE -->
+<!-- DELETE CONFIRMATION MODAL -->
 <div class="modal-overlay" *ngIf="clientToDelete" (click)="cancelDelete()">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-icon-wrap">
@@ -139,15 +139,15 @@
         <i class="ti ti-trash"></i>
       </div>
     </div>
-    <h3 class="modal-title">Remover cliente?</h3>
+    <h3 class="modal-title">Remove client?</h3>
     <p class="modal-text">
-      O cliente <strong>{{ clientToDelete.name }}</strong> será removido permanentemente. Esta ação não pode ser desfeita.
+      The client <strong>{{ clientToDelete.name }}</strong> will be permanently removed. This action cannot be undone.
     </p>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
       <button class="btn btn-danger" (click)="confirmDelete()">
         <i class="ti ti-trash"></i>
-        Remover
+        Remove
       </button>
     </div>
   </div>

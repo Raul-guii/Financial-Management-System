@@ -13,25 +13,25 @@
     <a routerLink="/dashboard" routerLinkActive="active" (click)="close()">Dashboard</a>
 
     <a routerLink="/users" routerLinkActive="active" *ngIf="isAdmin()" (click)="close()">
-      Usuários
+      Users
     </a>
 
-    <a routerLink="/clients" routerLinkActive="active" (click)="close()">Clientes</a>
-    <a routerLink="/contracts" routerLinkActive="active" (click)="close()">Contratos</a>
-    <a routerLink="/invoices" routerLinkActive="active" (click)="close()">Faturas</a>
+    <a routerLink="/clients" routerLinkActive="active" (click)="close()">Clients</a>
+    <a routerLink="/contracts" routerLinkActive="active" (click)="close()">Contracts</a>
+    <a routerLink="/invoices" routerLinkActive="active" (click)="close()">Invoices</a>
 
     <a routerLink="/refunds" routerLinkActive="active" *ngIf="isAdminOrGestor()" (click)="close()">
-    Reembolsos
+    Refunds
     </a>
 
     <a routerLink="/financial-parameters" routerLinkActive="active" *ngIf="isAdminOrGestor()" (click)="close()">
-      Parâmetros
+      Parameters
     </a>
 
-    <a routerLink="/reconciliation" routerLinkActive="active" (click)="close()">Reconciliação</a>
+    <a routerLink="/reconciliation" routerLinkActive="active" (click)="close()">Reconciliation</a>
 
     <a routerLink="/audit-logs" routerLinkActive="active" *ngIf="isAdmin()" (click)="close()">
-      Auditoria
+      Audit
     </a>
   </nav>
 </aside>

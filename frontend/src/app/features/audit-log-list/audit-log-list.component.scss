@@ -25,7 +25,7 @@
 }
 
 // ============================
-// FILTROS
+// FILTERS
 // ============================
 .filters-row {
   display: flex;
@@ -53,7 +53,7 @@
 }
 
 // ============================
-// TABELA
+// TABLE
 // ============================
 .table-wrap {
   background: #fff;
@@ -139,7 +139,7 @@ tbody td {
 }
 
 // ============================
-// PAGINAÇÃO
+// PAGINATION
 // ============================
 .pagination {
   display: flex;
@@ -191,7 +191,7 @@ tbody td {
 }
 
 // ============================
-// RESPONSIVO
+// RESPONSIVE
 // ============================
 @media (max-width: 768px) {
   .page { padding: 16px; }
@@ -214,7 +214,7 @@ tbody td {
 
   .table-wrap { overflow-x: auto; }
 
-  // esconde ID e Usuário no mobile
+  // Hides ID and User on mobile.
   thead th:nth-child(3),
   tbody td:nth-child(3),
   thead th:nth-child(5),

@@ -1,8 +1,8 @@
 // ============================
-// HAMBURGUER (só mobile)
+// HAMBURGER (mobile only)
 // ============================
 .hamburger {
-  display: none; // escondido no desktop
+  display: none; // hidden on desktop
   position: fixed;
   top: 16px;
   left: 16px;
@@ -51,7 +51,7 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  position: sticky; // desktop: flui normalmente no layout
+  position: sticky; // desktop: follows the normal layout flow
   top: 0;
 }
 
@@ -89,7 +89,7 @@ a {
 // ============================
 @media (max-width: 768px) {
   .hamburger {
-    display: flex; // aparece no mobile
+    display: flex; // visible on mobile
   }
 
   .sidebar {
@@ -97,12 +97,12 @@ a {
     top: 0;
     left: 0;
     z-index: 999;
-    transform: translateX(-100%); // escondido por padrão
+    transform: translateX(-100%); // hidden by default
     transition: transform 0.25s ease;
     height: 100vh;
 
     &.open {
-      transform: translateX(0); // abre ao clicar
+      transform: translateX(0); // opens on click
     }
   }
 }

@@ -37,7 +37,7 @@ export class InvoiceLinesComponent implements OnInit {
         this.invoice = invoice;
         this.lines = lines;
       },
-      error: (err) => console.error('Erro ao carregar fatura:', err)
+      error: (err) => console.error('Error loading invoice:', err)
     });
   }
 
@@ -59,12 +59,12 @@ export class InvoiceLinesComponent implements OnInit {
 
   getStatusLabel(status: InvoiceStatus): string {
     const map: Record<InvoiceStatus, string> = {
-      [InvoiceStatus.PENDING]:       'Pendente',
-      [InvoiceStatus.PAID]:          'Paga',
-      [InvoiceStatus.OVERDUE]:       'Vencida',
-      [InvoiceStatus.CANCELLED]:     'Cancelada',
-      [InvoiceStatus.REFUNDED]:      'Reembolsada',
-      [InvoiceStatus.PARTIALLY_PAID]:'Parcialmente paga',
+      [InvoiceStatus.PENDING]:       'Pending',
+      [InvoiceStatus.PAID]:          'Paid',
+      [InvoiceStatus.OVERDUE]:       'Overdue',
+      [InvoiceStatus.CANCELLED]:     'Cancelled',
+      [InvoiceStatus.REFUNDED]:      'Refunded',
+      [InvoiceStatus.PARTIALLY_PAID]:'Partially paid',
     };
     return map[status] ?? status;
   }

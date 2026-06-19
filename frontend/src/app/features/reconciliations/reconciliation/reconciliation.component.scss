@@ -25,7 +25,7 @@
 }
 
 // ============================
-// FILTROS
+// FILTERS
 // ============================
 .filter-card {
   background: #fff;
@@ -91,7 +91,7 @@
 }
 
 // ============================
-// ERRO GLOBAL
+// GLOBAL ERROR
 // ============================
 .global-error {
   display: flex;
@@ -109,7 +109,7 @@
 }
 
 // ============================
-// CARDS DE RESUMO
+// SUMMARY CARDS
 // ============================
 .summary-grid {
   display: grid;
@@ -145,7 +145,7 @@
 }
 
 // ============================
-// TABELA
+// TABLE
 // ============================
 .table-wrap {
   background: #fff;
@@ -294,7 +294,7 @@ tbody td {
 }
 
 // ============================
-// BOTÕES
+// BUTTONS
 // ============================
 .btn {
   display: inline-flex;
@@ -316,7 +316,7 @@ tbody td {
 .btn-secondary { background: #fff; color: #374151; border: 1px solid #e5e7eb; &:hover:not(:disabled) { background: #f9fafb; } }
 
 // ============================
-// RESPONSIVO
+// RESPONSIVE
 // ============================
 @media (max-width: 768px) {
   .page { padding: 16px; }

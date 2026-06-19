@@ -48,7 +48,7 @@ export class ContractItemsComponent implements OnInit {
       next: (data) => {
         this.items = data;
       },
-      error: (err) => console.error('Erro ao carregar itens:', err)
+      error: (err) => console.error('Error loading items:', err)
     });
   }
 
@@ -71,7 +71,7 @@ export class ContractItemsComponent implements OnInit {
     const value = this.form.value;
 
     if (this.editingItem) {
-      // EDITAR item existente
+      // Edits an existing item.
       this.itemService.update(this.editingItem.id, value).subscribe({
         next: (updated) => {
           const idx = this.items.findIndex(i => i.id === this.editingItem!.id);
@@ -80,11 +80,11 @@ export class ContractItemsComponent implements OnInit {
         },
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao atualizar item.';
+          this.errorMessage = 'Error updating item.';
         }
       });
     } else {
-      // CRIAR novo item
+      // Creates a new item.
       const payload = { ...value, contractId: this.contractId };
       this.itemService.create(payload).subscribe({
         next: (created) => {
@@ -93,7 +93,7 @@ export class ContractItemsComponent implements OnInit {
         },
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao adicionar item.';
+          this.errorMessage = 'Error adding item.';
         }
       });
     }
@@ -136,7 +136,7 @@ export class ContractItemsComponent implements OnInit {
         this.items = this.items.filter(i => i.id !== this.itemToDelete!.id);
         this.itemToDelete = null;
       },
-      error: (err) => console.error('Erro ao remover item:', err)
+      error: (err) => console.error('Error removing item:', err)
     });
   }
 

@@ -4,7 +4,7 @@
   </div>
 
   <div class="right">
-    <!-- SINO DE NOTIFICAÇÕES -->
+    <!-- NOTIFICATIONS BELL -->
     <div class="notif-wrap" (clickOutside)="closeNotifications()">
       <button class="notif-btn" (click)="toggleNotifications()">
         <i class="ti ti-bell"></i>
@@ -14,8 +14,8 @@
       <!-- DROPDOWN -->
       <div class="notif-dropdown" *ngIf="showNotifications">
         <div class="notif-header">
-          <span class="notif-title">Notificações</span>
-          <span class="notif-count" *ngIf="unreadCount > 0">{{ unreadCount }} não lida{{ unreadCount !== 1 ? 's' : '' }}</span>
+          <span class="notif-title">Notifications</span>
+          <span class="notif-count" *ngIf="unreadCount > 0">{{ unreadCount }} unread</span>
         </div>
 
         <div class="notif-list" *ngIf="notifications.length > 0">
@@ -38,12 +38,12 @@
 
         <div class="notif-empty" *ngIf="notifications.length === 0">
           <i class="ti ti-bell-off"></i>
-          <span>Nenhuma notificação</span>
+          <span>No notifications</span>
         </div>
       </div>
     </div>
 
-    <!-- USUÁRIO -->
+    <!-- USER -->
     <div class="user-info">
       <div class="user-avatar">{{ getUserInitial() }}</div>
       <div class="user-details">
@@ -52,7 +52,7 @@
       </div>
     </div>
 
-    <button class="btn-logout" (click)="logout()" title="Sair">
+    <button class="btn-logout" (click)="logout()" title="Log out">
       <i class="ti ti-logout"></i>
     </button>
   </div>

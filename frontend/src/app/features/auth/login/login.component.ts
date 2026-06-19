@@ -37,9 +37,9 @@ export class LoginComponent {
     ).subscribe({
       next: () => this.router.navigate(['/dashboard']),
       error: (err) => {
-        console.log('ERRO CHEGOU NO COMPONENTE', err);
+        console.log('ERROR RECEIVED IN COMPONENT', err);
         this.loading = false;
-        this.errorMessage = 'E-mail ou senha inválidos';
+        this.errorMessage = 'Invalid e-mail or password';
 }
       
     });

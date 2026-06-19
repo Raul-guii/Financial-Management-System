@@ -49,7 +49,7 @@ export class AuditLogListComponent implements OnInit {
         this.totalElements = data.totalElements;
         this.totalPages = data.totalPages;
       },
-      error: (err) => console.error('Erro ao carregar audit logs:', err)
+      error: (err) => console.error('Error loading audit logs:', err)
     });
   }
 
@@ -66,33 +66,33 @@ export class AuditLogListComponent implements OnInit {
 
   getActionLabel(action: string): string {
     const map: Record<string, string> = {
-      CONTRACT_CREATED: 'Contrato criado',
-      CONTRACT_UPDATED: 'Contrato atualizado',
-      CONTRACT_CANCELLED: 'Contrato cancelado',
-      INVOICE_CREATED: 'Fatura criada',
-      INVOICE_CANCELLED: 'Fatura cancelada',
-      PAYMENT_CREATED: 'Pagamento criado',
-      PAYMENT_DELETED: 'Pagamento removido',
-      REFUND_REQUESTED: 'Reembolso solicitado',
-      REFUND_APPROVED: 'Reembolso aprovado',
-      REFUND_REJECTED: 'Reembolso rejeitado',
-      CLIENT_CREATED: 'Cliente criado',
-      CLIENT_UPDATED: 'Cliente atualizado',
-      CLIENT_DEACTIVATED: 'Cliente desativado',
-      USER_CREATED: 'Usuário criado',
-      USER_UPDATED: 'Usuário atualizado',
+      CONTRACT_CREATED: 'Contract created',
+      CONTRACT_UPDATED: 'Contract updated',
+      CONTRACT_CANCELLED: 'Contract cancelled',
+      INVOICE_CREATED: 'Invoice created',
+      INVOICE_CANCELLED: 'Invoice cancelled',
+      PAYMENT_CREATED: 'Payment created',
+      PAYMENT_DELETED: 'Payment removed',
+      REFUND_REQUESTED: 'Refund requested',
+      REFUND_APPROVED: 'Refund approved',
+      REFUND_REJECTED: 'Refund rejected',
+      CLIENT_CREATED: 'Client created',
+      CLIENT_UPDATED: 'Client updated',
+      CLIENT_DEACTIVATED: 'Client deactivated',
+      USER_CREATED: 'User created',
+      USER_UPDATED: 'User updated',
     };
     return map[action] ?? action;
   }
 
   getEntityLabel(entity: string): string {
     const map: Record<string, string> = {
-      CONTRACT: 'Contrato',
-      INVOICE: 'Fatura',
-      PAYMENT: 'Pagamento',
-      REFUND: 'Reembolso',
-      CLIENT: 'Cliente',
-      USER: 'Usuário',
+      CONTRACT: 'Contract',
+      INVOICE: 'Invoice',
+      PAYMENT: 'Payment',
+      REFUND: 'Refund',
+      CLIENT: 'Client',
+      USER: 'User',
     };
     return map[entity] ?? entity;
   }

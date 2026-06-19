@@ -91,7 +91,7 @@
 }
 
 // ============================
-// TABELA
+// TABLE
 // ============================
 .table-wrap {
   background: #fff;
@@ -138,7 +138,7 @@ tbody td {
 }
 
 // ============================
-// AVATAR + CÉLULA DE USUÁRIO
+// AVATAR + USER CELL
 // ============================
 .user-cell {
   display: flex;
@@ -167,7 +167,7 @@ tbody td {
 }
 
 // ============================
-// BADGES DE ROLE
+// ROLE BADGES
 // ============================
 .badge {
   display: inline-flex;
@@ -178,12 +178,12 @@ tbody td {
   font-weight: 500;
 
   &.badge-admin    { background: #FCEBEB; color: #A32D2D; }
-  &.badge-gestor   { background: #EEEDFE; color: #534AB7; }
-  &.badge-analista { background: #E1F5EE; color: #0F6E56; }
+  &.badge-manager  { background: #EEEDFE; color: #534AB7; }
+  &.badge-analyst  { background: #E1F5EE; color: #0F6E56; }
 }
 
 // ============================
-// AÇÕES
+// ACTIONS
 // ============================
 .actions {
   display: flex;
@@ -240,7 +240,7 @@ tbody td {
 }
 
 // ============================
-// BOTÕES
+// BUTTONS
 // ============================
 .btn {
   display: inline-flex;
@@ -375,31 +375,31 @@ tbody td {
     padding: 16px;
   }
 
-  // header vira coluna
+  // Header stacks into a column.
   .page-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
 
-  // search ocupa largura toda
+  // Search takes the full width.
   .search-input {
     width: 100%;
   }
 
-  // botão novo usuário ocupa largura toda
+  // New user button takes the full width.
   .btn-primary {
     width: 93%;
     justify-content: center;
   }
 
-  // tabela: esconde e-mail no mobile
+  // Table: hides e-mail on mobile.
   thead th:nth-child(2),
   tbody td:nth-child(2) {
     display: none;
   }
 
-  // tabela não estoura a tela
+  // Keeps the table from overflowing the screen.
   .table-wrap {
     overflow-x: auto;
   }

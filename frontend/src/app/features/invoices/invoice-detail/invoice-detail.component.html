@@ -1,12 +1,12 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Fatura #{{ invoiceId }}</h1>
-      <p class="page-subtitle">Detalhes, pagamentos e simulação</p>
+      <h1 class="page-title">Invoice #{{ invoiceId }}</h1>
+      <p class="page-subtitle">Details, payments, and simulation</p>
     </div>
     <a routerLink="/invoices" class="btn btn-secondary">
       <i class="ti ti-arrow-left"></i>
-      Voltar
+      Back
     </a>
   </div>
 
@@ -19,15 +19,15 @@
         </span>
       </div>
       <div class="summary-item">
-        <span class="summary-label">Contrato</span>
+        <span class="summary-label">Contract</span>
         <span class="summary-value">#{{ invoice.contractId }}</span>
       </div>
       <div class="summary-item">
-        <span class="summary-label">Emissão</span>
+        <span class="summary-label">Issue</span>
         <span class="summary-value">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</span>
       </div>
       <div class="summary-item">
-        <span class="summary-label">Vencimento</span>
+        <span class="summary-label">Due</span>
         <span class="summary-value">{{ invoice.dueDate ? (invoice.dueDate | date:'dd/MM/yyyy') : '—' }}</span>
       </div>
       <div class="summary-item">
@@ -35,11 +35,11 @@
         <span class="summary-value highlight">{{ invoice.amount | currency:'BRL' }}</span>
       </div>
       <div class="summary-item">
-        <span class="summary-label">Pago</span>
+        <span class="summary-label">Paid</span>
         <span class="summary-value success">{{ invoice.paidAmount | currency:'BRL' }}</span>
       </div>
       <div class="summary-item" *ngIf="invoice.remainingAmount > 0">
-        <span class="summary-label">Restante</span>
+        <span class="summary-label">Remaining</span>
         <span class="summary-value warn">{{ invoice.remainingAmount | currency:'BRL' }}</span>
       </div>
     </div>
@@ -49,15 +49,15 @@
 
     <div class="section-card">
       <div class="section-header">
-        <div class="section-title">Pagamentos</div>
+        <div class="section-title">Payments</div>
         <div class="section-actions">
           <button class="btn btn-secondary btn-sm" (click)="loadData()">
             <i class="ti ti-refresh"></i>
-            Atualizar
+            Refresh
           </button>
           <button class="btn btn-primary btn-sm" (click)="openPaymentModal()" *ngIf="canPay">
             <i class="ti ti-plus"></i>
-            Gerar pagamento
+            Generate payment
           </button>
         </div>
       </div>
@@ -66,7 +66,7 @@
         <div class="payment-item" *ngFor="let payment of payments">
           <div class="payment-info">
             <div class="payment-header">
-              <span class="payment-id">Pagamento #{{ payment.id }}</span>
+              <span class="payment-id">Payment #{{ payment.id }}</span>
               <span class="badge" [ngClass]="getPaymentStatusBadgeClass(payment.paymentStatus)">
                 {{ getPaymentStatusLabel(payment.paymentStatus) }}
               </span>
@@ -89,19 +89,19 @@
               <input type="text" [value]="payment.qrcode" readonly class="qrcode-input" />
               <button class="btn btn-secondary btn-sm" (click)="copyQrCode(payment.qrcode!)">
                 <i class="ti" [ngClass]="copied ? 'ti-check' : 'ti-copy'"></i>
-                {{ copied ? 'Copiado!' : 'Copiar' }}
+                {{ copied ? 'Copied!' : 'Copy' }}
               </button>
             </div>
             <a *ngIf="payment.ticketUrl" [href]="payment.ticketUrl" target="_blank" class="ticket-link">
               <i class="ti ti-external-link"></i>
-              Ver ticket completo
+              View full ticket
             </a>
           </div>
 
           <div class="simulation-wrap">
             <div class="simulation-title">
               <i class="ti ti-flask"></i>
-              Simulação (Sandbox)
+              Simulation (Sandbox)
             </div>
             <div class="simulation-actions">
               <button
@@ -109,7 +109,7 @@
                 (click)="simulateApproval(payment.id)"
                 [disabled]="payment.paymentStatus !== PaymentStatus.PENDING || simulating">
                 <i class="ti ti-check"></i>
-                Simular aprovação
+                Simulate approval
               </button>
               <button
                 class="btn btn-warning"
@@ -117,7 +117,7 @@
                 *ngIf="canRequestRefund"
                 [disabled]="payment.paymentStatus !== PaymentStatus.APPROVED || simulating">
                 <i class="ti ti-arrow-back-up"></i>
-                Solicitar reembolso
+                Request refund
               </button>
             </div>
           </div>
@@ -126,17 +126,17 @@
 
       <div class="empty-state" *ngIf="payments.length === 0">
         <i class="ti ti-credit-card-off"></i>
-        <p>Nenhum pagamento registrado</p>
+        <p>No payments recorded</p>
         <button class="btn btn-primary" (click)="openPaymentModal()" *ngIf="canPay">
           <i class="ti ti-plus"></i>
-          Gerar primeiro pagamento
+          Generate first payment
         </button>
       </div>
     </div>
 
     <div class="section-card">
       <div class="section-header">
-        <div class="section-title">Itens da fatura</div>
+        <div class="section-title">Invoice items</div>
       </div>
 
       <div class="lines-list" *ngIf="lines.length > 0">
@@ -154,7 +154,7 @@
 
       <div class="empty-state" *ngIf="lines.length === 0">
         <i class="ti ti-receipt-off"></i>
-        <p>Nenhuma linha encontrada</p>
+        <p>No lines found</p>
       </div>
     </div>
 
@@ -166,11 +166,11 @@
   </div>
 </div>
 
-<!-- MODAL DE PAGAMENTO -->
+<!-- PAYMENT MODAL -->
 <div class="modal-overlay" *ngIf="showPaymentModal" (click)="closePaymentModal()">
   <div class="modal modal-payment" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3 class="modal-title">Gerar pagamento PIX</h3>
+      <h3 class="modal-title">Generate PIX payment</h3>
       <button class="icon-btn" (click)="closePaymentModal()">
         <i class="ti ti-x"></i>
       </button>
@@ -178,25 +178,25 @@
 
     <form [formGroup]="paymentForm" (ngSubmit)="submitPayment()">
       <div class="form-group">
-        <label>Valor (R$)</label>
+        <label>Amount (R$)</label>
         <input type="number" formControlName="amount" step="0.01" min="0.01" [class.invalid]="isPaymentInvalid('amount')" />
-        <span class="field-error" *ngIf="isPaymentInvalid('amount')">Valor é obrigatório</span>
+        <span class="field-error" *ngIf="isPaymentInvalid('amount')">Amount is required</span>
       </div>
 
       <div class="form-group">
-        <label>E-mail do pagador</label>
-        <input type="email" formControlName="payerEmail" placeholder="pagador@email.com" [class.invalid]="isPaymentInvalid('payerEmail')" />
-        <span class="field-error" *ngIf="isPaymentInvalid('payerEmail')">E-mail é obrigatório</span>
+        <label>Payer e-mail</label>
+        <input type="email" formControlName="payerEmail" placeholder="payer@email.com" [class.invalid]="isPaymentInvalid('payerEmail')" />
+        <span class="field-error" *ngIf="isPaymentInvalid('payerEmail')">E-mail is required</span>
       </div>
 
       <div class="form-group">
-        <label>Data do pagamento</label>
+        <label>Payment date</label>
         <input type="date" formControlName="paymentDate" [class.invalid]="isPaymentInvalid('paymentDate')" />
-        <span class="field-error" *ngIf="isPaymentInvalid('paymentDate')">Data é obrigatória</span>
+        <span class="field-error" *ngIf="isPaymentInvalid('paymentDate')">Date is required</span>
       </div>
 
       <div class="form-group">
-        <label>Expiração do PIX <span class="optional">(opcional)</span></label>
+        <label>PIX expiration <span class="optional">(optional)</span></label>
         <input type="datetime-local" formControlName="date_of_expiration" />
       </div>
 
@@ -206,21 +206,21 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closePaymentModal()">Cancelar</button>
+        <button type="button" class="btn btn-secondary" (click)="closePaymentModal()">Cancel</button>
         <button type="submit" class="btn btn-primary" [disabled]="paymentLoading">
           <i class="ti" [ngClass]="paymentLoading ? 'ti-loader' : 'ti-qrcode'"></i>
-          {{ paymentLoading ? 'Gerando...' : 'Gerar QR Code PIX' }}
+          {{ paymentLoading ? 'Generating...' : 'Generate PIX QR Code' }}
         </button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- MODAL DE REEMBOLSO -->
+<!-- REFUND MODAL -->
 <div class="modal-overlay" *ngIf="showRefundModal" (click)="closeRefundModal()">
   <div class="modal modal-payment" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h3 class="modal-title">Solicitar reembolso</h3>
+      <h3 class="modal-title">Request refund</h3>
       <button class="icon-btn" (click)="closeRefundModal()">
         <i class="ti ti-x"></i>
       </button>
@@ -228,15 +228,15 @@
 
     <form [formGroup]="refundForm" (ngSubmit)="submitRefund()">
       <div class="form-group">
-        <label>Motivo do reembolso</label>
+        <label>Refund reason</label>
         <textarea
           formControlName="reason"
           rows="4"
-          placeholder="Descreva o motivo do reembolso (mínimo 10 caracteres)"
+          placeholder="Describe the refund reason (minimum 10 characters)"
           [class.invalid]="isRefundInvalid('reason')"
           style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px; font-size: 14px; resize: vertical;">
         </textarea>
-        <span class="field-error" *ngIf="isRefundInvalid('reason')">Motivo é obrigatório (mínimo 10 caracteres)</span>
+        <span class="field-error" *ngIf="isRefundInvalid('reason')">Reason is required (minimum 10 characters)</span>
       </div>
 
       <div class="global-error" *ngIf="refundError">
@@ -245,10 +245,10 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" (click)="closeRefundModal()">Cancelar</button>
+        <button type="button" class="btn btn-secondary" (click)="closeRefundModal()">Cancel</button>
         <button type="submit" class="btn btn-warning" [disabled]="refundLoading">
           <i class="ti" [ngClass]="refundLoading ? 'ti-loader' : 'ti-arrow-back-up'"></i>
-          {{ refundLoading ? 'Enviando...' : 'Solicitar reembolso' }}
+          {{ refundLoading ? 'Sending...' : 'Request refund' }}
         </button>
       </div>
     </form>

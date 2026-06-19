@@ -51,7 +51,7 @@ export class FinancialParameterFormComponent implements OnInit {
             active:      param.active
           });
         },
-        error: () => this.errorMessage = 'Erro ao carregar parâmetro'
+        error: () => this.errorMessage = 'Error loading parameter'
       });
     }
   }
@@ -85,7 +85,7 @@ export class FinancialParameterFormComponent implements OnInit {
         next: () => this.router.navigate(['/financial-parameters']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao atualizar parâmetro.';
+          this.errorMessage = 'Error updating parameter.';
         }
       });
     } else {
@@ -93,7 +93,7 @@ export class FinancialParameterFormComponent implements OnInit {
         next: () => this.router.navigate(['/financial-parameters']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao criar parâmetro.';
+          this.errorMessage = 'Error creating parameter.';
         }
       });
     }

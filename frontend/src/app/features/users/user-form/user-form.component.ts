@@ -21,12 +21,12 @@ export class UserFormComponent implements OnInit {
   showPassword = false;
   roleDescription = '';
 
-  Role = Role; // expõe o enum no template
+  Role = Role; // Exposes the enum to the template.
 
   private roleDescriptions: Record<Role, string> = {
-    [Role.ADMIN]: 'Acesso total ao sistema. Pode gerenciar usuários, contratos, faturas e configurações.',
-    [Role.FINANCIAL_MANAGER]: 'Pode criar e editar contratos e clientes, aprovar reembolsos e visualizar relatórios.',
-    [Role.FINANCIAL_ANALYST]: 'Pode visualizar faturas, registrar pagamentos e solicitar reembolsos. Sem acesso a usuários.'
+    [Role.ADMIN]: 'Full system access. Can manage users, contracts, invoices, and settings.',
+    [Role.FINANCIAL_MANAGER]: 'Can create and edit contracts and clients, approve refunds, and view reports.',
+    [Role.FINANCIAL_ANALYST]: 'Can view invoices, record payments, and request refunds. No access to users.'
   };
 
   constructor(
@@ -58,7 +58,7 @@ export class UserFormComponent implements OnInit {
           });
           this.onRoleChange();
         },
-        error: () => this.errorMessage = 'Erro ao carregar usuário'
+        error: () => this.errorMessage = 'Error loading user'
       });
     }
   }
@@ -88,14 +88,14 @@ export class UserFormComponent implements OnInit {
         email: value.email,
         role:  value.role
       };
-      // só inclui password se o usuário digitou algo
+      // Includes password only when the user entered one.
       if (value.password) payload.password = value.password;
 
       this.userService.update(this.userId, payload).subscribe({
         next: () => this.router.navigate(['/users']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao atualizar usuário. Verifique os dados e tente novamente.';
+          this.errorMessage = 'Error updating user. Check the data and try again.';
         }
       });
 
@@ -104,7 +104,7 @@ export class UserFormComponent implements OnInit {
         next: () => this.router.navigate(['/users']),
         error: () => {
           this.loading = false;
-          this.errorMessage = 'Erro ao criar usuário. O e-mail pode já estar em uso.';
+          this.errorMessage = 'Error creating user. The e-mail may already be in use.';
         }
       });
     }

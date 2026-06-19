@@ -64,7 +64,7 @@ export class ReconciliationComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         const msg = err?.error?.message || err?.error || '';
-        this.errorMessage = msg || 'Erro ao executar reconciliação.';
+        this.errorMessage = msg || 'Error running reconciliation.';
       }
     });
   }
@@ -83,7 +83,7 @@ export class ReconciliationComponent implements OnInit {
       },
       error: () => {
         this.exporting = false;
-        this.errorMessage = 'Erro ao exportar CSV.';
+        this.errorMessage = 'Error exporting CSV.';
       }
     });
   }
@@ -112,11 +112,11 @@ export class ReconciliationComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      MATCHED:            'Confirmado',
-      DIVERGENT:          'Divergente',
-      PENDING:            'Pendente',
-      MISSING_IN_GATEWAY: 'Sem gateway',
-      REFUNDED:           'Reembolsado',
+      MATCHED:            'Matched',
+      DIVERGENT:          'Divergent',
+      PENDING:            'Pending',
+      MISSING_IN_GATEWAY: 'Missing in gateway',
+      REFUNDED:           'Refunded',
     };
     return map[status] ?? status;
   }

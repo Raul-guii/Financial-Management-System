@@ -55,7 +55,7 @@ export class InvoiceListComponent implements OnInit {
         this.totalElements = data.totalElements;
         this.totalPages = data.totalPages;
       },
-      error: (err) => console.error('Erro ao carregar faturas:', err)
+      error: (err) => console.error('Error loading invoices:', err)
     });
   }
 
@@ -94,9 +94,9 @@ export class InvoiceListComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      PENDING: 'Pendente', PAID: 'Paga',
-      OVERDUE: 'Vencida', CANCELLED: 'Cancelada',
-      REFUNDED: 'Reembolsada', PARTIALLY_PAID: 'Parcial'
+      PENDING: 'Pending', PAID: 'Paid',
+      OVERDUE: 'Overdue', CANCELLED: 'Cancelled',
+      REFUNDED: 'Refunded', PARTIALLY_PAID: 'Partial'
     };
     return map[status] ?? status;
   }
@@ -128,7 +128,7 @@ export class InvoiceListComponent implements OnInit {
         this.invoices = this.invoices.filter(i => i.id !== this.invoiceToDelete!.id);
         this.invoiceToDelete = null;
       },
-      error: (err) => console.error('Erro ao remover fatura:', err)
+      error: (err) => console.error('Error removing invoice:', err)
     });
   }
 }

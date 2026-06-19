@@ -25,7 +25,7 @@
 }
 
 // ============================
-// TABELA
+// TABLE
 // ============================
 .table-wrap {
   background: #fff;
@@ -115,7 +115,7 @@ tbody td {
   &.badge-closed    { background: #F1EFE8; color: #5F5E5A; }
   &.badge-cancelled { background: #FCEBEB; color: #A32D2D; }
 
-  // Período
+  // Period
   &.badge-monthly    { background: #E6F1FB; color: #185FA5; }
   &.badge-quarterly  { background: #EEEDFE; color: #534AB7; }
   &.badge-semiannual { background: #E1F5EE; color: #0F6E56; }
@@ -123,7 +123,7 @@ tbody td {
 }
 
 // ============================
-// AÇÕES
+// ACTIONS
 // ============================
 .actions {
   display: flex;
@@ -186,7 +186,7 @@ tbody td {
 }
 
 // ============================
-// BOTÕES
+// BUTTONS
 // ============================
 .btn {
   display: inline-flex;
@@ -354,7 +354,7 @@ tbody td {
 .modal-footer { display: flex; gap: 8px; justify-content: center; }
 
 // ============================
-// RESPONSIVO
+// RESPONSIVE
 // ============================
 @media (max-width: 768px) {
   .page { padding: 16px; }
@@ -365,13 +365,13 @@ tbody td {
     gap: 12px;
   }
 
-  // botão novo contrato ocupa largura toda
+  // New contract button takes the full width.
   .btn-primary {
     width: 93%;
     justify-content: center;
   }
 
-  // filtros em coluna
+  // Filters stack into a column.
   .filters-row {
     flex-direction: column;
     align-items: stretch;
@@ -386,17 +386,17 @@ tbody td {
   .search-wrap { width: 100%; }
   .search-input { width: 100%; }
 
-  // tabela não estoura
+  // Keeps the table from overflowing.
   .table-wrap { overflow-x: auto; }
 
   table { font-size: 12px; }
   thead th, tbody td { padding: 10px 12px; }
 
-  // esconde colunas menos importantes
+  // Hides less important columns.
   thead th:nth-child(4),
   tbody td:nth-child(4),
   thead th:nth-child(5),
   tbody td:nth-child(5) {
-    display: none; // esconde Início e Fim no mobile
+    display: none; // hides Start and End on mobile
   }
 }

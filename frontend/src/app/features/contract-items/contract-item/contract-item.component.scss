@@ -89,7 +89,7 @@
 }
 
 // ============================
-// TABELA DE ITENS
+// ITEMS TABLE
 // ============================
 .table-wrap {
   background: #fff;
@@ -155,7 +155,7 @@ tfoot .total-row td {
 }
 
 // ============================
-// AÇÕES
+// ACTIONS
 // ============================
 .actions {
   display: flex;
@@ -187,7 +187,7 @@ tfoot .total-row td {
 }
 
 // ============================
-// FORMULÁRIO DE ITEM
+// ITEM FORM
 // ============================
 .form-card {
   background: #fff;
@@ -319,7 +319,7 @@ input[type="number"] {
 }
 
 // ============================
-// PREVIEW DO SUBTOTAL
+// SUBTOTAL PREVIEW
 // ============================
 .subtotal-preview {
   justify-content: center;
@@ -333,7 +333,7 @@ input[type="number"] {
 }
 
 // ============================
-// ERRO GLOBAL
+// GLOBAL ERROR
 // ============================
 .global-error {
   display: flex;
@@ -351,7 +351,7 @@ input[type="number"] {
 }
 
 // ============================
-// RODAPÉ
+// FOOTER
 // ============================
 .form-footer {
   display: flex;
@@ -363,7 +363,7 @@ input[type="number"] {
 }
 
 // ============================
-// BOTÕES
+// BUTTONS
 // ============================
 .btn {
   display: inline-flex;
@@ -427,7 +427,7 @@ input[type="number"] {
 .modal-footer { display: flex; gap: 8px; justify-content: center; }
 
 // ============================
-// RESPONSIVO
+// RESPONSIVE
 // ============================
 @media (max-width: 640px) {
   .form-grid { grid-template-columns: 1fr; }

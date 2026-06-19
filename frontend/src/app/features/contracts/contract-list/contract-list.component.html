@@ -1,12 +1,12 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Contratos</h1>
-      <p class="page-subtitle">{{ contracts.length }} contrato{{ contracts.length !== 1 ? 's' : '' }} cadastrado{{ contracts.length !== 1 ? 's' : '' }}</p>
+      <h1 class="page-title">Contracts</h1>
+      <p class="page-subtitle">{{ contracts.length }} registered contract{{ contracts.length !== 1 ? 's' : '' }}</p>
     </div>
     <a routerLink="/contracts/new" class="btn btn-primary">
       <i class="ti ti-plus"></i>
-      Novo contrato
+      New contract
     </a>
     
       <div class="filters-row">
@@ -16,22 +16,22 @@
           class="filter-select"
           [(ngModel)]="statusFilter">
 
-          <option value="">Todos os status</option>
+          <option value="">All statuses</option>
 
           <option value="ACTIVE">
-            Ativo ({{ countByStatus('ACTIVE') }})
+            Active ({{ countByStatus('ACTIVE') }})
           </option>
 
           <option value="SUSPENDED">
-            Suspenso ({{ countByStatus('SUSPENDED') }})
+            Suspended ({{ countByStatus('SUSPENDED') }})
           </option>
 
           <option value="CLOSED">
-            Encerrado ({{ countByStatus('CLOSED') }})
+            Closed ({{ countByStatus('CLOSED') }})
           </option>
 
           <option value="CANCELLED">
-            Cancelado ({{ countByStatus('CANCELLED') }})
+            Cancelled ({{ countByStatus('CANCELLED') }})
           </option>
 
         </select>
@@ -41,22 +41,22 @@
           class="filter-select"
           [(ngModel)]="billingFilter">
 
-          <option value="">Todos os períodos</option>
+          <option value="">All periods</option>
 
           <option value="MONTHLY">
-            Mensal ({{ countByBilling('MONTHLY') }})
+            Monthly ({{ countByBilling('MONTHLY') }})
           </option>
 
           <option value="QUARTERLY">
-            Trimestral ({{ countByBilling('QUARTERLY') }})
+            Quarterly ({{ countByBilling('QUARTERLY') }})
           </option>
 
           <option value="SEMIANNUAL">
-            Semestral ({{ countByBilling('SEMIANNUAL') }})
+            Semiannual ({{ countByBilling('SEMIANNUAL') }})
           </option>
 
           <option value="ANNUAL">
-            Anual ({{ countByBilling('ANNUAL') }})
+            Annual ({{ countByBilling('ANNUAL') }})
           </option>
 
         </select>
@@ -66,7 +66,7 @@
         <input
           type="text"
           class="search-input"
-          placeholder="Buscar por nome ou documento..."
+          placeholder="Search by name or document..."
           (input)="onSearch($event.target.value)"
         />
         </div>
@@ -80,10 +80,10 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Cliente</th>
-          <th>Período</th>
-          <th>Início</th>
-          <th>Fim</th>
+          <th>Client</th>
+          <th>Period</th>
+          <th>Start</th>
+          <th>End</th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -114,15 +114,15 @@
           </td>
           <td>
             <div class="actions">
-              <a [routerLink]="['/contracts', contract.id, 'edit']" class="icon-btn" title="Editar">
+              <a [routerLink]="['/contracts', contract.id, 'edit']" class="icon-btn" title="Edit">
                 <i class="ti ti-edit"></i>
               </a>
-              <a [routerLink]="['/contracts', contract.id, 'items']" class="icon-btn" title="Itens">
+              <a [routerLink]="['/contracts', contract.id, 'items']" class="icon-btn" title="Items">
                 <i class="ti ti-list"></i>
               </a>
               <button
                 class="icon-btn"
-                [title]="contract.invoiceIds.length > 0 ? 'Faturas já geradas' : 'Gerar faturas'"
+                [title]="contract.invoiceIds.length > 0 ? 'Invoices already generated' : 'Generate invoices'"
                 (click)="generateInvoices(contract.id)"
                 [disabled]="generatingId === contract.id || contract.status === ContractStatus.CANCELLED || contract.invoiceIds.length > 0">
                 <i class="ti" [ngClass]="{
@@ -134,7 +134,7 @@
               <button
                 class="icon-btn icon-btn-danger"
                 (click)="openDeleteConfirm(contract)"
-                title="Cancelar contrato"
+                title="Cancel contract"
                 [disabled]="contract.status === ContractStatus.CANCELLED">
                 <i class="ti ti-trash"></i>
               </button>
@@ -146,8 +146,8 @@
           <td colspan="7">
             <div class="empty-state">
               <i class="ti ti-file-text"></i>
-              <p>Nenhum contrato cadastrado</p>
-              <a routerLink="/contracts/new" class="btn btn-primary">Criar primeiro contrato</a>
+              <p>No contracts registered</p>
+              <a routerLink="/contracts/new" class="btn btn-primary">Create first contract</a>
             </div>
           </td>
         </tr>
@@ -155,7 +155,7 @@
     </table>
   </div>
 
-  <!-- PAGINAÇÃO -->
+  <!-- PAGINATION -->
   <div class="pagination" *ngIf="totalPages > 1">
     <button 
       class="page-btn" 
@@ -165,8 +165,8 @@
     </button>
 
     <div class="page-info">
-      Página {{ currentPage + 1 }} de {{ totalPages }}
-      <span class="total-info">({{ totalElements }} registros)</span>
+      Page {{ currentPage + 1 }} of {{ totalPages }}
+      <span class="total-info">({{ totalElements }} records)</span>
     </div>
 
     <button 
@@ -179,7 +179,7 @@
 
   </div>
 
-  <!-- MODAL DE CONFIRMAÇÃO -->
+  <!-- CONFIRMATION MODAL -->
   <div class="modal-overlay" *ngIf="contractToDelete" (click)="cancelDelete()">
     <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-icon-wrap">
@@ -187,16 +187,16 @@
           <i class="ti ti-trash"></i>
         </div>
       </div>
-      <h3 class="modal-title">Cancelar contrato?</h3>
+      <h3 class="modal-title">Cancel contract?</h3>
       <p class="modal-text">
-        O contrato <strong>#{{ contractToDelete.id }}</strong> será cancelado permanentemente.
-        Esta ação não pode ser desfeita.
+        Contract <strong>#{{ contractToDelete.id }}</strong> will be permanently cancelled.
+        This action cannot be undone.
       </p>
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="cancelDelete()">Voltar</button>
+        <button class="btn btn-secondary" (click)="cancelDelete()">Back</button>
         <button class="btn btn-danger" (click)="confirmDelete()">
           <i class="ti ti-trash"></i>
-          Cancelar contrato
+          Cancel contract
         </button>
       </div>
     </div>

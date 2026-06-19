@@ -1,13 +1,10 @@
 <div class="page">
   <div class="page-header">
     <div>
-      <h1 class="page-title">Faturas</h1>
-      <p class="page-subtitle">{{ invoices.length }} fatura{{ invoices.length !== 1 ? 's' : '' }} encontrada{{ invoices.length !== 1 ? 's' : '' }}</p>
+      <h1 class="page-title">Invoices</h1>
+      <p class="page-subtitle">{{ invoices.length }} invoice{{ invoices.length !== 1 ? 's' : '' }} found</p>
     </div>
-    <a routerLink="/invoices/new" class="btn btn-primary">
-      <i class="ti ti-plus"></i>
-      Nova fatura
-    </a>
+
     <div class="filters-row">
 
       <!-- STATUS -->
@@ -15,40 +12,40 @@
         class="filter-select"
         [(ngModel)]="statusFilter">
 
-        <option value="">Todos os status</option>
+        <option value="">All statuses</option>
         <option value="PENDING">
-          Pendente ({{ countByStatus('PENDING') }})
+          Pending ({{ countByStatus('PENDING') }})
         </option>
         <option value="PAID">
-          Paga ({{ countByStatus('PAID') }})
+          Paid ({{ countByStatus('PAID') }})
         </option>
         <option value="OVERDUE">
-          Vencida ({{ countByStatus('OVERDUE') }})
+          Overdue ({{ countByStatus('OVERDUE') }})
         </option>
         <option value="CANCELLED">
-          Cancelada ({{ countByStatus('CANCELLED') }})
+          Cancelled ({{ countByStatus('CANCELLED') }})
         </option>
         <option value="PARTIALLY_PAID">
-          Parcial
+          Partial
         </option>
       </select>
 
-      <!-- VALOR -->
+      <!-- AMOUNT -->
       <select
         class="filter-select"
         [(ngModel)]="amountFilter">
 
-        <option value="">Todos os valores</option>
-        <option value="under100">Até R$100</option>
+        <option value="">All amounts</option>
+        <option value="under100">Up to R$100</option>
         <option value="100to500">R$100–500</option>
         <option value="500to1000">R$500–1000</option>
-        <option value="above1000">Acima de R$1000</option>
+        <option value="above1000">Above R$1000</option>
       </select>
 
       <select class="filter-select" [(ngModel)]="contractFilter">
-        <option value="">Todos os contratos</option>
+        <option value="">All contracts</option>
         <option *ngFor="let id of getUniqueContractIds()" [value]="id">
-          Contrato #{{ id }}
+          Contract #{{ id }}
         </option>
       </select>
 
@@ -57,7 +54,7 @@
       <input
         type="text"
         class="search-input"
-        placeholder="Buscar por nome"
+        placeholder="Search by name"
         (input)="onSearch($event.target.value)"
       />
     </div>
@@ -69,10 +66,10 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Contrato</th>
-          <th>Emissão</th>
-          <th>Vencimento</th>
-          <th>Valor</th>
+          <th>Contract</th>
+          <th>Issue Date</th>
+          <th>Due Date</th>
+          <th>Amount</th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -83,7 +80,7 @@
           <td>
             <div class="contract-ref">
               <div class="avatar av-blue">C</div>
-              <span class="ref-label">Contrato #{{ invoice.contractId }}</span>
+              <span class="ref-label">Contract #{{ invoice.contractId }}</span>
             </div>
           </td>
           <td class="text-secondary">{{ invoice.issueDate | date:'dd/MM/yyyy' }}</td>
@@ -94,7 +91,7 @@
             <div class="amount-cell">
               <span class="amount-total">{{ invoice.amount | currency:'BRL' }}</span>
               <span class="amount-remaining" *ngIf="invoice.remainingAmount > 0">
-                Restante: {{ invoice.remainingAmount | currency:'BRL' }}
+                Remaining: {{ invoice.remainingAmount | currency:'BRL' }}
               </span>
             </div>
           </td>
@@ -105,19 +102,16 @@
           </td>
           <td>
             <div class="actions">
-              <a [routerLink]="['/invoices', invoice.id, 'lines']" class="icon-btn" title="Ver linhas">
+              <a [routerLink]="['/invoices', invoice.id, 'lines']" class="icon-btn" title="View lines">
                 <i class="ti ti-list"></i>
               </a>
-              <a [routerLink]="['/invoices', invoice.id, 'edit']" class="icon-btn" title="Editar">
-                <i class="ti ti-edit"></i>
-              </a>
-              <a [routerLink]="['/invoices', invoice.id, 'detail']" class="icon-btn" title="Ver detalhes">
+              <a [routerLink]="['/invoices', invoice.id, 'detail']" class="icon-btn" title="View details">
                 <i class="ti ti-eye"></i>
               </a>
               <button
                 class="icon-btn icon-btn-danger"
                 (click)="openDeleteConfirm(invoice)"
-                title="Remover"
+                title="Remove"
                 [disabled]="invoice.status === InvoiceStatus.PAID">
                 <i class="ti ti-trash"></i>
               </button>
@@ -129,8 +123,8 @@
           <td colspan="7">
             <div class="empty-state">
               <i class="ti ti-receipt"></i>
-              <p>Nenhuma fatura encontrada</p>
-              <a routerLink="/invoices/new" class="btn btn-primary">Gerar primeira fatura</a>
+              <p>No invoices found</p>
+              <a routerLink="/contracts" class="btn btn-primary">Open a contract to generate invoices</a>
             </div>
           </td>
         </tr>
@@ -138,7 +132,7 @@
     </table>
   </div>
 
-  <!-- PAGINAÇÃO -->
+  <!-- PAGINATION -->
   <div class="pagination" *ngIf="totalPages > 1">
     <button 
       class="page-btn" 
@@ -148,8 +142,8 @@
     </button>
 
     <div class="page-info">
-      Página {{ currentPage + 1 }} de {{ totalPages }}
-      <span class="total-info">({{ totalElements }} registros)</span>
+      Page {{ currentPage + 1 }} of {{ totalPages }}
+      <span class="total-info">({{ totalElements }} records)</span>
     </div>
 
     <button 
@@ -162,21 +156,21 @@
 
 </div>
 
-<!-- MODAL DE CONFIRMAÇÃO -->
+<!-- CONFIRMATION MODAL -->
 <div class="modal-overlay" *ngIf="invoiceToDelete" (click)="cancelDelete()">
   <div class="modal" (click)="$event.stopPropagation()">
     <div class="modal-icon-wrap">
       <div class="modal-icon"><i class="ti ti-trash"></i></div>
     </div>
-    <h3 class="modal-title">Remover fatura?</h3>
+    <h3 class="modal-title">Remove invoice?</h3>
     <p class="modal-text">
-      A fatura <strong>#{{ invoiceToDelete.id }}</strong> será removida permanentemente.
+      Invoice <strong>#{{ invoiceToDelete.id }}</strong> will be permanently removed.
     </p>
     <div class="modal-footer">
-      <button class="btn btn-secondary" (click)="cancelDelete()">Cancelar</button>
+      <button class="btn btn-secondary" (click)="cancelDelete()">Cancel</button>
       <button class="btn btn-danger" (click)="confirmDelete()">
         <i class="ti ti-trash"></i>
-        Remover
+        Remove
       </button>
     </div>
   </div>

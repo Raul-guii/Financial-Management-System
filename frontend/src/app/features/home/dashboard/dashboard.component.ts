@@ -80,7 +80,7 @@ export class DashboardComponent implements OnInit {
         this.summary = data;
         this.buildCharts();
       },
-      error: (err) => console.error('Erro ao carregar dashboard:', err)
+      error: (err) => console.error('Error loading dashboard:', err)
     });
   }
 
@@ -88,7 +88,7 @@ export class DashboardComponent implements OnInit {
     if (!this.startDate || !this.endDate) return;
     this.dashboardService.getMonthlyRevenue(this.startDate, this.endDate).subscribe({
       next: (data) => this.buildLineChart(data),
-      error: (err) => console.error('Erro ao carregar receita mensal:', err)
+      error: (err) => console.error('Error loading monthly revenue:', err)
     });
   }
 
@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit {
     if (!this.summary) return;
 
     this.pieChartData = {
-      labels: ['Pagas', 'Pendentes', 'Vencidas'],
+      labels: ['Paid', 'Pending', 'Overdue'],
       datasets: [{
         data: [
           this.summary.paidInvoices,
@@ -127,9 +127,9 @@ export class DashboardComponent implements OnInit {
     };
 
     this.barChartData = {
-      labels: ['Receita Bruta', 'Reembolsos', 'Receita Líquida', 'Em Aberto'],
+      labels: ['Gross Revenue', 'Refunds', 'Net Revenue', 'Outstanding'],
       datasets: [{
-        label: 'Valores (R$)',
+        label: 'Values (R$)',
         data: [
           Number(this.summary.grossRevenue),
           Number(this.summary.refunded),
@@ -162,7 +162,7 @@ export class DashboardComponent implements OnInit {
       labels: data.map(d => d.month),
       datasets: [
         {
-          label: 'Receita',
+          label: 'Revenue',
           data: data.map(d => Number(d.revenue)),
           borderColor: '#3B6D11',
           backgroundColor: 'rgba(59, 109, 17, 0.1)',
@@ -172,7 +172,7 @@ export class DashboardComponent implements OnInit {
           pointBackgroundColor: '#3B6D11',
         },
         {
-          label: 'Pendente',
+          label: 'Pending',
           data: data.map(d => Number(d.pending)),
           borderColor: '#854F0B',
           backgroundColor: 'rgba(133, 79, 11, 0.1)',
@@ -182,7 +182,7 @@ export class DashboardComponent implements OnInit {
           pointBackgroundColor: '#854F0B',
         },
         {
-          label: 'Vencida',
+          label: 'Overdue',
           data: data.map(d => Number(d.overdue)),
           borderColor: '#A32D2D',
           backgroundColor: 'rgba(163, 45, 45, 0.1)',

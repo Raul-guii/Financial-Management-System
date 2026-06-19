@@ -6,7 +6,7 @@
 }
 
 // ============================
-// PAINEL ESQUERDO (AZUL)
+// LEFT PANEL (BLUE)
 // ============================
 .left-panel {
   flex: 1;
@@ -38,7 +38,7 @@
     color: #fff;
   }
 
-  // Quando você adicionar uma imagem de logo, use:
+  // When you add a logo image, use:
   // img {
   //   max-width: 140px;
   //   max-height: 140px;
@@ -64,7 +64,7 @@
 }
 
 // ============================
-// PAINEL DIREITO (BRANCO)
+// RIGHT PANEL (WHITE)
 // ============================
 .right-panel {
   flex: 1;
@@ -134,7 +134,7 @@
 }
 
 // ============================
-// BOTÃO
+// BUTTON
 // ============================
 .btn-login {
   width: 100%;
@@ -180,7 +180,7 @@
 }
 
 // ============================
-// MENSAGEM DE ERRO
+// ERROR MESSAGE
 // ============================
 .error-message {
   margin-top: 16px;
@@ -194,7 +194,7 @@
 }
 
 // ============================
-// ESQUECI A SENHA
+// FORGOT PASSWORD
 // ============================
 .forgot-password {
   text-align: center;
@@ -213,7 +213,7 @@
 }
 
 // ============================
-// RESPONSIVO (MOBILE)
+// RESPONSIVE (MOBILE)
 // ============================
 @media (max-width: 768px) {
   .login-container {

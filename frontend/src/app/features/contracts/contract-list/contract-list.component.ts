@@ -79,7 +79,7 @@ export class ContractListComponent implements OnInit {
         );
       },
 
-      error: (err) => console.error('Erro ao carregar contratos:', err)
+      error: (err) => console.error('Error loading contracts:', err)
     });
   }
 
@@ -91,7 +91,7 @@ export class ContractListComponent implements OnInit {
   }
 
   getClientName(clientId: number): string {
-    return this.clientMap[clientId] ?? `Cliente #${clientId}`;
+    return this.clientMap[clientId] ?? `Client #${clientId}`;
   }
 
   getFilteredContracts(): ContractResponse[] {
@@ -112,8 +112,8 @@ export class ContractListComponent implements OnInit {
 
   getStatusLabel(status: string): string {
     const map: Record<string, string> = {
-      ACTIVE: 'Ativo', SUSPENDED: 'Suspenso',
-      CLOSED: 'Encerrado', CANCELLED: 'Cancelado'
+      ACTIVE: 'Active', SUSPENDED: 'Suspended',
+      CLOSED: 'Closed', CANCELLED: 'Cancelled'
     };
     return map[status] ?? status;
   }
@@ -123,12 +123,12 @@ export class ContractListComponent implements OnInit {
     this.contractService.generateInvoices(contractId).subscribe({
       next: () => {
         this.generatingId = null;
-        this.showToast('Faturas geradas com sucesso!', 'toast-success');
+        this.showToast('Invoices generated successfully!', 'toast-success');
       },
       error: (err) => {
         this.generatingId = null;
         const msg = err?.error?.message || err?.error || '';
-        this.showToast(msg || 'Erro ao gerar faturas.', 'toast-error');
+        this.showToast(msg || 'Error generating invoices.', 'toast-error');
       }
     });
   }
@@ -141,8 +141,8 @@ export class ContractListComponent implements OnInit {
 
   getBillingLabel(period: string): string {
     const map: Record<string, string> = {
-      MONTHLY: 'Mensal', QUARTERLY: 'Trimestral',
-      SEMIANNUAL: 'Semestral', ANNUAL: 'Anual'
+      MONTHLY: 'Monthly', QUARTERLY: 'Quarterly',
+      SEMIANNUAL: 'Semiannual', ANNUAL: 'Annual'
     };
     return map[period] ?? period;
   }
@@ -169,10 +169,10 @@ export class ContractListComponent implements OnInit {
 
   getPeriodLabel(period: BillingPeriod): string {
     const map: Record<BillingPeriod, string> = {
-      [BillingPeriod.MONTHLY]:    'Mensal',
-      [BillingPeriod.QUARTERLY]:  'Trimestral',
-      [BillingPeriod.SEMIANNUAL]: 'Semestral',
-      [BillingPeriod.ANNUAL]:     'Anual',
+      [BillingPeriod.MONTHLY]:    'Monthly',
+      [BillingPeriod.QUARTERLY]:  'Quarterly',
+      [BillingPeriod.SEMIANNUAL]: 'Semiannual',
+      [BillingPeriod.ANNUAL]:     'Annual',
     };
     return map[period] ?? period;
   }
@@ -193,7 +193,7 @@ export class ContractListComponent implements OnInit {
         if (c) c.status = ContractStatus.CANCELLED;
         this.contractToDelete = null;
       },
-      error: (err) => console.error('Erro ao cancelar contrato:', err)
+      error: (err) => console.error('Error cancelling contract:', err)
     });
   }
 }
